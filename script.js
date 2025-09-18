@@ -28,11 +28,6 @@ function stopNote(noteName) {
     }
 }
 
-// Get note based on key pressed and play audio
-document.addEventListener("click", () => {
-audioContext.resume().then(() => playIowa("C4", "mf"));
-});
-
 // Wire up the SVG keys
 const piano = document.getElementById("piano");
 if (piano) {
@@ -42,7 +37,7 @@ if (piano) {
         const start = (e) => {
             e.preventDefault();
             key.classList.add("active");
-            playNote("sounds/" + noteName + ".ogg", noteName);
+            playNote("https://raw.githubusercontent.com/Callum-OP/88-Piano-Notes/main/PianoSounds/" + noteName.toLowerCase() + ".ogg", noteName);
         };
 
         const stop = () => {
