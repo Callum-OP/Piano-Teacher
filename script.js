@@ -22,13 +22,25 @@ function playNotesFromInput() {
 
 // Function to highlight keys on the html keyboard piano
 function highlightKey(noteName, duration) {
-    const key = document.querySelector(`[data-note="${noteName}"]`);
+    const key = document.querySelector(`[data-note="${transformNote(noteName)}"]`);
     if (key) {
         key.classList.add("active");
         setTimeout(() => {
             key.classList.remove("active");
         }, duration);
     }
+}
+
+// Function to translate into notes by making all letters uppercase apart from s
+// Removes case sensitivity issues when entering sheet music
+function transformNote(str) {
+  return str
+    .split("")
+    .map(char => {
+      if (char.toLowerCase() === "s") return "s";
+      return char.toUpperCase();
+    })
+    .join("");
 }
 
 // Function to play an audio file
