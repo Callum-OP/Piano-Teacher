@@ -16,8 +16,8 @@ header { text-align: center; padding: 12px 8px; }
 
 .white-key { fill: var(--white); stroke: var(--border); }
 .black-key { fill: var(--black); }
-.white-key.active { fill: var(--highlight); }
-.black-key.active { fill: #333; }
+.white-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
+.black-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
 
 #piano { width: 100%; height: auto; display: block; }
 .label { font: 12px sans-serif; fill: #666; user-select: none; pointer-events: none; }
