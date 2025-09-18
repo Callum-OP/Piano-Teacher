@@ -1,6 +1,36 @@
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeNotes = {};
 
+// Function to do a tutorial demo of sheet music
+function playNotesFromInput() {
+    const input = document.getElementById("noteInput").value;
+    const notes = input.split(",").map(n => n.trim().toUpperCase());
+    let delay = 0;
+    let timeOffset = 0;
+    notes.forEach((note, index) => {
+        // Times delay by how many underscores there are, also remove all underscores.
+        if(note.includes("_")) {delay = 900 * (note.match(/_/g) || []).length; note = note.replace(/_/g, "");} 
+        else {delay = 600;}
+        setTimeout(() => {
+            const filePath = `./sounds/${note.toLowerCase()}.ogg`;
+            highlightKey(note, delay);
+            playNote(filePath, note);
+        }, timeOffset);
+        timeOffset += delay;
+    });
+}
+
+// Function to highlight keys on the html keyboard piano
+function highlightKey(noteName, duration) {
+    const key = document.querySelector(`[data-note="${noteName}"]`);
+    if (key) {
+        key.classList.add("active");
+        setTimeout(() => {
+            key.classList.remove("active");
+        }, duration);
+    }
+}
+
 // Function to play an audio file
 function playNote(filePath, noteName) {
     // Decodes audio file
