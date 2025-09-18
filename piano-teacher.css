@@ -22,3 +22,10 @@ header { text-align: center; padding: 12px 8px; }
 #piano { width: 100%; height: auto; display: block; }
 .label { font: 12px sans-serif; fill: #666; user-select: none; pointer-events: none; }
 
+.hide-labels .label {
+  display: none;
+}
+
+.center {
+    text-align: center;
+}
