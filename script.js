@@ -18,7 +18,7 @@ function playNotesFromInput() {
             if(note.includes("_")) {delay = 900 * (note.match(/_/g) || []).length; note = note.replace(/_/g, "");} 
                 const filePath = `./sounds/${note.toLowerCase()}.ogg`;
                 playNote(filePath, note);
-                highlightKey(note, delay);
+                highlightKey(note, delay / 1.3);
             });
         }, timeOffset);
 
