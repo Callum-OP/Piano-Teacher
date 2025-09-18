@@ -37,7 +37,7 @@ if (piano) {
         const start = (e) => {
             e.preventDefault();
             key.classList.add("active");
-            playNote("https://raw.githubusercontent.com/Callum-OP/88-Piano-Notes/main/PianoSounds/" + noteName.toLowerCase() + ".ogg", noteName);
+            playNote("./sounds/" + noteName.toLowerCase() + ".ogg", noteName);
         };
 
         const stop = () => {
