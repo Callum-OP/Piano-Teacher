@@ -4,18 +4,24 @@ const activeNotes = {};
 // Function to do a tutorial demo of sheet music
 function playNotesFromInput() {
     const input = document.getElementById("noteInput").value;
-    const notes = input.split(",").map(n => n.trim().toUpperCase());
+    // Split by commas
+    const entries = input.split(",").map(n => n.trim().toUpperCase());
     let delay = 0;
     let timeOffset = 0;
-    notes.forEach((note, index) => {
-        // Times delay by how many underscores there are, also remove all underscores.
-        if(note.includes("_")) {delay = 900 * (note.match(/_/g) || []).length; note = note.replace(/_/g, "");} 
-        else {delay = 600;}
+        entries.forEach(entry => {
+        const notes = entry.split("+").map(n => n.replace(/_/g, "").toUpperCase());
+        // Times delay by how many underscores there are, also remove all underscores
+        const delay = (entry.match(/_/g) || []).length > 0 ? 900 * (entry.match(/_/g) || []).length : 600;
+
         setTimeout(() => {
-            const filePath = `./sounds/${note.toLowerCase()}.ogg`;
-            highlightKey(note, delay);
-            playNote(filePath, note);
+            notes.forEach(note => {
+            if(note.includes("_")) {delay = 900 * (note.match(/_/g) || []).length; note = note.replace(/_/g, "");} 
+                const filePath = `./sounds/${note.toLowerCase()}.ogg`;
+                playNote(filePath, note);
+                highlightKey(note, delay);
+            });
         }, timeOffset);
+
         timeOffset += delay;
     });
 }
