@@ -1,9 +1,15 @@
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeNotes = {};
 
+function autoPlay() {
+    const inputLeft = document.getElementById("noteInputLeft").value;
+    playNotesFromInput(inputLeft);
+    const inputRight = document.getElementById("noteInputRight").value;
+    playNotesFromInput(inputRight);
+}
+
 // Function to do a tutorial demo of sheet music
-function playNotesFromInput() {
-    const input = document.getElementById("noteInput").value;
+function playNotesFromInput(input) {
     // Split by commas
     const entries = input.split(",").map(n => n.trim().toUpperCase());
     let delay = 0;

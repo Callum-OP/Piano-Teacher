@@ -74,8 +74,12 @@
         </div>
         <div class="center">
             <!-- Play a list of notes -->
-            <input type="text" id="noteInput" placeholder="Enter notes (e.g. C4,E4,G4)">
-            <button onclick="playNotesFromInput()">View Tutorial</button>
+            <p>Enter notes (e.g. C4,F4,E4_,G4+G5__).<br>
+            The letter is the note, the number is the octave.<br>
+            Use + to play several notes at same time, use _ to wait before next key.</p>
+            <input type="text" id="noteInputLeft" placeholder="Enter left hand notes">
+            <input type="text" id="noteInputRight" placeholder="Enter right hand notes">
+            <button onclick="autoPlay()">View Tutorial</button>
         </div>
     </div>
 
