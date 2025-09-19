@@ -32,9 +32,9 @@ function playNotesFromInput(input) {
                 highlightKey(note, delay / 1.3);
                 // Stop note if it has no underscore, else wait
                 if(underscoreCount == 0) {
-                    setTimeout(() => stopNote(note), 100);
+                    setTimeout(() => stopNote(note), 50);
                 } else {
-                    setTimeout(() => stopNote(note), delay);
+                    setTimeout(() => stopNote(note), delay / 2);
                 }
             });
         }, timeOffset);
