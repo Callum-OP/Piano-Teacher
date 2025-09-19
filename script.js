@@ -12,19 +12,30 @@ function autoPlay() {
 function playNotesFromInput(input) {
     // Split by commas
     const entries = input.split(",").map(n => n.trim().toUpperCase());
-    let delay = 0;
     let timeOffset = 0;
-        entries.forEach(entry => {
+    // Entries could be several notes at same time, eg: A1+B2+C2
+    entries.forEach(entry => {
         const notes = entry.split("+").map(n => n.replace(/_/g, "").toUpperCase());
-        // Times delay by how many underscores there are, also remove all underscores
-        const delay = (entry.match(/_/g) || []).length > 0 ? 900 * (entry.match(/_/g) || []).length : 600;
-
+        // Times delay by how many underscores there are
+        const underscoreCount = (entry.match(/_/g) || []).length;
+        const delay = underscoreCount > 0 ? 900 * underscoreCount : 600;
         setTimeout(() => {
+            // Notes are the note letter and octave, eg: A1
             notes.forEach(note => {
-            if(note.includes("_")) {delay = 900 * (note.match(/_/g) || []).length; note = note.replace(/_/g, "");} 
+                // If note has underscores remove them
+                if (note.includes("_")) {
+                    note = note.replace(/_/g, "");
+                }
+                // Play note
                 const filePath = `./sounds/${note.toLowerCase()}.ogg`;
                 playNote(filePath, note);
                 highlightKey(note, delay / 1.3);
+                // Stop note if it has no underscore, else wait
+                if(underscoreCount == 0) {
+                    setTimeout(() => stopNote(note), 100);
+                } else {
+                    setTimeout(() => stopNote(note), delay);
+                }
             });
         }, timeOffset);
 
