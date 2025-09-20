@@ -7,4 +7,6 @@ F4,A4,F4,E4__,F4,A4,E4,D4__,F4,D4,C4__,D4_,A4,G4,D4_, A4,G4,F4,D4___,F4,G4,F4,E4
 
 ## Issues
 Will make a popping sound when it has just began playing audio.
+Pressing the same note again in autoplay is quicker than playing a different note.
+When playing several notes at once in autoplay the underscores are not considered seperate for each note making it not possible to have one note last longer than another.
 
