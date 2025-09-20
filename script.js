@@ -18,7 +18,7 @@ function playNotesFromInput(input) {
         const notes = entry.split("+").map(n => n.replace(/_/g, "").toUpperCase());
         // Times delay by how many underscores there are
         const underscoreCount = (entry.match(/_/g) || []).length;
-        const delay = underscoreCount > 0 ? 600 * underscoreCount : 400;
+        const delay = underscoreCount > 0 ? 400 * underscoreCount : 200;
         setTimeout(() => {
             // Notes are the note letter and octave, eg: A1
             notes.forEach(note => {
