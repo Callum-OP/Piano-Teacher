@@ -8,24 +8,35 @@ function autoPlay() {
     playNotesFromInput(inputRight);
 }
 
+// Function to ensure that input is what is expected
+function normalise(input) {
+    // Change spaces into underscores
+    const normalized = input.replace(/ /g, "_");
+    // Ensure notes match expected values
+    const notes = normalized.match(/([\^v]*[A-G](?:#|s)?\d*_*(?:\+[\^v]*[A-G](?:#|s)?\d*_*)*)/g);
+    // Add comma before letter if not already there
+    return notes ? notes.join(",") : "";
+}
+
 // Function to do a tutorial demo of sheet music
 function playNotesFromInput(input) {
-    // Split by commas
-    const entries = input.split(",").map(n => n.trim().toUpperCase());
+    // Only play if there is input
+    if (!input || typeof input !== "string" || input.trim() === "") {
+        return;
+    }
+    // Normalise input and split by commas
+    const entries = normalise(input).split(",").map(n => n.trim());
     let timeOffset = 0;
     // Entries could be several notes at same time, eg: A1+B2+C2
     entries.forEach(entry => {
-        const notes = entry.split("+").map(n => n.replace(/_/g, "").toUpperCase());
+        // Translate notes into desired input
+       const notes = entry.split("+").map(n => translateNote(n));
         // Times delay by how many underscores there are
         const underscoreCount = (entry.match(/_/g) || []).length;
-        const delay = underscoreCount > 0 ? 400 * underscoreCount : 200;
+        let delay = underscoreCount > 0 ? 400 * underscoreCount : 200;
         setTimeout(() => {
             // Notes are the note letter and octave, eg: A1
             notes.forEach(note => {
-                // If note has underscores remove them
-                if (note.includes("_")) {
-                    note = note.replace(/_/g, "");
-                }
                 // Play note
                 const filePath = `./sounds/${note.toLowerCase()}.ogg`;
                 playNote(filePath, note);
@@ -41,6 +52,36 @@ function playNotesFromInput(input) {
 
         timeOffset += delay;
     });
+}
+
+// Function to translate notes into the expected format I need
+function translateNote(input) {
+    let baseOctave = 4;
+    let note = input.toUpperCase()
+
+    // Count ^ and v symbols
+    let upCount = (note.match(/\^/g) || []).length;
+    let downCount = (note.match(/v/g) || []).length;
+    downCount += (note.match(/V/g) || []).length;
+
+    // Remove those symbols from note name
+    note = note.replace(/\^/g, "");
+    note = note.replace(/v/g, "")
+    note = note.replace(/V/g, "")
+    // Remove underscores
+    note = note.replace(/_/g, "");
+    // Convert # symbol to s
+    note = note.replace("#", "s");
+
+    // Adjust octave so it is the correct number
+    const finalOctave = baseOctave + upCount - downCount;
+
+    // If there is a number
+    if(/\d/.test(note)) {
+        return note;
+    } else {
+        return note + finalOctave;
+    }
 }
 
 // Function to highlight keys on the html keyboard piano
@@ -92,7 +133,7 @@ function playNote(filePath, noteName) {
 function stopNote(noteName) {
     const note = activeNotes[noteName];
     if (note) {
-        note.gain.gain.setTargetAtTime(0, audioContext.currentTime, 0.8); // Slight fade out
+        note.gain.gain.setTargetAtTime(0, audioContext.currentTime, 0.7); // Slight fade out
         delete activeNotes[noteName];
     }
 }
