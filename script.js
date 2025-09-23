@@ -14,7 +14,7 @@ function normalise(input) {
     let normalised = input.replace(/ /g, "_");
     normalised = normalised.toUpperCase();
     // Ensure notes match expected values
-    const notes = normalised.match(/([\^v]*[A-G](?:#|s)?\d*_*(?:\+[\^v]*[A-G](?:#|s)?\d*_*)*)/g);
+    const notes = normalised.match(/([\^v]*[A-G](?:#|S)?\d*_*(?:\+[\^v]*[A-G](?:#|S)?\d*_*)*)/g);
     // Add comma before letter if not already there
     return notes ? notes.join(",") : "";
 }
