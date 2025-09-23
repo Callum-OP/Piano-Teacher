@@ -10,10 +10,11 @@ function autoPlay() {
 
 // Function to ensure that input is what is expected
 function normalise(input) {
-    // Change spaces into underscores
-    const normalized = input.replace(/ /g, "_");
+    // Change spaces into underscores and change to uppercase
+    let normalised = input.replace(/ /g, "_");
+    normalised = normalised.toUpperCase();
     // Ensure notes match expected values
-    const notes = normalized.match(/([\^v]*[A-G](?:#|s)?\d*_*(?:\+[\^v]*[A-G](?:#|s)?\d*_*)*)/g);
+    const notes = normalised.match(/([\^v]*[A-G](?:#|s)?\d*_*(?:\+[\^v]*[A-G](?:#|s)?\d*_*)*)/g);
     // Add comma before letter if not already there
     return notes ? notes.join(",") : "";
 }
@@ -38,14 +39,16 @@ function playNotesFromInput(input) {
             // Notes are the note letter and octave, eg: A1
             notes.forEach(note => {
                 // Play note
-                const filePath = `./sounds/${note.toLowerCase()}.ogg`;
-                playNote(filePath, note);
-                highlightKey(note, delay / 1.3);
-                // Stop note if it has no underscore, else wait
-                if(underscoreCount == 0) {
-                    setTimeout(() => stopNote(note), 50);
-                } else {
-                    setTimeout(() => stopNote(note), delay / 2);
+                if(note.match(/[A-G]/g) || [].length != 0) {
+                    const filePath = `./sounds/${note.toLowerCase()}.ogg`;
+                    playNote(filePath, note);
+                    highlightKey(note, delay / 1.3);
+                    // Stop note if it has no underscore, else wait
+                    if(underscoreCount == 0) {
+                        setTimeout(() => stopNote(note), 50);
+                    } else {
+                        setTimeout(() => stopNote(note), delay / 2);
+                    }
                 }
             });
         }, timeOffset);
