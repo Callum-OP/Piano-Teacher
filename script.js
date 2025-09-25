@@ -30,6 +30,7 @@ function playNotesFromInput(input) {
     const entries = normalise(input).split(",").map(n => n.trim());
     let timeOffset = 9000;
     let duration = 9000;
+    startCountdown();
 
     // Entries could be several notes at same time, eg: A1+B2+C2
     entries.forEach(entry => {
@@ -218,6 +219,26 @@ function showPreviewNote(noteName, delay, duration) {
     setTimeout(() => {
         previewLayer.removeChild(noteDiv);
     }, duration + 100);
+}
+
+// Function to count down from 5 
+function startCountdown() {
+    const countdown = document.getElementById("countdown");
+    let seconds = 5;
+
+    countdown.style.display = "block";
+    countdown.textContent = `Starting in ${seconds}...`;
+
+    const interval = setInterval(() => {
+        seconds--;
+        // Keep counting down until 0
+        if (seconds > 0) {
+            countdown.textContent = `Starting in ${seconds}...`;
+        } else {
+            clearInterval(interval);
+            countdown.style.display = "none";
+        }
+    }, 1000);
 }
 
 
