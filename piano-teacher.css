@@ -29,3 +29,9 @@ header { text-align: center; padding: 12px 8px; }
 .center {
     text-align: center;
 }
+
+.falling-note {
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+    opacity: 0.8;
+}
+

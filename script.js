@@ -1,6 +1,7 @@
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeNotes = {};
 
+// Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
     const inputLeft = document.getElementById("noteInputLeft").value;
     playNotesFromInput(inputLeft);
@@ -27,7 +28,9 @@ function playNotesFromInput(input) {
     }
     // Normalise input and split by commas
     const entries = normalise(input).split(",").map(n => n.trim());
-    let timeOffset = 0;
+    let timeOffset = 9000;
+    let duration = 9000;
+
     // Entries could be several notes at same time, eg: A1+B2+C2
     entries.forEach(entry => {
         // Translate notes into desired input
@@ -35,10 +38,18 @@ function playNotesFromInput(input) {
         // Times delay by how many underscores there are
         const underscoreCount = (entry.match(/_/g) || []).length;
         let delay = underscoreCount > 0 ? 400 * underscoreCount : 200;
+
+        // Show future notes above piano before they are played
+        notes.forEach(note => {
+            setTimeout(() => {
+                showPreviewNote(note, delay, duration);
+            }, Math.max(0, timeOffset - duration));
+        });
+
+        // Play note
         setTimeout(() => {
             // Notes are the note letter and octave, eg: A1
             notes.forEach(note => {
-                // Play note
                 if(note.match(/[A-G]/g) || [].length != 0) {
                     const filePath = `./sounds/${note.toLowerCase()}.ogg`;
                     playNote(filePath, note);
@@ -67,19 +78,16 @@ function translateNote(input) {
     let downCount = (note.match(/v/g) || []).length;
     downCount += (note.match(/V/g) || []).length;
 
-    // Remove those symbols from note name
-    note = note.replace(/\^/g, "");
-    note = note.replace(/v/g, "")
-    note = note.replace(/V/g, "")
-    // Remove underscores
-    note = note.replace(/_/g, "");
-    // Convert # symbol to s
-    note = note.replace("#", "s");
+    // Remove these symbols from note name
+    note = note.replace(/\^/g, ""); // Remove ^
+    note = note.replace(/v/g, "") // Remove v
+    note = note.replace(/V/g, "") // Remove V
+    note = note.replace(/_/g, ""); // Remove underscores
+    note = note.replace("#", "s"); // Convert # symbol to s
 
     // Adjust octave so it is the correct number
     const finalOctave = baseOctave + upCount - downCount;
-
-    // If there is a number
+    // Only add if there is no number
     if(/\d/.test(note)) {
         return note;
     } else {
@@ -175,3 +183,39 @@ document.getElementById("toggle-labels").addEventListener("change", function () 
         piano.classList.add("hide-labels");
     }
 });
+
+// Function to show future notes before they are played
+function showPreviewNote(noteName, delay, duration) {
+    // Get html items
+    const key = document.querySelector(`[data-note="${transformNote(noteName)}"]`);
+    const previewLayer = document.getElementById("note-preview");
+    if (!key || !previewLayer) return; // Stop if key or layer doesn't exist
+    const keyRect = key.getBoundingClientRect();
+    const previewRect = previewLayer.getBoundingClientRect();
+
+    // Create a new html element
+    const noteDiv = document.createElement("div");
+    noteDiv.className = "falling-note"; // This is for css to detect the class
+    noteDiv.style.position = "absolute";
+    noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
+    noteDiv.style.left = `${keyRect.left - previewRect.left}px`;
+    noteDiv.style.top = `-1000px`; // Start above piano
+    noteDiv.style.height = `10 + (delay / 2) * 0.1`; // Set height to length of note
+    noteDiv.style.background = "#ffd54f"; // Same colour as highlight in css
+    noteDiv.style.borderRadius = "4px";
+    noteDiv.style.transition = `top ${duration}ms linear`; // Allows the note to be animated when it falls down to piano
+    // Append to div in html
+    previewLayer.appendChild(noteDiv);
+
+    // Animate down
+    requestAnimationFrame(() => {
+        noteDiv.style.top = `${keyRect.top - previewRect.top}px`;
+    });
+
+    // Remove after it reaches the key
+    setTimeout(() => {
+        previewLayer.removeChild(noteDiv);
+    }, duration + 100);
+}
+
+
