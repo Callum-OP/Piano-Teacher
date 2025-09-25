@@ -200,10 +200,12 @@ function showPreviewNote(noteName, delay, duration) {
     noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
     noteDiv.style.left = `${keyRect.left - previewRect.left}px`;
     noteDiv.style.top = `-1000px`; // Start above piano
-    noteDiv.style.height = `10 + (delay / 2) * 0.1`; // Set height to length of note
+    noteDiv.style.height = `${10 + (delay / 10)}px`; // Set height to length of note
     noteDiv.style.background = "#ffd54f"; // Same colour as highlight in css
     noteDiv.style.borderRadius = "4px";
     noteDiv.style.transition = `top ${duration}ms linear`; // Allows the note to be animated when it falls down to piano
+    noteDiv.style.transformOrigin = "bottom"; // Anchor growth to bottom
+    noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
     // Append to div in html
     previewLayer.appendChild(noteDiv);
 
