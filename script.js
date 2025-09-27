@@ -1,5 +1,6 @@
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeNotes = {};
+let scheduledTimeouts = [];
 
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
@@ -44,13 +45,14 @@ function playNotesFromInput(input) {
 
         // Show future notes above piano before they are played
         notes.forEach(note => {
-            setTimeout(() => {
+            const t1 = setTimeout(() => {
                 showPreviewNote(note, delay, duration);
             }, Math.max(0, timeOffset - duration));
+            scheduledTimeouts.push(t1);
         });
 
         // Play note
-        setTimeout(() => {
+        const t2 = setTimeout(() => {
             // Notes are the note letter and octave, eg: A1
             notes.forEach(note => {
                 if(note.match(/[A-G]/g) || [].length != 0) {
@@ -59,13 +61,16 @@ function playNotesFromInput(input) {
                     highlightKey(note, delay / 1.3);
                     // Stop note if it has no underscore, else wait
                     if(underscoreCount == 0) {
-                        setTimeout(() => stopNote(note), 50);
+                        const t3 = setTimeout(() => stopNote(note), 50);
+                        scheduledTimeouts.push(t3);
                     } else {
-                        setTimeout(() => stopNote(note), delay / 2);
+                        const t3 = setTimeout(() => stopNote(note), delay / 2);
+                        scheduledTimeouts.push(t3);
                     }
                 }
             });
         }, timeOffset);
+        scheduledTimeouts.push(t2);
 
         timeOffset += delay;
     });
@@ -223,13 +228,46 @@ function showPreviewNote(noteName, delay, duration) {
 
     // Remove after it reaches the key
     setTimeout(() => {
+    if (noteDiv.parentNode === previewLayer) {
         previewLayer.removeChild(noteDiv);
         activeNotesCount--; // Minus when note is removed
         if (activeNotesCount === 0) {
             // Show hero section
             document.querySelector('.hero-button').classList.remove('hidden');
         }
+    }
     }, duration + 100);
+}
+
+function clearAutoplay() {
+    // Clear input fields
+    document.getElementById("noteInputLeft").value = "";
+    document.getElementById("noteInputRight").value = "";
+
+    // Remove any preview notes still falling
+    const previewLayer = document.getElementById("note-preview");
+    if (previewLayer) {
+        previewLayer.innerHTML = "";
+    }
+
+    // Stop any currently playing audio
+    for (let note in activeNotes) {
+        stopNote(note);
+    }
+    scheduledTimeouts.forEach(id => clearTimeout(id));
+    scheduledTimeouts = [];
+
+    // Reset hero button
+    const hero = document.querySelector(".hero-button");
+    if (hero) {
+        hero.classList.remove("hidden");
+    }
+
+    // Reset countdown if it’s visible
+    const countdown = document.getElementById("countdown");
+    if (countdown) {
+        countdown.style.display = "none";
+    }
 }
 
 // Function to count down from 5 
