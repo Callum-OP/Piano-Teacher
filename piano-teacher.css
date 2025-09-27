@@ -48,6 +48,11 @@ html, body {
     border-radius: 10px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
+.hero-button.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
 
 /* Cards */
 .controls-card.card,

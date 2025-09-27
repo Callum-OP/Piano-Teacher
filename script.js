@@ -22,6 +22,8 @@ function normalise(input) {
 
 // Function to do a tutorial demo of sheet music
 function playNotesFromInput(input) {
+    // Hide hero section
+    document.querySelector('.hero-button').classList.add('hidden');
     // Only play if there is input
     if (!input || typeof input !== "string" || input.trim() === "") {
         return;
@@ -185,6 +187,8 @@ document.getElementById("toggle-labels").addEventListener("change", function () 
     }
 });
 
+let activeNotesCount = 0;
+
 // Function to show future notes before they are played
 function showPreviewNote(noteName, delay, duration) {
     // Get html items
@@ -200,7 +204,7 @@ function showPreviewNote(noteName, delay, duration) {
     noteDiv.style.position = "absolute";
     noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
     noteDiv.style.left = `${keyRect.left - previewRect.left}px`;
-    noteDiv.style.top = `-1000px`; // Start above piano
+    noteDiv.style.top = `-1500px`; // Start above piano
     noteDiv.style.height = `${10 + (delay / 10)}px`; // Set height to length of note
     noteDiv.style.background = "#ffd54f"; // Same colour as highlight in css
     noteDiv.style.borderRadius = "4px";
@@ -209,6 +213,8 @@ function showPreviewNote(noteName, delay, duration) {
     noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
     // Append to div in html
     previewLayer.appendChild(noteDiv);
+    // Add for each note
+    activeNotesCount++;
 
     // Animate down
     requestAnimationFrame(() => {
@@ -218,6 +224,11 @@ function showPreviewNote(noteName, delay, duration) {
     // Remove after it reaches the key
     setTimeout(() => {
         previewLayer.removeChild(noteDiv);
+        activeNotesCount--; // Minus when note is removed
+        if (activeNotesCount === 0) {
+            // Show hero section
+            document.querySelector('.hero-button').classList.remove('hidden');
+        }
     }, duration + 100);
 }
 
