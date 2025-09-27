@@ -23,12 +23,14 @@ function normalise(input) {
 
 // Function to do a tutorial demo of sheet music
 function playNotesFromInput(input) {
-    // Only play if there is input
-    if (!input || typeof input !== "string" || input.trim() === "") {
-        return;
-    }
     // Hide hero section
     document.querySelector('.hero-button').classList.add('hidden');
+    // Only play if there is input
+    if (!input || typeof input !== "string" || input.trim() === "") {
+        // Show hero section
+        document.querySelector('.hero-button').classList.remove('hidden');
+        return;
+    }
     // Normalise input and split by commas
     const entries = normalise(input).split(",").map(n => n.trim());
     let timeOffset = 9000;
