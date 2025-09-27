@@ -23,12 +23,12 @@ function normalise(input) {
 
 // Function to do a tutorial demo of sheet music
 function playNotesFromInput(input) {
-    // Hide hero section
-    document.querySelector('.hero-button').classList.add('hidden');
     // Only play if there is input
     if (!input || typeof input !== "string" || input.trim() === "") {
         return;
     }
+    // Hide hero section
+    document.querySelector('.hero-button').classList.add('hidden');
     // Normalise input and split by commas
     const entries = normalise(input).split(",").map(n => n.trim());
     let timeOffset = 9000;
@@ -260,7 +260,8 @@ function clearAutoplay() {
     // Reset hero button
     const hero = document.querySelector(".hero-button");
     if (hero) {
-        hero.classList.remove("hidden");
+        // Show hero section
+        document.querySelector('.hero-button').classList.remove('hidden');
     }
 
     // Reset countdown if it’s visible
