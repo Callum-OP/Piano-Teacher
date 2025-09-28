@@ -15,4 +15,7 @@ When playing several notes at once in autoplay the underscores are not considere
 ## Issues
 Will make a popping sound when it has just began playing audio.
 Pressing the same note again in autoplay is quicker than playing a different note.
+Pressing autoplay again while music is still playing will cause overlapping music.
+Piano is not centred.
+Sometimes notes appear on the piano without falling but this issue does not seem recreatable.
 
