@@ -26,8 +26,6 @@
         <div class="hero-overlay"></div>
     </header>
 
-    <br>
-
     <!-- Main content -->
     <main class="container py-5">
         <br><br><br><br><br><br><br id="piano-section"><br><br>
@@ -41,7 +39,7 @@
             <div class="note-preview" id="note-preview" aria-hidden="true"></div>
 
             <!-- Using an svg to display the piano -->
-            <div class="piano-frame">
+            <div class="piano-frame center">
             <svg id="piano" viewBox="0 0 854 116" role="img" aria-label="Piano keyboard">
                 <!-- White keys -->
                 <rect x="0"   y="0" width="30" height="90" class="white-key" data-note="C2"/>
@@ -134,9 +132,15 @@
                 </div>
             </div>
 
-            <hr class="my-2"> <!-- Gap -->
+            <hr class="my-1"> <!-- Gap -->
 
             <!-- Form Input -->
+            <div class="mb-3">
+                <label for="musicSelect" class="form-label">Choose prestored music</label>
+                <select id="musicSelect" class="form-select">
+                    <option value="">-- Select music --</option>
+                </select>
+            </div>
             <div class="row g-3">
                 <div class="col-12 col-lg-6">
                     <label for="noteInputLeft" class="form-label">Left hand notes</label>

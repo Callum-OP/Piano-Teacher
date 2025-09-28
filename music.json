@@ -1,0 +1,14 @@
+[
+    {
+        "title": "Clair de Lune",
+        "composer": "Debussy",
+        "right": "F4+Gs4____,F5+Gs5_____,Cs5+F5______,C5+Ds5_Cs5+F5__,C5+Ds5_____,As4+C5___,C5+Ds5_,As4+C5__,F5___,Cs5___,Gs4+C5_,As4+C5_,Gs4+Cs5_,",
+        "left": "F4+Gs4_____________,Fs4+A4________,F4+Gs4_____________"
+    },
+    {
+        "title": "Nocturne Op. 9 No. 2",
+        "composer": "Chopin",
+        "right": "As3___,G4_____,F4__,G4_,F4___,Ds4___,As3___,G4____,B3_,C4,Cs4_,B3,C4__,C5___,G4___,As4_,Gs4_,G4_,F4_,G4_,D4_,Ds4__,C4__,As3__,C5_,B4_,A4_,G4_,A4__,C4_,D4_,Ds4___",
+        "left": ""
+    }
+]

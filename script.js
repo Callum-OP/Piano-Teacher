@@ -2,6 +2,34 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeNotes = {};
 let scheduledTimeouts = [];
 
+// Set up default music to choose from
+let musicLibrary = [];
+fetch('./music.json')
+    .then(response => response.json())
+    .then(data => {
+        musicLibrary = data;
+        populateMusicSelect(musicLibrary);
+    })
+.catch(err => console.error("Error loading music:", err));
+const musicSelect = document.getElementById("musicSelect");
+
+// Populate inputs if default music selected
+function populateMusicSelect(musicLibrary) {
+    musicLibrary.forEach((music, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = `${music.title} – ${music.composer}`;
+        musicSelect.appendChild(option);
+    });
+    musicSelect.addEventListener("change", (e) => {
+    const selected = musicLibrary[e.target.value];
+    if (selected) {
+        document.getElementById("noteInputLeft").value = selected.left;
+        document.getElementById("noteInputRight").value = selected.right;
+    }
+    });
+}
+
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
     const inputLeft = document.getElementById("noteInputLeft").value;
@@ -245,6 +273,10 @@ function clearAutoplay() {
     // Clear input fields
     document.getElementById("noteInputLeft").value = "";
     document.getElementById("noteInputRight").value = "";
+    const musicSelect = document.getElementById("musicSelect"); // Dropdown box
+    if (musicSelect) {
+        musicSelect.selectedIndex = 0;
+    }
 
     // Remove any preview notes still falling
     const previewLayer = document.getElementById("note-preview");
