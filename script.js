@@ -68,10 +68,10 @@ function playNotesFromInput(input) {
     entries.forEach(entry => {
         // Translate notes into desired input
        const notes = entry.split("+").map(n => translateNote(n));
-        // Times delay by how many underscores there are
+        // Times delay by how many underscores there are 
         const underscoreCount = (entry.match(/_/g) || []).length;
-        let delay = underscoreCount > 0 ? 75 * underscoreCount : 50; // Acts as a tempo (Default: 150 - 100;)
-        let duration = 6000;
+        let delay = underscoreCount > 0 ? 75 * underscoreCount : 50; // Acts as a tempo (Default: 75 - 50;)
+        let duration = 9000;
 
         // Show future notes above piano before they are played
         notes.forEach(note => {
