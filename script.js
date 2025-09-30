@@ -2,6 +2,34 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeNotes = {};
 let scheduledTimeouts = [];
 
+// Set up default music to choose from
+let musicLibrary = [];
+fetch('./music.json')
+    .then(response => response.json())
+    .then(data => {
+        musicLibrary = data;
+        populateMusicSelect(musicLibrary);
+    })
+.catch(err => console.error("Error loading music:", err));
+const musicSelect = document.getElementById("musicSelect");
+
+// Populate inputs if default music selected
+function populateMusicSelect(musicLibrary) {
+    musicLibrary.forEach((music, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = `${music.title} – ${music.composer}`;
+        musicSelect.appendChild(option);
+    });
+    musicSelect.addEventListener("change", (e) => {
+    const selected = musicLibrary[e.target.value];
+    if (selected) {
+        document.getElementById("noteInputLeft").value = selected.left;
+        document.getElementById("noteInputRight").value = selected.right;
+    }
+    });
+}
+
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
     const inputLeft = document.getElementById("noteInputLeft").value;
@@ -34,16 +62,16 @@ function playNotesFromInput(input) {
     // Normalise input and split by commas
     const entries = normalise(input).split(",").map(n => n.trim());
     let timeOffset = 9000;
-    let duration = 9000;
     startCountdown();
 
     // Entries could be several notes at same time, eg: A1+B2+C2
     entries.forEach(entry => {
         // Translate notes into desired input
        const notes = entry.split("+").map(n => translateNote(n));
-        // Times delay by how many underscores there are
+        // Times delay by how many underscores there are 
         const underscoreCount = (entry.match(/_/g) || []).length;
-        let delay = underscoreCount > 0 ? 400 * underscoreCount : 200;
+        let delay = underscoreCount > 0 ? 75 * underscoreCount : 50; // Acts as a tempo (Default: 75 - 50;)
+        let duration = 9000;
 
         // Show future notes above piano before they are played
         notes.forEach(note => {
@@ -225,6 +253,8 @@ function showPreviewNote(noteName, delay, duration) {
 
     // Animate down
     requestAnimationFrame(() => {
+        const keyRect = key.getBoundingClientRect();
+        const previewRect = previewLayer.getBoundingClientRect();
         noteDiv.style.top = `${keyRect.top - previewRect.top}px`;
     });
 
@@ -245,6 +275,10 @@ function clearAutoplay() {
     // Clear input fields
     document.getElementById("noteInputLeft").value = "";
     document.getElementById("noteInputRight").value = "";
+    const musicSelect = document.getElementById("musicSelect"); // Dropdown box
+    if (musicSelect) {
+        musicSelect.selectedIndex = 0;
+    }
 
     // Remove any preview notes still falling
     const previewLayer = document.getElementById("note-preview");
