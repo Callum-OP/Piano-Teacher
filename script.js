@@ -62,7 +62,6 @@ function playNotesFromInput(input) {
     // Normalise input and split by commas
     const entries = normalise(input).split(",").map(n => n.trim());
     let timeOffset = 9000;
-    let duration = 9000;
     startCountdown();
 
     // Entries could be several notes at same time, eg: A1+B2+C2
@@ -72,6 +71,7 @@ function playNotesFromInput(input) {
         // Times delay by how many underscores there are
         const underscoreCount = (entry.match(/_/g) || []).length;
         let delay = underscoreCount > 0 ? 75 * underscoreCount : 50; // Acts as a tempo (Default: 150 - 100;)
+        let duration = 6000;
 
         // Show future notes above piano before they are played
         notes.forEach(note => {
@@ -253,6 +253,8 @@ function showPreviewNote(noteName, delay, duration) {
 
     // Animate down
     requestAnimationFrame(() => {
+        const keyRect = key.getBoundingClientRect();
+        const previewRect = previewLayer.getBoundingClientRect();
         noteDiv.style.top = `${keyRect.top - previewRect.top}px`;
     });
 
