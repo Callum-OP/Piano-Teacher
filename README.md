@@ -7,9 +7,13 @@ F4,A4,F4,E4__,F4,A4,E4,D4__,F4,D4,C4__,D4_,A4,G4,D4_, A4,G4,F4,D4___,F4,G4,F4,E4
 
 ## Features to consider
 Allow users to upload a MusicXML file or MIDI file that can be used to play the notes.
-Show clearly the notes about to be played above the piano using bars and letters.
+From sites such as: 
+https://flat.io/search/
+https://midifind.com/
+https://www.midiworld.com/
+
+Show clearly the notes about to be played above the piano using letters.
 Allow users to change the delay time so notes/music plays slower and is easier to follow.
-Add ready stored tutorial songs for the user to choose from.
 When playing several notes at once in autoplay the underscores are not considered seperate for each note. Could make it possible to have one note last longer than another.
 
 ## Issues
