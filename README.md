@@ -11,6 +11,7 @@ From sites such as:
 https://flat.io/search/
 https://midifind.com/
 https://www.midiworld.com/
+https://bitmidi.com/
 
 Show clearly the notes about to be played above the piano using letters.
 Allow users to change the delay time so notes/music plays slower and is easier to follow.
@@ -24,4 +25,5 @@ Pressing autoplay again while music is still playing will cause overlapping musi
 Piano is not centred.
 Sometimes notes appear on the piano without falling but this issue does not seem recreatable.
 Extremely high memory usage when playing music with lots of notes. (300-600mb, likely caused by the improved css and animation of the preview notes).
+Gaps at the start will be interpreted as underscores for delays but will not work as the current code does not handle underscores on their own.
 
