@@ -16,8 +16,7 @@
         <div class="container">
         <div class="hero-content text-center">
             <h1 class="hero-title">Piano Teacher</h1>
-            <p class="hero-subtitle">Learn, play, and enjoy the music.</p>
-            <p id="autoplay-section"></p>
+            <p class="hero-subtitle" id="autoplay-section">Learn, play, and enjoy the music.</p>
             <div class="hero-button">
                 <a href="#piano-section" class="btn btn-primary">Start playing</a>
             </div>
@@ -152,10 +151,18 @@
                 </div>
             </div>
 
+            <hr class="my-2"> <!-- Gap -->
+
             <!-- Buttons -->
-            <div class="mt-3 d-flex gap-2 justify-content-end"> <!-- Set to right -->
-                <button class="btn btn-primary" id="autoplay-btn" onclick="autoPlay(); location.href='#autoplay-section';">Start autoplay</button>
-                <button class="btn btn-outline-primary" id="clear-btn" onclick="clearAutoplay()">Clear</button>
+            <div class="row g-3">
+                <div class="col-12 col-lg-6 mt-3 d-flex gap-2">
+                    <label for="midiFile" class="form-label">Upload MIDI file</label>
+                    <input type="file" id="midiFile" accept=".mid,.midi">
+                </div>
+                <div class="col-12 col-lg-6 mt-3 d-flex gap-2 justify-content-end"> <!-- Set to right -->
+                    <button class="btn btn-primary" id="autoplay-btn" onclick="autoPlay(); location.href='#autoplay-section';">Start autoplay</button>
+                    <button class="btn btn-outline-primary" id="clear-btn" onclick="clearAutoplay()">Clear</button>
+                </div>
             </div>
         </div>
         </section>
@@ -166,7 +173,8 @@
     <p>© 2025 Callum O'Prey</p>
     </footer>
 
-    <!-- Your scripts -->
+    <!-- Javascript files -->
     <script src="script.js"></script>
+    <script src="midi-upload.js"></script>
 </body>
 </html>
