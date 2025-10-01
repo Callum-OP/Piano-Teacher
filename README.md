@@ -12,18 +12,21 @@ https://flat.io/search/
 https://midifind.com/
 https://www.midiworld.com/
 https://bitmidi.com/
+https://musescore.com/
 
 Show clearly the notes about to be played above the piano using letters.
 Allow users to change the delay time so notes/music plays slower and is easier to follow.
 When playing several notes at once in autoplay the underscores are not considered seperate for each note. Could make it possible to have one note last longer than another.
 Show clearly which notes are the left and which are the right hand. (Use different colours).
+Make the whole hero section disappear during autoplay.
 
 ## Issues
 Will make a popping sound when it has just began playing audio.
 Pressing the same note again in autoplay is quicker than playing a different note.
 Pressing autoplay again while music is still playing will cause overlapping music.
 Piano is not centred.
-Sometimes notes appear on the piano without falling but this issue does not seem recreatable.
 Extremely high memory usage when playing music with lots of notes. (300-600mb, likely caused by the improved css and animation of the preview notes).
 Gaps at the start will be interpreted as underscores for delays but will not work as the current code does not handle underscores on their own.
+The colours and layout on dark mode do not look quite right compared to the intended look.
+If no notes are on screen the hero section will reappear even if the music isn't actually finished yet.
 
