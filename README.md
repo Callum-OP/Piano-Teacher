@@ -26,7 +26,6 @@ Pressing the same note again in autoplay is quicker than playing a different not
 Pressing autoplay again while music is still playing will cause overlapping music.
 Piano is not centred.
 Extremely high memory usage when playing music with lots of notes. (300-600mb, likely caused by the improved css and animation of the preview notes).
-Gaps at the start will be interpreted as underscores for delays but will not work as the current code does not handle underscores on their own.
 The colours and layout on dark mode do not look quite right compared to the intended look.
 If no notes are on screen the hero section will reappear even if the music isn't actually finished yet.
 
