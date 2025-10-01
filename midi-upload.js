@@ -148,4 +148,9 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
     // Add the output to the note input area in html
     document.getElementById("noteInputRight").value = rightStr;
     document.getElementById("noteInputLeft").value  = leftStr;
+    // Reset music select dropdown box
+    const musicSelect = document.getElementById("musicSelect");
+    if (musicSelect) {
+        musicSelect.selectedIndex = 0;
+    }
 });
