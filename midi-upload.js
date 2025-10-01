@@ -98,15 +98,15 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
         const active = {};
         track.events.forEach(ev => {
             if (ev.type === "on") {
-            if (active[ev.pitch] == null) {
-                active[ev.pitch] = ev.time;
-            }
+                if (active[ev.pitch] == null) {
+                    active[ev.pitch] = ev.time;
+                }
             } else if (ev.type === "off" && active[ev.pitch] != null) {
-            const dur = ev.time - active[ev.pitch];
-            if (dur > 0) {
-                allNotes.push({ start: active[ev.pitch], dur, pitch: ev.pitch, hand });
-            }
-            delete active[ev.pitch];
+                const dur = ev.time - active[ev.pitch];
+                if (dur > 0) {
+                    allNotes.push({ start: active[ev.pitch], dur, pitch: ev.pitch, hand });
+                }
+                delete active[ev.pitch];
             }
         });
     });

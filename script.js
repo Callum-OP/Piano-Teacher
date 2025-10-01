@@ -44,7 +44,7 @@ function normalise(input) {
     let normalised = input.replace(/ /g, "_");
     normalised = normalised.toUpperCase();
     // Ensure notes match expected values
-    const notes = normalised.match(/([\^v]*[A-G](?:#|S)?\d*_*(?:\+[\^v]*[A-G](?:#|S)?\d*_*)*)/g);
+    const notes = normalised.match(/([\^v]*[A-G](?:#|S)?\d*_*(?:\+[\^v]*[A-G](?:#|S)?\d*_*)*|_+)/g);
     // Add comma before letter if not already there
     return notes ? notes.join(",") : "";
 }
@@ -66,12 +66,19 @@ function playNotesFromInput(input) {
 
     // Entries could be several notes at same time, eg: A1+B2+C2
     entries.forEach(entry => {
-        // Translate notes into desired input
-       const notes = entry.split("+").map(n => translateNote(n));
         // Times delay by how many underscores there are 
         const underscoreCount = (entry.match(/_/g) || []).length;
         let delay = underscoreCount > 0 ? 75 * underscoreCount : 50; // Acts as a tempo (Default: 75 - 50;)
         let duration = 9000;
+
+        // If this entry is just underscores, treat it as a delay
+        if (/^_+$/.test(entry)) {
+            timeOffset += delay;
+            return;
+        }
+
+        // Translate notes into desired input
+       const notes = entry.split("+").map(n => translateNote(n));
 
         // Show future notes above piano before they are played
         notes.forEach(note => {
