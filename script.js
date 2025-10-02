@@ -52,11 +52,11 @@ function normalise(input) {
 // Function to do a tutorial demo of sheet music
 function playNotesFromInput(input) {
     // Hide hero section
-    document.querySelector('.hero-button').classList.add('hidden');
+    document.querySelector('.hero').classList.add('hidden');
     // Only play if there is input
     if (!input || typeof input !== "string" || input.trim() === "") {
         // Show hero section
-        document.querySelector('.hero-button').classList.remove('hidden');
+        document.querySelector('.hero').classList.remove('hidden');
         return;
     }
     // Normalise input and split by commas
@@ -272,7 +272,7 @@ function showPreviewNote(noteName, delay, duration) {
         activeNotesCount--; // Minus when note is removed
         if (activeNotesCount === 0) {
             // Show hero section
-            document.querySelector('.hero-button').classList.remove('hidden');
+            document.querySelector('.hero').classList.remove('hidden');
         }
     }
     }, duration + 100);
@@ -301,10 +301,10 @@ function clearAutoplay() {
     scheduledTimeouts = [];
 
     // Reset hero button
-    const hero = document.querySelector(".hero-button");
+    const hero = document.querySelector(".hero");
     if (hero) {
         // Show hero section
-        document.querySelector('.hero-button').classList.remove('hidden');
+        document.querySelector('.hero').classList.remove('hidden');
     }
 
     // Reset countdown if it’s visible
