@@ -30,6 +30,39 @@ function populateMusicSelect(musicLibrary) {
     });
 }
 
+// Values for delay
+let delayAmountLow = 50;
+let delayAmountHigh = 75;
+let step = 10;
+let max = 1000;
+let min = 40;
+const delayValue = document.getElementById("delayValue");
+const incBtn = document.getElementById("increaseDelay");
+const decBtn = document.getElementById("decreaseDelay");
+delayValue.textContent = delayAmountHigh;
+// Update UI for delay
+function updateUI() {
+    delayValue.textContent = delayAmountLow;
+}
+// Increase delay
+incBtn.addEventListener("click", () => {
+    if (delayAmountHigh + step <= max) {
+        delayAmountHigh += step;
+        delayAmountLow += step;
+        updateUI();
+    }
+});
+// Decrease delay
+decBtn.addEventListener("click", () => {
+    if (delayAmountHigh - step >= min) {
+        delayAmountHigh -= step;
+        delayAmountLow -= step;
+        updateUI();
+    }
+});
+
+updateUI();
+
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
     const inputLeft = document.getElementById("noteInputLeft").value;
@@ -68,7 +101,7 @@ function playNotesFromInput(input) {
     entries.forEach(entry => {
         // Times delay by how many underscores there are 
         const underscoreCount = (entry.match(/_/g) || []).length;
-        let delay = underscoreCount > 0 ? 75 * underscoreCount : 50; // Acts as a tempo (Default: 75 - 50;)
+        let delay = underscoreCount > 0 ? delayAmountHigh * underscoreCount : delayAmountLow; // Acts as a tempo (Default: 75 - 50;)
         let duration = 9000;
 
         // If this entry is just underscores, treat it as a delay
