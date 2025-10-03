@@ -23,7 +23,6 @@ Could add a pause, rewind and fast forward button.
 Will make a popping sound when it has just began playing audio.
 Pressing the same note again in autoplay is quicker than playing a different note.
 Pressing autoplay again while music is still playing will cause overlapping music.
-Piano is not centred.
 Extremely high memory usage when playing music with lots of notes. (300-600mb, likely caused by the improved css and animation of the preview notes).
 The colours and layout on dark mode do not look quite right compared to the intended look.
 If no notes are on screen the hero section will reappear even if the music isn't actually finished yet.
