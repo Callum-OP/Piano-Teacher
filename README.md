@@ -17,7 +17,7 @@ Show clearly the notes about to be played above the piano using letters.
 Allow users to change the delay time so notes/music plays slower and is easier to follow.
 When playing several notes at once in autoplay the underscores are not considered seperate for each note. Could make it possible to have one note last longer than another.
 Show clearly which notes are the left and which are the right hand. (Use different colours).
-Make the whole hero section disappear during autoplay.
+Could add a pause, rewind and fast forward button.
 
 ## Issues
 Will make a popping sound when it has just began playing audio.
