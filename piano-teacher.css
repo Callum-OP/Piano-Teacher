@@ -149,6 +149,7 @@ html, body {
     padding: 20px;
     padding-bottom: 1px;
     margin-bottom: 1rem;
+    padding-left: 32px;
 }
 #piano {
     width: 100%;
@@ -157,7 +158,7 @@ html, body {
 }
 
 /* Keys */
-.white-key { fill: var(--white); stroke: var(--border); }
+.white-key { fill: var(--white); stroke: var(--stroke);}
 .black-key { fill: var(--black); }
 .white-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
 .black-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
