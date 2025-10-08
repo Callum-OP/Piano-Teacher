@@ -66,7 +66,8 @@ function playNote(filePath, noteName) {
         src.buffer = decoded;
         src.connect(gain);
         gain.connect(audioContext.destination);
-        src.start(0);
+        const now = audioContext.currentTime;
+        src.start(now);
         activeAudio[noteName] = { src, gain };
         })
         .catch(err => console.error("Error playing file:", err));
