@@ -251,8 +251,48 @@ footer {
     color: #8b949e;
 }
 
-/* Change spacing depending on screen */
-@media (max-width: 576px) {
-    .hero { padding: 72px 0 56px; }
-    .piano-frame { padding: 14px; }
+/* Main container */
+.main {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
 }
+
+/* Change spacing depending on screen */
+@media (max-width: 1000px) {
+    .main {
+        margin-top: 150px;
+    }
+}
+@media (max-width: 400px) {
+    .main {
+        margin-top: 200px;
+    }
+}
+
+/* Portrait */
+@media (orientation: portrait) {
+    body {
+        flex-direction: column;
+    }
+    .controls-card,
+    .piano-card,
+    .piano-frame {
+        margin: 0 auto;
+    }
+    .layout, #controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Landscape */
+@media (orientation: landscape) {
+    body {
+        flex-direction: row;
+    }
+}
+
+
