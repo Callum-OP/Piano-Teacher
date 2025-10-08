@@ -114,10 +114,25 @@
         <!-- Autoplay editor -->
         <section class="controls-card card shadow-sm mb-4">
             <div class="card-body">
-                <button id="pause" onclick="togglePause();">Pause/Resume</button>
-                <button id="stop" onclick="stopAll();">Stop</button>
-                <label class="text-light">Tempo <input id="tempo" type="range" min="0.5" max="2" step="0.1" value="1"></label>
-                <span class="text-light" id="tempoVal">1.0x</span>
+                <div class="d-grid align-items-center" style="grid-template-columns: 1fr auto 1fr;">
+                    <!-- Left (tempo) -->
+                    <div class="tempo-left text-start">
+                    <label class="text-light">
+                        Tempo
+                        <input id="tempo" type="range" min="0.5" max="2" step="0.1" value="1">
+                    </label>
+                    <span class="text-light" id="tempoVal">1.0x</span>
+                    </div>
+
+                    <!-- Center (play) -->
+                    <div class="transport text-center">
+                    <button class="btn btn-outline-light mx-2" id="pause" onclick="togglePause();">▶</button>
+                    <button class="btn btn-outline-danger mx-2" id="stop" onclick="stopAll();">⏹</button>
+                    </div>
+
+                    <!-- Right () -->
+                    <div></div>
+                </div>
             </div>
         </section>
 

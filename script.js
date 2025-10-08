@@ -192,27 +192,46 @@ function tick(ts) {
         n.el.style.top = y + "px";
     }
     requestAnimationFrame(tick);
+    checkIfFinished(); // Check if finished
 }
 
 // --- Button controls ---
 // Pause falling notes as well as countdown
-function togglePause() { isPaused = !isPaused; togglePauseCountdown();}
+function togglePause() { 
+    isPaused = !isPaused; // Pause autoplay
+    togglePauseCountdown(); // Pause countdown
+
+    // Get pause button and change symbol based on state
+    const btn = document.getElementById("pause");
+    if (!isPaused) {
+        btn.textContent = "⏸"; // Show pause symbol
+    } else {
+        // Pause logic here
+        btn.textContent = "▶"; // Show play symbol
+    }
+}
 // Change tempo, making autoplay quicker or slower
 function setTempo(scale) { tempoScale = Number(scale); }
-// Stop audio and any falling notes as well as countdown
+// Stop audio and any falling notes as well as countdown and reset hero
 function stopAll() {
     activeNotes.forEach(n => n.el.remove());
     activeNotes.length = 0;
     isPaused = false; tempoScale = 1; globalTime = 0; lastFrameTime = null;
-    resetCountdown()
+    resetCountdown();
+    const hero = document.querySelector(".hero");
+    hero.classList.remove("hidden");
 }
 // Begin autoplay
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
     stopAll(); // End previous run
     if (audioContext.state === "suspended") audioContext.resume();
+    // Play sheet music
     playNotesFromInput(document.getElementById("noteInputLeft").value);
     playNotesFromInput(document.getElementById("noteInputRight").value);
+    // Change pause button symbol
+    const btn = document.getElementById("pause");
+    btn.textContent = "⏸"; // Show pause symbol
 }
 // Tempo slider
 const tempo = document.getElementById("tempo");
@@ -285,7 +304,8 @@ function clearAutoPlay() {
     activeNotes.length = 0;
     
     // Reset hero section
-    document.querySelector('.hero')?.classList.remove('hidden');
+    const hero = document.querySelector(".hero");
+    hero.classList.remove("hidden");
     // Reset countdown
     const countdown = document.getElementById("countdown");
     if (countdown) countdown.style.display = "none";
@@ -330,4 +350,15 @@ function resetCountdown() {
     countdownPaused = false;
     const countdown = document.getElementById("countdown");
     if (countdown) countdown.style.display = "none";
+}
+
+// --- Check if autoplay is over ---
+function checkIfFinished() {
+    if (activeNotes.length === 0 && !isPaused) {
+        const hero = document.querySelector(".hero");
+        hero.classList.remove("hidden");
+        // Change pause button symbol
+        const btn = document.getElementById("pause");
+        btn.textContent = "▶"; // Show play symbol
+    }
 }
