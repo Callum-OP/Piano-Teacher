@@ -175,25 +175,36 @@ function tick(ts) {
     lastFrameTime = ts;
     if (!isPaused) globalTime += delta * tempoScale;
 
-    for (let i = activeNotes.length - 1; i >= 0; i--) {
+    for (let i = 0; i < activeNotes.length; i++) {
         const n = activeNotes[i];
         const elapsed = globalTime - n.scheduledStart;
-        if (elapsed < 0) continue;
+        // Skip until note's time
+        if (elapsed < 0) {
+            // Reset so it can trigger again if we rewound
+            n.audioTriggered = false;
+            if (!document.body.contains(n.el)) previewLayer.appendChild(n.el);
+            continue;
+        }
         // Play note
         if (!n.audioTriggered && elapsed >= n.duration) {
-        const filePath = `./sounds/${n.noteName.replace("s","#").toLowerCase()}.ogg`;
-        playNote(filePath, n.noteName);
-        highlightKey(n.noteName, 200);
-        setTimeout(() => stopNote(n.noteName), 400);
-        n.audioTriggered = true;
+            const filePath = `./sounds/${n.noteName.replace("s","#").toLowerCase()}.ogg`;
+            playNote(filePath, n.noteName);
+            highlightKey(n.noteName, 200);
+            setTimeout(() => stopNote(n.noteName), 400);
+            n.audioTriggered = true;
         }
-        if (elapsed >= n.duration) { n.el.remove(); activeNotes.splice(i, 1); continue; }
+        // Remove only if we've gone past its window AND we’re not rewinding
+        if (elapsed >= n.duration) {
+            n.el.remove();
+            continue;
+        }
+        // Update position
         const progress = elapsed / n.duration;
         const y = n.startTop + (n.targetTop - n.startTop) * progress;
         n.el.style.top = y + "px";
     }
     requestAnimationFrame(tick);
-    checkIfFinished(); // Check if finished
+    checkIfFinished();
 }
 
 // --- Button controls ---
@@ -203,12 +214,13 @@ function togglePause() {
     togglePauseCountdown(); // Pause countdown
 
     // Get pause button and change symbol based on state
-    const btn = document.getElementById("pause");
+    const btnIcon = document.querySelector("#pause i");
     if (!isPaused) {
-        btn.textContent = "⏸"; // Show pause symbol
+        btnIcon.classList.remove("bi-play-fill");
+        btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
     } else {
-        // Pause logic here
-        btn.textContent = "▶"; // Show play symbol
+        btnIcon.classList.remove("bi-pause-fill");
+        btnIcon.classList.add("bi-play-fill"); // Show play symbol
     }
 }
 // Change tempo, making autoplay quicker or slower
@@ -231,8 +243,9 @@ function autoPlay() {
     playNotesFromInput(document.getElementById("noteInputLeft").value);
     playNotesFromInput(document.getElementById("noteInputRight").value);
     // Change pause button symbol
-    const btn = document.getElementById("pause");
-    btn.textContent = "⏸"; // Show pause symbol
+    const btnIcon = document.querySelector("#pause i");
+    btnIcon.classList.remove("bi-play-fill");
+    btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
 }
 // Tempo slider
 const tempo = document.getElementById("tempo");
@@ -243,6 +256,38 @@ if (tempo && tempoVal) {
     tempoVal.textContent = `${tempo.value}x`;
   };
 }
+// Rewind or fast Forward
+function rewind() {
+    globalTime = Math.max(0, globalTime - 2000); // Jump back 2s
+    // Reset audio triggers for notes that are now in the future
+    activeNotes.forEach(n => {
+        if (globalTime < n.scheduledStart + n.duration) {
+            n.audioTriggered = false;
+            if (!document.body.contains(n.el)) previewLayer.appendChild(n.el);
+        }
+    });
+}
+function fastForward() {
+    globalTime += 2000; // Jump forward 2s
+}
+let rewindInterval, forwardInterval;
+function startRewind() {
+  rewindInterval = setInterval(() => rewind(), 200);
+}
+function stopRewind() {
+  clearInterval(rewindInterval);
+}
+function startForward() {
+  forwardInterval = setInterval(() => fastForward(), 200);
+}
+function stopForward() {
+  clearInterval(forwardInterval);
+}
+// Attach in JS instead of inline onclick:
+document.getElementById("rewind").addEventListener("mousedown", startRewind);
+document.getElementById("rewind").addEventListener("mouseup", stopRewind);
+document.getElementById("forward").addEventListener("mousedown", startForward);
+document.getElementById("forward").addEventListener("mouseup", stopForward);
 
 // --- Wire up SVG keys for manual play ---
 // Wire up the SVG keys
@@ -355,11 +400,33 @@ function resetCountdown() {
 
 // --- Check if autoplay is over ---
 function checkIfFinished() {
-    if (activeNotes.length === 0 && !isPaused) {
+    // All notes are finished if every note has elapsed past its duration
+    const allDone = activeNotes.every(n => globalTime > n.scheduledStart + n.duration);
+    if (allDone && !isPaused) {
         const hero = document.querySelector(".hero");
         hero.classList.remove("hidden");
         // Change pause button symbol
-        const btn = document.getElementById("pause");
-        btn.textContent = "▶"; // Show play symbol
+        const btnIcon = document.querySelector("#pause i");
+        btnIcon.classList.remove("bi-pause-fill");
+        btnIcon.classList.add("bi-play-fill"); // Show play symbol
     }
 }
+
+// --- Update tempo live ---
+function updateTempoFill() {
+    const min = parseFloat(tempo.min);
+    const max = parseFloat(tempo.max);
+    const val = parseFloat(tempo.value);
+
+    const percent = ((val - min) / (max - min)) * 100;
+
+    tempo.style.background = `linear-gradient(to right,
+        var(--accent-2) 0%,
+        var(--accent-2) ${percent}%,
+        #fff ${percent}%,
+        #fff 100%)`;
+}
+
+tempo.addEventListener("input", updateTempoFill);
+updateTempoFill();
+

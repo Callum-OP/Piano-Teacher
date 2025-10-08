@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Piano Teacher</title>
 
-    <!-- Links to bootstrap css and my own css -->
+    <!-- Links to bootstrap css, bootstrap icons css and my own css -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="./piano-teacher.css">
 </head>
 
@@ -126,8 +127,14 @@
 
                     <!-- Center (play) -->
                     <div class="transport text-center">
-                    <button class="btn btn-outline-light mx-2" id="pause" onclick="togglePause();">▶</button>
-                    <button class="btn btn-outline-danger mx-2" id="stop" onclick="stopAll();">⏹</button>
+                        <!-- Rewind -->
+                        <button class="btn btn-outline-light mx-2" id="rewind" onclick="rewind();"><i class="bi bi-skip-backward-fill"></i></button>
+                        <!-- Play / Pause toggle -->
+                        <button class="btn btn-outline-light mx-2" id="pause" onclick="togglePause();"><i class="bi bi-play-fill"></i></button>
+                        <!-- Stop -->
+                        <button class="btn btn-outline-light mx-2" id="stop" onclick="stopAll();"><i class="bi bi-stop-fill"></i></button>
+                        <!-- Fast Forward -->
+                        <button class="btn btn-outline-light mx-2" id="forward" onclick="fastForward();"><i class="bi bi-skip-forward-fill"></i></button>
                     </div>
 
                     <!-- Right () -->

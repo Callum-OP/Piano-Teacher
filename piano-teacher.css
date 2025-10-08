@@ -123,6 +123,50 @@ html, body {
     border-color: var(--accent-2);
     color: #1b1b1b;
 }
+.btn-outline-danger {
+    border-radius: 10px;
+}
+#stop i { color: #dc3545; }
+.transport button {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 0;
+}
+.transport i {
+    font-size: 2rem;
+    line-height: 1;
+}
+#tempo {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 200px;
+    height: 6px;
+    border-radius: 3px;
+    background: #fff; /* will be overridden by JS */
+    outline: none;
+}
+/* Thumb */
+#tempo::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+    margin-top: -1px;
+}
+#tempo::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+}
 
 /* Countdown (autoplay) */
 .countdown-wrap {
