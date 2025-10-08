@@ -1,232 +1,230 @@
+// --- Audio setup ---
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const activeNotes = {};
-let scheduledTimeouts = [];
+const activeAudio = {};
 
+// --- Music library select ---
 // Set up default music to choose from
 let musicLibrary = [];
-fetch('./music.json')
-    .then(response => response.json())
-    .then(data => {
-        musicLibrary = data;
-        populateMusicSelect(musicLibrary);
-    })
-.catch(err => console.error("Error loading music:", err));
 const musicSelect = document.getElementById("musicSelect");
-
+fetch('./music.json')
+    .then(r => r.json())
+    .then(data => { musicLibrary = data; populateMusicSelect(musicLibrary); })
+    .catch(err => console.error("Error loading music:", err));
 // Populate inputs if default music selected
-function populateMusicSelect(musicLibrary) {
-    musicLibrary.forEach((music, index) => {
+function populateMusicSelect(list) {
+    list.forEach((music, index) => {
         const option = document.createElement("option");
         option.value = index;
         option.textContent = `${music.title} – ${music.composer}`;
         musicSelect.appendChild(option);
     });
     musicSelect.addEventListener("change", (e) => {
-    const selected = musicLibrary[e.target.value];
-    if (selected) {
-        document.getElementById("noteInputLeft").value = selected.left;
-        document.getElementById("noteInputRight").value = selected.right;
-    }
-    });
-}
-
-// Values for delay
-let delayAmountLow = 50;
-let delayAmountHigh = 75;
-let step = 10;
-let max = 1000;
-let min = 40;
-const delayValue = document.getElementById("delayValue");
-const incBtn = document.getElementById("increaseDelay");
-const decBtn = document.getElementById("decreaseDelay");
-delayValue.textContent = delayAmountHigh;
-// Update UI for delay
-function updateUI() {
-    delayValue.textContent = delayAmountLow;
-}
-// Increase delay
-incBtn.addEventListener("click", () => {
-    if (delayAmountHigh + step <= max) {
-        delayAmountHigh += step;
-        delayAmountLow += step;
-        updateUI();
-    }
-});
-// Decrease delay
-decBtn.addEventListener("click", () => {
-    if (delayAmountHigh - step >= min) {
-        delayAmountHigh -= step;
-        delayAmountLow -= step;
-        updateUI();
-    }
-});
-
-updateUI();
-
-// Calls the play notes from input functions twice (left hand and right hand)
-function autoPlay() {
-    const inputLeft = document.getElementById("noteInputLeft").value;
-    playNotesFromInput(inputLeft);
-    const inputRight = document.getElementById("noteInputRight").value;
-    playNotesFromInput(inputRight);
-}
-
-// Function to ensure that input is what is expected
-function normalise(input) {
-    // Change spaces into underscores and change to uppercase
-    let normalised = input.replace(/ /g, "_");
-    normalised = normalised.toUpperCase();
-    // Ensure notes match expected values
-    const notes = normalised.match(/([\^v]*[A-G](?:#|S)?\d*_*(?:\+[\^v]*[A-G](?:#|S)?\d*_*)*|_+)/g);
-    // Add comma before letter if not already there
-    return notes ? notes.join(",") : "";
-}
-
-// Function to do a tutorial demo of sheet music
-function playNotesFromInput(input) {
-    // Hide hero section
-    document.querySelector('.hero').classList.add('hidden');
-    // Only play if there is input
-    if (!input || typeof input !== "string" || input.trim() === "") {
-        // Show hero section
-        document.querySelector('.hero').classList.remove('hidden');
-        return;
-    }
-    // Normalise input and split by commas
-    const entries = normalise(input).split(",").map(n => n.trim());
-    let timeOffset = 9000;
-    startCountdown();
-
-    // Entries could be several notes at same time, eg: A1+B2+C2
-    entries.forEach(entry => {
-        // Times delay by how many underscores there are 
-        const underscoreCount = (entry.match(/_/g) || []).length;
-        let delay = underscoreCount > 0 ? delayAmountHigh * underscoreCount : delayAmountLow; // Acts as a tempo (Default: 75 - 50;)
-        let duration = 9000;
-
-        // If this entry is just underscores, treat it as a delay
-        if (/^_+$/.test(entry)) {
-            timeOffset += delay;
-            return;
+        const selected = list[e.target.value];
+        if (selected) {
+        document.getElementById("noteInputLeft").value = selected.left || "";
+        document.getElementById("noteInputRight").value = selected.right || "";
         }
-
-        // Translate notes into desired input
-       const notes = entry.split("+").map(n => translateNote(n));
-
-        // Show future notes above piano before they are played
-        notes.forEach(note => {
-            const t1 = setTimeout(() => {
-                showPreviewNote(note, delay, duration);
-            }, Math.max(0, timeOffset - duration));
-            scheduledTimeouts.push(t1);
-        });
-
-        // Play note
-        const t2 = setTimeout(() => {
-            // Notes are the note letter and octave, eg: A1
-            notes.forEach(note => {
-                if(note.match(/[A-G]/g) || [].length != 0) {
-                    const filePath = `./sounds/${note.toLowerCase()}.ogg`;
-                    playNote(filePath, note);
-                    highlightKey(note, delay / 1.3);
-                    // Stop note if it has no underscore, else wait
-                    if(underscoreCount == 0) {
-                        const t3 = setTimeout(() => stopNote(note), 50);
-                        scheduledTimeouts.push(t3);
-                    } else {
-                        const t3 = setTimeout(() => stopNote(note), delay / 2);
-                        scheduledTimeouts.push(t3);
-                    }
-                }
-            });
-        }, timeOffset);
-        scheduledTimeouts.push(t2);
-
-        timeOffset += delay;
     });
 }
 
-// Function to translate notes into the expected format I need
+// --- Input normalisation & translation ---
+// Ensure that input is what is expected
+function normalise(input) {
+    if (!input) return "";
+    // Change spaces into underscores and change to uppercase
+    let normalised = input.replace(/ /g, "_").toUpperCase();
+    // Ensure notes match expected values
+    const tokens = normalised.match(/([\^v]*[A-G](?:#|S)?\d*_*(?:\+[\^v]*[A-G](?:#|S)?\d*_*)*|_+)/g);
+    // Add comma before letter if not already there
+    return tokens ? tokens.join(",") : "";
+}
+// Translate notes into the expected format I need
 function translateNote(input) {
     let baseOctave = 4;
-    let note = input.toUpperCase()
-
-    // Count ^ and v symbols
-    let upCount = (note.match(/\^/g) || []).length;
-    let downCount = (note.match(/v/g) || []).length;
-    downCount += (note.match(/V/g) || []).length;
-
-    // Remove these symbols from note name
-    note = note.replace(/\^/g, ""); // Remove ^
-    note = note.replace(/v/g, "") // Remove v
-    note = note.replace(/V/g, "") // Remove V
-    note = note.replace(/_/g, ""); // Remove underscores
-    note = note.replace("#", "s"); // Convert # symbol to s
-
-    // Adjust octave so it is the correct number
+    let note = input.toUpperCase();
+    const upCount = (note.match(/\^/g) || []).length;
+    let downCount = (note.match(/v/gi) || []).length;
+    note = note.replace(/\^/g, "").replace(/v/gi, "").replace(/_/g, "").replace("#", "s");
     const finalOctave = baseOctave + upCount - downCount;
-    // Only add if there is no number
-    if(/\d/.test(note)) {
-        return note;
-    } else {
-        return note + finalOctave;
-    }
+    return /\d/.test(note) ? note : note + finalOctave;
 }
-
-// Function to highlight keys on the html keyboard piano
-function highlightKey(noteName, duration) {
-    const key = document.querySelector(`[data-note="${transformNote(noteName)}"]`);
-    if (key) {
-        key.classList.add("active");
-        setTimeout(() => {
-            key.classList.remove("active");
-        }, duration);
-    }
-}
-
-// Function to translate into notes by making all letters uppercase apart from s
+// Translate into notes by making all letters uppercase apart from s
 // Removes case sensitivity issues when entering sheet music
 function transformNote(str) {
-  return str
-    .split("")
-    .map(char => {
-      if (char.toLowerCase() === "s") return "s";
-      return char.toUpperCase();
-    })
-    .join("");
+    return str.split("").map(c => (c.toLowerCase() === "s" ? "s" : c.toUpperCase())).join("");
 }
 
-// Function to play an audio file
+// --- Audio play/stop ---
+// Play an audio file
 function playNote(filePath, noteName) {
-    // Decodes audio file
     fetch(filePath)
         .then(res => res.arrayBuffer())
         .then(buf => audioContext.decodeAudioData(buf))
         .then(decoded => {
-            // The gain node controls the volume, can be used to mute the audio
-            const gain = audioContext.createGain();
-            // Source node for decrypting audio
-            const src = audioContext.createBufferSource();
-            src.buffer = decoded;
-            src.connect(gain);
-            gain.connect(audioContext.destination);
-            // Starts playing
-            src.start(0);
-
-            activeNotes[noteName] = { src, gain }; // Used to modify or stop the note later
+        const gain = audioContext.createGain();
+        const src = audioContext.createBufferSource();
+        src.buffer = decoded;
+        src.connect(gain);
+        gain.connect(audioContext.destination);
+        src.start(0);
+        activeAudio[noteName] = { src, gain };
         })
         .catch(err => console.error("Error playing file:", err));
 }
-
-// Function to stop a note being played
+// Stop a note being played
 function stopNote(noteName) {
-    const note = activeNotes[noteName];
+    const note = activeAudio[noteName];
     if (note) {
-        note.gain.gain.setTargetAtTime(0, audioContext.currentTime, 0.7); // Slight fade out
-        delete activeNotes[noteName];
+        note.gain.gain.setTargetAtTime(0, audioContext.currentTime, 0.7);
+        delete activeAudio[noteName];
     }
 }
+// Highlight keys on the html keyboard piano
+function highlightKey(noteName, duration = 200) {
+    const key = document.querySelector(`[data-note="${transformNote(noteName)}"]`);
+    if (!key) return;
+    key.classList.add("active");
+    setTimeout(() => key.classList.remove("active"), duration);
+}
 
+// --- Falling note animation ---
+let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;
+const activeNotes = [];
+const previewLayer = document.getElementById("note-overlay");
+// Get html items for piano keys
+function getRects(noteName) {
+  const key = document.querySelector(`[data-note="${transformNote(noteName)}"]`);
+  if (!key || !previewLayer) return null;
+  return { keyRect: key.getBoundingClientRect(), previewRect: previewLayer.getBoundingClientRect() };
+}
+// Create the html element for falling notes
+function createNoteDiv(noteName, delay) {
+    // Get html items
+    const rects = getRects(noteName);
+    if (!rects) return null;
+    const { keyRect, previewRect } = rects;
+
+    const noteDiv = document.createElement("div");
+    noteDiv.className = "falling-note"; // This is for css to detect the class
+    noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
+    noteDiv.style.left = `${keyRect.left}px`; // Relative to viewport
+    noteDiv.style.height = `${10 + delay / 10}px`; // Set height to length of note
+    noteDiv.style.setProperty("--target-top", `${keyRect.top}px`);
+    noteDiv.style.animationDuration = "9s"; // Lasts for 9 seconds
+    previewLayer.appendChild(noteDiv);
+    noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
+    noteDiv.style.top = "-2000px"; // Start above piano
+
+    return noteDiv;
+}
+// Calculate where falling notes end
+function calcTargetTop(noteName) {
+    const rects = getRects(noteName);
+    if (!rects) return 0;
+    const { keyRect, previewRect } = rects;
+    return keyRect.top - previewRect.top;
+}
+
+// --- Play notes from input ---
+// Play sheet music automatically
+function playNotesFromInput(rawInput) {
+    // Hide hero section
+    document.querySelector('.hero').classList.add('hidden');
+    // Don't play if there is no input
+    if (!rawInput || typeof rawInput !== "string" || rawInput.trim() === "") {
+        document.querySelector('.hero').classList.remove('hidden'); // Show hero section again if no input
+        return;
+    }
+    // Count down from 5 seconds
+    startCountdown();
+    // Normalise input and split by commas
+    const entries = normalise(rawInput).split(",").map(n => n.trim()).filter(Boolean);
+    let timeOffset = 0;
+    const baseDuration = 9000;
+    // Entries could be several notes at same time, eg: A1+B2+C2
+    for (const entry of entries) {
+        // Times delay by how many underscores there are 
+        const underscoreCount = (entry.match(/_/g) || []).length;
+        const delay = underscoreCount > 0 ? 75 * underscoreCount : 50;
+        if (/^_+$/.test(entry)) { timeOffset += delay; continue; } // If entry is just underscores, treat as delay
+
+        // Translate notes into desired input
+        const chordNotes = entry.split("+").map(n => translateNote(n));
+        // Notes are the note letter and octave, eg: A1
+        for (const noteName of chordNotes) {
+            const el = createNoteDiv(noteName, delay);
+            if (!el) continue;
+            const targetTop = calcTargetTop(noteName);
+            activeNotes.push({
+                el, scheduledStart: timeOffset, duration: baseDuration,
+                startTop: -window.innerHeight, targetTop, noteHeight: 20,
+                noteName, audioTriggered: false
+            });
+        }
+        timeOffset += delay;
+    }
+    isPaused = false; lastFrameTime = null; globalTime = 0;
+    requestAnimationFrame(tick); // Begin animation and audio playing
+}
+
+// --- Animation loop ---
+function tick(ts) {
+    if (!lastFrameTime) lastFrameTime = ts;
+    const delta = ts - lastFrameTime;
+    lastFrameTime = ts;
+    if (!isPaused) globalTime += delta * tempoScale;
+
+    for (let i = activeNotes.length - 1; i >= 0; i--) {
+        const n = activeNotes[i];
+        const elapsed = globalTime - n.scheduledStart;
+        if (elapsed < 0) continue;
+        // Play note
+        if (!n.audioTriggered && elapsed >= n.duration) {
+        const filePath = `./sounds/${n.noteName.replace("s","#").toLowerCase()}.ogg`;
+        playNote(filePath, n.noteName);
+        highlightKey(n.noteName, 200);
+        setTimeout(() => stopNote(n.noteName), 400);
+        n.audioTriggered = true;
+        }
+        if (elapsed >= n.duration) { n.el.remove(); activeNotes.splice(i, 1); continue; }
+        const progress = elapsed / n.duration;
+        const y = n.startTop + (n.targetTop - n.startTop) * progress;
+        n.el.style.top = y + "px";
+    }
+    requestAnimationFrame(tick);
+}
+
+// --- Button controls ---
+// Pause falling notes as well as countdown
+function togglePause() { isPaused = !isPaused; togglePauseCountdown();}
+// Change tempo, making autoplay quicker or slower
+function setTempo(scale) { tempoScale = Number(scale); }
+// Stop audio and any falling notes as well as countdown
+function stopAll() {
+    activeNotes.forEach(n => n.el.remove());
+    activeNotes.length = 0;
+    isPaused = false; tempoScale = 1; globalTime = 0; lastFrameTime = null;
+    resetCountdown()
+}
+// Begin autoplay
+// Calls the play notes from input functions twice (left hand and right hand)
+function autoPlay() {
+    stopAll(); // End previous run
+    if (audioContext.state === "suspended") audioContext.resume();
+    playNotesFromInput(document.getElementById("noteInputLeft").value);
+    playNotesFromInput(document.getElementById("noteInputRight").value);
+}
+// Tempo slider
+const tempo = document.getElementById("tempo");
+const tempoVal = document.getElementById("tempoVal");
+if (tempo && tempoVal) {
+  tempo.oninput = () => {
+    setTempo(tempo.value);
+    tempoVal.textContent = `${tempo.value}x`;
+  };
+}
+
+// --- Wire up SVG keys for manual play ---
 // Wire up the SVG keys
 const piano = document.getElementById("piano");
 if (piano) {
@@ -252,119 +250,84 @@ if (piano) {
     });
 }
 
+// --- Toggle labels on/off ---
+const toggleLabels = document.getElementById("toggle-labels");
 // Toggle button for labels on the piano
-document.getElementById("toggle-labels").addEventListener("change", function () {
-    const piano = document.getElementById("piano");
+if (toggleLabels) {
+  toggleLabels.addEventListener("change", function () {
     if (this.checked) {
-        piano.classList.remove("hide-labels");
+      piano.classList.remove("hide-labels");
     } else {
-        piano.classList.add("hide-labels");
+      piano.classList.add("hide-labels");
     }
-});
-
-let activeNotesCount = 0;
-
-// Function to show future notes before they are played
-function showPreviewNote(noteName, delay, duration) {
-    // Get html items
-    const key = document.querySelector(`[data-note="${transformNote(noteName)}"]`);
-    const previewLayer = document.getElementById("note-preview");
-    if (!key || !previewLayer) return; // Stop if key or layer doesn't exist
-    const keyRect = key.getBoundingClientRect();
-    const previewRect = previewLayer.getBoundingClientRect();
-
-    // Create a new html element
-    const noteDiv = document.createElement("div");
-    noteDiv.className = "falling-note"; // This is for css to detect the class
-    noteDiv.style.position = "absolute";
-    noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
-    noteDiv.style.left = `${keyRect.left - previewRect.left}px`;
-    noteDiv.style.top = `-1500px`; // Start above piano
-    noteDiv.style.height = `${10 + (delay / 10)}px`; // Set height to length of note
-    noteDiv.style.background = "#ffd54f"; // Same colour as highlight in css
-    noteDiv.style.borderRadius = "4px";
-    noteDiv.style.transition = `top ${duration}ms linear`; // Allows the note to be animated when it falls down to piano
-    noteDiv.style.transformOrigin = "bottom"; // Anchor growth to bottom
-    noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
-    // Append to div in html
-    previewLayer.appendChild(noteDiv);
-    // Add for each note
-    activeNotesCount++;
-
-    // Animate down
-    requestAnimationFrame(() => {
-        const keyRect = key.getBoundingClientRect();
-        const previewRect = previewLayer.getBoundingClientRect();
-        noteDiv.style.top = `${keyRect.top - previewRect.top}px`;
-    });
-
-    // Remove after it reaches the key
-    setTimeout(() => {
-    if (noteDiv.parentNode === previewLayer) {
-        previewLayer.removeChild(noteDiv);
-        activeNotesCount--; // Minus when note is removed
-        if (activeNotesCount === 0) {
-            // Show hero section
-            document.querySelector('.hero').classList.remove('hidden');
-        }
-    }
-    }, duration + 100);
+  });
 }
 
-function clearAutoplay() {
-    // Clear input fields
+// --- Clear/reset autoplay ---
+function clearAutoPlay() {
+    // Reset dropdown
+    const musicSelect = document.getElementById("musicSelect");
+    if (musicSelect) musicSelect.selectedIndex = 0;
+    // Reset text inputs
     document.getElementById("noteInputLeft").value = "";
     document.getElementById("noteInputRight").value = "";
-    const musicSelect = document.getElementById("musicSelect"); // Dropdown box
-    if (musicSelect) {
-        musicSelect.selectedIndex = 0;
-    }
+    // Reset file input
+    const midiFile = document.getElementById("midiFile");
+    if (midiFile) midiFile.value = "";   // Clears any chosen filename
 
     // Remove any preview notes still falling
-    const previewLayer = document.getElementById("note-preview");
-    if (previewLayer) {
-        previewLayer.innerHTML = "";
-    }
-
+    if (previewLayer) previewLayer.innerHTML = "";
     // Stop any currently playing audio
-    for (let note in activeNotes) {
+    stopAll();
+    for (let note in activeAudio) {
         stopNote(note);
     }
-    scheduledTimeouts.forEach(id => clearTimeout(id));
-    scheduledTimeouts = [];
-
-    // Reset hero button
-    const hero = document.querySelector(".hero");
-    if (hero) {
-        // Show hero section
-        document.querySelector('.hero').classList.remove('hidden');
-    }
-
-    // Reset countdown if it’s visible
+    activeNotes.length = 0;
+    
+    // Reset hero section
+    document.querySelector('.hero')?.classList.remove('hidden');
+    // Reset countdown
     const countdown = document.getElementById("countdown");
-    if (countdown) {
-        countdown.style.display = "none";
-    }
+    if (countdown) countdown.style.display = "none";
 }
 
-// Function to count down from 5 
+// --- Countdown overlay before autoplay ---
+let countdownSeconds = 0;
+let countdownInterval = null;
+let countdownPaused = false;
+// Count down from 5 
 function startCountdown() {
     const countdown = document.getElementById("countdown");
-    let seconds = 5;
-
+    countdownSeconds = 5;
+    countdownPaused = false;
     countdown.style.display = "block";
-    countdown.textContent = `Starting in ${seconds}...`;
+    countdown.textContent = `Starting in ${countdownSeconds}...`;
 
-    const interval = setInterval(() => {
-        seconds--;
-        // Keep counting down until 0
-        if (seconds > 0) {
-            countdown.textContent = `Starting in ${seconds}...`;
+    // Clear any old interval
+    if (countdownInterval) clearInterval(countdownInterval);
+    // Keep counting down until 0
+    countdownInterval = setInterval(() => {
+        if (countdownPaused) return;
+        countdownSeconds--;
+        if (countdownSeconds > 0) {
+        countdown.textContent = `Starting in ${countdownSeconds}...`;
         } else {
-            clearInterval(interval);
-            countdown.style.display = "none";
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+        countdown.style.display = "none";
         }
     }, 1000);
 }
-
-
+// Pause countdown
+function togglePauseCountdown() {
+    countdownPaused = !countdownPaused;
+}
+// Reset countdown
+function resetCountdown() {
+    if (countdownInterval) clearInterval(countdownInterval);
+    countdownInterval = null;
+    countdownSeconds = 0;
+    countdownPaused = false;
+    const countdown = document.getElementById("countdown");
+    if (countdown) countdown.style.display = "none";
+}
