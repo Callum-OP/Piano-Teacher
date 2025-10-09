@@ -177,13 +177,13 @@ html, body {
 }
 .countdown {
     position: absolute; 
-    top: -150px; 
+    top: 450px; 
     left: 50%; 
     transform: translateX(-50%); 
     font-size: 32px; 
     font-weight: bold; 
     color: var(--highlight);
-    z-index: 1000; 
+    z-index: 10000; 
     display: none;
 }
 .d-none { display: none !important; }
@@ -244,14 +244,13 @@ html, body {
 
 /* Note preview overlay (autoplay) */
 #note-overlay {
-    position: absolute;
+    position: relative;
     top: 0; left: 0; right: 0;
     height: 100%;
     pointer-events: none;
     z-index: 9999;
 }
 
-    
 /* Falling notes (autoplay) */
 .falling-note {
     position: absolute;

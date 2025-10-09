@@ -364,26 +364,31 @@ let countdownPaused = false;
 // Count down from 5 
 function startCountdown() {
     const countdown = document.getElementById("countdown");
-    countdownSeconds = 5;
+    // Kill any old countdown first
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+    countdownSeconds = 5; // Begin countdown
     countdownPaused = false;
+    // Update countdown html text
     countdown.style.display = "block";
     countdown.textContent = `Starting in ${countdownSeconds}...`;
 
-    // Clear any old interval
-    if (countdownInterval) clearInterval(countdownInterval);
-    // Keep counting down until 0
+     // Keep counting down until 0
     countdownInterval = setInterval(() => {
         if (countdownPaused) return;
-        countdownSeconds--;
+            countdownSeconds--;
         if (countdownSeconds > 0) {
-        countdown.textContent = `Starting in ${countdownSeconds}...`;
+            countdown.textContent = `Starting in ${countdownSeconds}...`;
         } else {
-        clearInterval(countdownInterval);
-        countdownInterval = null;
-        countdown.style.display = "none";
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            countdown.style.display = "none";
         }
     }, 1000);
 }
+
 // Pause countdown
 function togglePauseCountdown() {
     countdownPaused = !countdownPaused;
