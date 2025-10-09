@@ -17,6 +17,7 @@ When playing several notes at once in autoplay the underscores are not considere
 Improve ability to determine left or right hand based on notes in MIDI files.
 Show clearly which notes are the left and which are the right hand. (Use different colours).
 Give the autoplay editor a faded look if no music has been started.
+Expand piano option.
 
 ## Issues
 May make a popping sound when it has just began playing audio.
@@ -24,3 +25,4 @@ Pressing the same note again in autoplay is quicker than playing a different not
 Extremely high memory usage when playing music with lots of notes. (300-600mb, likely caused by the improved css and animation of the preview notes).
 The colours and layout on dark mode do not look quite right compared to the intended look.
 Switching orientation causes notes to still appear as they would in the old orientation.
+Due to how audio now works it won't play correctly if the animation does not complete, so if the user switches windows or tabs the audio will stop.
