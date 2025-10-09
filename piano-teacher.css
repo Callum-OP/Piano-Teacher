@@ -237,10 +237,8 @@ html, body {
 /* Falling notes (autoplay) */
 .falling-note {
     position: absolute;
-    background: #ffd54f;
+    background: var(--highlight);
     border-radius: 3px;
-    height: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     z-index: 9999;
 }
 
