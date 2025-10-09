@@ -430,3 +430,45 @@ function updateTempoFill() {
 tempo.addEventListener("input", updateTempoFill);
 updateTempoFill();
 
+// --- Extend piano ---
+const toggleExtended = document.getElementById('toggleExtended');
+const keysGroup = document.getElementById('keys');
+const pianoCard = document.querySelector('.piano-card');
+
+// Widths of ranges in px
+const widthStandard = 1168;  // C2–B5
+const widthExtended = 2047; // C1–B7
+
+const offsetC2 = 210;
+
+// Toggle visibility of extended-only elements
+function showExtended(isExtended) {
+    keysGroup.querySelectorAll('.extended-only').forEach(el => {
+        el.style.display = isExtended ? 'block' : 'none';
+    });
+}
+function applyTransform(isExtended) {
+    const cardWidth = pianoCard.clientWidth;
+
+    if (isExtended) {
+        const scale = cardWidth / widthExtended;
+        keysGroup.setAttribute('transform', `scale(${scale})`);
+    } else {
+        const scale = cardWidth / widthStandard;
+        // Ensure c2 sits at the left edge
+        keysGroup.setAttribute('transform', `translate(${-offsetC2 * scale},0) scale(${scale})`);
+    }
+}
+
+function updatePiano() {
+    const isExtended = toggleExtended.checked;
+    showExtended(isExtended);
+    applyTransform(isExtended);
+}
+
+// Initial setup
+document.addEventListener('DOMContentLoaded', updatePiano);
+// Toggle handler
+toggleExtended.addEventListener('change', updatePiano);
+// Re‑scale on window resize
+window.addEventListener('resize', updatePiano);

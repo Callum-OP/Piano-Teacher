@@ -67,6 +67,9 @@ html, body {
     border-radius: 16px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.25);
     z-index: 1;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 #controls { padding: 10px; background: #222; display: flex; gap: 10px; align-items: center; }
 #controls button { padding: 6px 10px; }
@@ -189,6 +192,9 @@ html, body {
 .piano-wrapper {
     position: relative;
     z-index: 1;
+    width: 100%;
+    overflow-x: auto; /* fallback scroll if needed */
+    text-align: center;
 }
 .piano-frame {
     border-radius: 14px;
@@ -199,6 +205,9 @@ html, body {
     margin-bottom: 1rem;
     padding-left: 32px;
     z-index: 1;
+    max-width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
 }
 #piano {
     width: 100%;
@@ -212,6 +221,15 @@ html, body {
 .black-key { fill: var(--black); }
 .white-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
 .black-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
+
+/* Hide keys outside C2–C5 by default */
+.extended-only {
+    display: none;
+}
+#keys {
+    transform-origin: left top;
+    transition: transform 0.3s ease;
+}
 
 /* Labels */
 .label {

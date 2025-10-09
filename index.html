@@ -40,71 +40,121 @@
             <!-- Using an svg to display the piano -->
             <div class="piano-frame center">
             <svg id="piano" viewBox="0 0 854 116" role="img" aria-label="Piano keyboard">
-                <!-- White keys -->
-                <rect x="0"   y="0" width="30" height="90" class="white-key" data-note="C2"/>
-                <rect x="30" y="0" width="30" height="90" class="white-key" data-note="D2"/>
-                <rect x="60" y="0" width="30" height="90" class="white-key" data-note="E2"/>
-                <rect x="90" y="0" width="30" height="90" class="white-key" data-note="F2"/>
-                <rect x="120" y="0" width="30" height="90" class="white-key" data-note="G2"/>
-                <rect x="150" y="0" width="30" height="90" class="white-key" data-note="A2"/>
-                <rect x="180" y="0" width="30" height="90" class="white-key" data-note="B2"/>
-                <rect x="210" y="0" width="30" height="90" class="white-key" data-note="C3"/>
-                <rect x="240" y="0" width="30" height="90" class="white-key" data-note="D3"/>
-                <rect x="270" y="0" width="30" height="90" class="white-key" data-note="E3"/>
-                <rect x="300" y="0" width="30" height="90" class="white-key" data-note="F3"/>
-                <rect x="330" y="0" width="30" height="90" class="white-key" data-note="G3"/>
-                <rect x="360" y="0" width="30" height="90" class="white-key" data-note="A3"/>
-                <rect x="390" y="0" width="30" height="90" class="white-key" data-note="B3"/>
-                <rect x="420" y="0" width="30" height="90" class="white-key" data-note="C4"/>
-                <rect x="450" y="0" width="30" height="90" class="white-key" data-note="D4"/>
-                <rect x="480" y="0" width="30" height="90" class="white-key" data-note="E4"/>
-                <rect x="510" y="0" width="30" height="90" class="white-key" data-note="F4"/>
-                <rect x="540" y="0" width="30" height="90" class="white-key" data-note="G4"/>
-                <rect x="570" y="0" width="30" height="90" class="white-key" data-note="A4"/>
-                <rect x="600" y="0" width="30" height="90" class="white-key" data-note="B4"/>
-                <rect x="630" y="0" width="30" height="90" class="white-key" data-note="C5"/>
-                <rect x="660" y="0" width="30" height="90" class="white-key" data-note="D5"/>
-                <rect x="690" y="0" width="30" height="90" class="white-key" data-note="E5"/>
-                <rect x="720" y="0" width="30" height="90" class="white-key" data-note="F5"/>
-                <rect x="750" y="0" width="30" height="90" class="white-key" data-note="G5"/>
-                <rect x="780" y="0" width="30" height="90" class="white-key" data-note="A5"/>
-                <rect x="810" y="0" width="30" height="90" class="white-key" data-note="B5"/>
+                <!-- White keys C1–B7 -->
+                <g id="keys">
+                    <rect x="0" y="0" width="30" height="90" class="white-key extended-only" data-note="C1"/>
+                    <rect x="30" y="0" width="30" height="90" class="white-key extended-only" data-note="D1"/>
+                    <rect x="60" y="0" width="30" height="90" class="white-key extended-only" data-note="E1"/>
+                    <rect x="90" y="0" width="30" height="90" class="white-key extended-only" data-note="F1"/>
+                    <rect x="120" y="0" width="30" height="90" class="white-key extended-only" data-note="G1"/>
+                    <rect x="150" y="0" width="30" height="90" class="white-key extended-only" data-note="A1"/>
+                    <rect x="180" y="0" width="30" height="90" class="white-key extended-only" data-note="B1"/>
 
-                <!-- C labels -->
-                <text x="15"  y="60" text-anchor="middle" class="label">C2</text>
-                <text x="225" y="60" text-anchor="middle" class="label">C3</text>
-                <text x="435" y="60" text-anchor="middle" class="label">C4</text>
-                <text x="645" y="60" text-anchor="middle" class="label">C5</text>
+                    <rect x="210" y="0" width="30" height="90" class="white-key" data-note="C2"/>
+                    <rect x="240" y="0" width="30" height="90" class="white-key" data-note="D2"/>
+                    <rect x="270" y="0" width="30" height="90" class="white-key" data-note="E2"/>
+                    <rect x="300" y="0" width="30" height="90" class="white-key" data-note="F2"/>
+                    <rect x="330" y="0" width="30" height="90" class="white-key" data-note="G2"/>
+                    <rect x="360" y="0" width="30" height="90" class="white-key" data-note="A2"/>
+                    <rect x="390" y="0" width="30" height="90" class="white-key" data-note="B2"/>
 
-                <!-- Beginner labels -->
-                <text x="255" y="60" text-anchor="middle" class="label">D</text>
-                <text x="285" y="60" text-anchor="middle" class="label">E</text>
-                <text x="315" y="60" text-anchor="middle" class="label">F</text>
-                <text x="345" y="60" text-anchor="middle" class="label">G</text>
-                <text x="375" y="60" text-anchor="middle" class="label">A</text>
-                <text x="405" y="60" text-anchor="middle" class="label">B</text>
+                    <rect x="420" y="0" width="30" height="90" class="white-key" data-note="C3"/>
+                    <rect x="450" y="0" width="30" height="90" class="white-key" data-note="D3"/>
+                    <rect x="480" y="0" width="30" height="90" class="white-key" data-note="E3"/>
+                    <rect x="510" y="0" width="30" height="90" class="white-key" data-note="F3"/>
+                    <rect x="540" y="0" width="30" height="90" class="white-key" data-note="G3"/>
+                    <rect x="570" y="0" width="30" height="90" class="white-key" data-note="A3"/>
+                    <rect x="600" y="0" width="30" height="90" class="white-key" data-note="B3"/>
 
-                <!-- Black keys -->
-                <rect x="21"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Cs2"/>
-                <rect x="51"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Ds2"/>
-                <rect x="111" y="0" width="18" height="46" rx="4" class="black-key" data-note="Fs2"/>
-                <rect x="141" y="0" width="18" height="46" rx="4" class="black-key" data-note="Gs2"/>
-                <rect x="171" y="0" width="18" height="46" rx="4" class="black-key" data-note="As2"/>
-                <rect x="231" y="0" width="18" height="46" rx="4" class="black-key" data-note="Cs3"/>
-                <rect x="261" y="0" width="18" height="46" rx="4" class="black-key" data-note="Ds3"/>
-                <rect x="321" y="0" width="18" height="46" rx="4" class="black-key" data-note="Fs3"/>
-                <rect x="351" y="0" width="18" height="46" rx="4" class="black-key" data-note="Gs3"/>
-                <rect x="381" y="0" width="18" height="46" rx="4" class="black-key" data-note="As3"/>
-                <rect x="441" y="0" width="18" height="46" rx="4" class="black-key" data-note="Cs4"/>
-                <rect x="471" y="0" width="18" height="46" rx="4" class="black-key" data-note="Ds4"/>
-                <rect x="531" y="0" width="18" height="46" rx="4" class="black-key" data-note="Fs4"/>
-                <rect x="561" y="0" width="18" height="46" rx="4" class="black-key" data-note="Gs4"/>
-                <rect x="591" y="0" width="18" height="46" rx="4" class="black-key" data-note="As4"/>
-                <rect x="651" y="0" width="18" height="46" rx="4" class="black-key" data-note="Cs5"/>
-                <rect x="681" y="0" width="18" height="46" rx="4" class="black-key" data-note="Ds5"/>
-                <rect x="741" y="0" width="18" height="46" rx="4" class="black-key" data-note="Fs5"/>
-                <rect x="771" y="0" width="18" height="46" rx="4" class="black-key" data-note="Gs5"/>
-                <rect x="801" y="0" width="18" height="46" rx="4" class="black-key" data-note="As5"/>
+                    <rect x="630" y="0" width="30" height="90" class="white-key" data-note="C4"/>
+                    <rect x="660" y="0" width="30" height="90" class="white-key" data-note="D4"/>
+                    <rect x="690" y="0" width="30" height="90" class="white-key" data-note="E4"/>
+                    <rect x="720" y="0" width="30" height="90" class="white-key" data-note="F4"/>
+                    <rect x="750" y="0" width="30" height="90" class="white-key" data-note="G4"/>
+                    <rect x="780" y="0" width="30" height="90" class="white-key" data-note="A4"/>
+                    <rect x="810" y="0" width="30" height="90" class="white-key" data-note="B4"/>
+
+                    <rect x="840" y="0" width="30" height="90" class="white-key" data-note="C5"/>
+                    <rect x="870" y="0" width="30" height="90" class="white-key" data-note="D5"/>
+                    <rect x="900" y="0" width="30" height="90" class="white-key" data-note="E5"/>
+                    <rect x="930" y="0" width="30" height="90" class="white-key" data-note="F5"/>
+                    <rect x="960" y="0" width="30" height="90" class="white-key" data-note="G5"/>
+                    <rect x="990" y="0" width="30" height="90" class="white-key" data-note="A5"/>
+                    <rect x="1020" y="0" width="30" height="90" class="white-key" data-note="B5"/>
+
+                    <rect x="1050" y="0" width="30" height="90" class="white-key extended-only" data-note="C6"/>
+                    <rect x="1080" y="0" width="30" height="90" class="white-key extended-only" data-note="D6"/>
+                    <rect x="1110" y="0" width="30" height="90" class="white-key extended-only" data-note="E6"/>
+                    <rect x="1140" y="0" width="30" height="90" class="white-key extended-only" data-note="F6"/>
+                    <rect x="1170" y="0" width="30" height="90" class="white-key extended-only" data-note="G6"/>
+                    <rect x="1200" y="0" width="30" height="90" class="white-key extended-only" data-note="A6"/>
+                    <rect x="1230" y="0" width="30" height="90" class="white-key extended-only" data-note="B6"/>
+
+                    <rect x="1260" y="0" width="30" height="90" class="white-key extended-only" data-note="C7"/>
+                    <rect x="1290" y="0" width="30" height="90" class="white-key extended-only" data-note="D7"/>
+                    <rect x="1320" y="0" width="30" height="90" class="white-key extended-only" data-note="E7"/>
+                    <rect x="1350" y="0" width="30" height="90" class="white-key extended-only" data-note="F7"/>
+                    <rect x="1380" y="0" width="30" height="90" class="white-key extended-only" data-note="G7"/>
+                    <rect x="1410" y="0" width="30" height="90" class="white-key extended-only" data-note="A7"/>
+                    <rect x="1440" y="0" width="30" height="90" class="white-key extended-only" data-note="B7"/>
+
+                    <!-- C labels -->
+                    <text x="15"   y="60" text-anchor="middle" class="label extended-only">C1</text>
+                    <text x="225"  y="60" text-anchor="middle" class="label">C2</text>
+                    <text x="435"  y="60" text-anchor="middle" class="label">C3</text>
+                    <text x="645"  y="60" text-anchor="middle" class="label">C4</text>
+                    <text x="855"  y="60" text-anchor="middle" class="label">C5</text>
+                    <text x="1065" y="60" text-anchor="middle" class="label extended-only">C6</text>
+                    <text x="1275" y="60" text-anchor="middle" class="label extended-only">C7</text>
+
+                    <!-- Beginner labels -->
+                    <text x="255" y="60" text-anchor="middle" class="label">D</text>
+                    <text x="285" y="60" text-anchor="middle" class="label">E</text>
+                    <text x="315" y="60" text-anchor="middle" class="label">F</text>
+                    <text x="345" y="60" text-anchor="middle" class="label">G</text>
+                    <text x="375" y="60" text-anchor="middle" class="label">A</text>
+                    <text x="405" y="60" text-anchor="middle" class="label">B</text>
+
+                    <!-- Black keys C1–B7 -->
+                    <rect x="21"   y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Cs1"/>
+                    <rect x="51"   y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Ds1"/>
+                    <rect x="111"  y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Fs1"/>
+                    <rect x="141"  y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Gs1"/>
+                    <rect x="171"  y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="As1"/>
+
+                    <rect x="231"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Cs2"/>
+                    <rect x="261"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Ds2"/>
+                    <rect x="321"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Fs2"/>
+                    <rect x="351"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Gs2"/>
+                    <rect x="381"  y="0" width="18" height="46" rx="4" class="black-key" data-note="As2"/>
+
+                    <rect x="441"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Cs3"/>
+                    <rect x="471"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Ds3"/>
+                    <rect x="531"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Fs3"/>
+                    <rect x="561"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Gs3"/>
+                    <rect x="591"  y="0" width="18" height="46" rx="4" class="black-key" data-note="As3"/>
+
+                    <rect x="651"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Cs4"/>
+                    <rect x="681"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Ds4"/>
+                    <rect x="741"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Fs4"/>
+                    <rect x="771"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Gs4"/>
+                    <rect x="801"  y="0" width="18" height="46" rx="4" class="black-key" data-note="As4"/>
+
+                    <rect x="861"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Cs5"/>
+                    <rect x="891"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Ds5"/>
+                    <rect x="951"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Fs5"/>
+                    <rect x="981"  y="0" width="18" height="46" rx="4" class="black-key" data-note="Gs5"/>
+                    <rect x="1011" y="0" width="18" height="46" rx="4" class="black-key" data-note="As5"/>
+
+                    <rect x="1071" y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Cs6"/>
+                    <rect x="1101" y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Ds6"/>
+                    <rect x="1161" y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Fs6"/>
+                    <rect x="1191" y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Gs6"/>
+                    <rect x="1221" y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="As6"/>
+
+                    <rect x="1281" y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Cs7"/>
+                    <rect x="1311" y="0" width="18" height="46" rx="4" class="black-key extended-only" data-note="Ds7"/>
+                </g>
             </svg>
             </div>
         </div>
@@ -138,7 +188,12 @@
                     </div>
 
                     <!-- Right () -->
-                    <div></div>
+                    <div>
+                        <div class="form-check form-switch mt-2 d-flex gap-2 justify-content-end">
+                            <input class="form-check-input" type="checkbox" id="toggleExtended">
+                            <label class="form-check-label" for="toggleExtended">Extend piano</label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
