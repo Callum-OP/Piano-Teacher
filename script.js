@@ -42,9 +42,15 @@ function normalise(input) {
 function translateNote(input) {
     let baseOctave = 4;
     let note = input.toUpperCase();
-    const upCount = (note.match(/\^/g) || []).length;
-    let downCount = (note.match(/v/gi) || []).length;
-    note = note.replace(/\^/g, "").replace(/v/gi, "").replace(/_/g, "").replace("#", "s");
+    // Count ^ and v symbols
+    let upCount = (note.match(/\^/g) || []).length;
+    let downCount = (note.match(/v/g) || []).length;
+
+    // Remove these symbols from note name
+    note = note.replace(/\^/g, ""); // Remove ^
+    note = note.replace(/v/g, "") // Remove v
+    note = note.replace(/_/g, ""); // Remove underscores
+    note = note.replace("#", "s"); // Convert # symbol to s
     const finalOctave = baseOctave + upCount - downCount;
     return /\d/.test(note) ? note : note + finalOctave;
 }
@@ -187,7 +193,7 @@ function tick(ts) {
         }
         // Play note
         if (!n.audioTriggered && elapsed >= n.duration) {
-            const filePath = `./sounds/${n.noteName.replace("s","#").toLowerCase()}.ogg`;
+            const filePath = `./sounds/${n.noteName.toLowerCase()}.ogg`;
             playNote(filePath, n.noteName);
             highlightKey(n.noteName, 200);
             setTimeout(() => stopNote(n.noteName), 400);
