@@ -26,3 +26,4 @@ Extremely high memory usage when playing music with lots of notes. (300-600mb, l
 The colours and layout on dark mode do not look quite right compared to the intended look.
 Switching orientation causes notes to still appear as they would in the old orientation.
 Due to how audio now works it won't play correctly if the animation does not complete, so if the user switches windows or tabs the audio will stop.
+Notes may be too close together and it is hard to tell then if the note is held down or pressed several times.
