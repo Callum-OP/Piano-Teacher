@@ -462,16 +462,18 @@ const offsetC2 = 210;
 
 // Toggle visibility of extended-only elements
 let activePiano = document.getElementById("piano-standard");
-
+// Change which piano is showing depending on extended toggle button
 function showExtendedPiano(isExtended) {
-  document.getElementById("piano-standard").style.display = isExtended ? "none" : "inline";
-  document.getElementById("piano-extended").style.display = isExtended ? "inline" : "none";
-  activePiano = document.getElementById(isExtended ? "piano-extended" : "piano-standard");
+    document.getElementById("piano-standard").style.display = isExtended ? "none" : "inline";
+    document.getElementById("piano-extended").style.display = isExtended ? "inline" : "none";
+    activePiano = document.getElementById(isExtended ? "piano-extended" : "piano-standard");
 }
-
+// Make changes to piano size or falling notes
 function updatePiano() {
     const isExtended = toggleExtended.checked;
     showExtendedPiano(isExtended);
+    updateNotePositions();
+    updateNoteTargets();
 }
 // Initial setup
 document.addEventListener('DOMContentLoaded', () => {
@@ -490,3 +492,21 @@ window.addEventListener('resize', () => {
         updatePiano();
     }, 100);
 });
+
+// --- Update falling notes size ---
+// Calculate width for all active notes based on current key rects
+function updateNotePositions() {
+    activeNotes.forEach(n => {
+        const rects = getRects(n.noteName);
+        if (!rects) return;
+        const { keyRect, previewRect } = rects;
+        n.el.style.width = `${keyRect.width}px`;
+        n.el.style.left  = `${keyRect.left - previewRect.left}px`;
+    });
+}
+// Calculate targetTop after layout changes
+function updateNoteTargets() {
+    activeNotes.forEach(n => {
+        n.targetTop = calcTargetTop(n.noteName);
+    });
+}
