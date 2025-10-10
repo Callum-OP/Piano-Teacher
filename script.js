@@ -88,7 +88,7 @@ function stopNote(noteName) {
 }
 // Highlight keys on the html keyboard piano
 function highlightKey(noteName, duration = 200) {
-    const key = document.querySelector(`[data-note="${transformNote(noteName)}"]`);
+    const key = getKeyElement(noteName);
     if (!key) return;
     key.classList.add("active");
     setTimeout(() => key.classList.remove("active"), duration);
@@ -100,9 +100,12 @@ const activeNotes = [];
 const previewLayer = document.getElementById("note-overlay");
 // Get html items for piano keys
 function getRects(noteName) {
-  const key = document.querySelector(`[data-note="${transformNote(noteName)}"]`);
-  if (!key || !previewLayer) return null;
-  return { keyRect: key.getBoundingClientRect(), previewRect: previewLayer.getBoundingClientRect() };
+    const key = getKeyElement(noteName);
+    if (!key || !previewLayer) return null;
+    return {
+        keyRect: key.getBoundingClientRect(),
+        previewRect: previewLayer.getBoundingClientRect()
+    };
 }
 // Create the html element for falling notes
 function createNoteDiv(noteName, delay) {
@@ -130,6 +133,11 @@ function calcTargetTop(noteName) {
     if (!rects) return 0;
     const { keyRect, previewRect } = rects;
     return keyRect.top - previewRect.top;
+}
+// Get key from note
+function getKeyElement(noteName) {
+  if (!activePiano) return null;
+  return activePiano.querySelector(`[data-note="${transformNote(noteName)}"]`);
 }
 
 // --- Play notes from input ---
@@ -453,33 +461,32 @@ const widthExtended = 2047; // C1–B7
 const offsetC2 = 210;
 
 // Toggle visibility of extended-only elements
-function showExtended(isExtended) {
-    keysGroup.querySelectorAll('.extended-only').forEach(el => {
-        el.style.display = isExtended ? 'block' : 'none';
-    });
-}
-function applyTransform(isExtended) {
-    const cardWidth = pianoCard.clientWidth;
+let activePiano = document.getElementById("piano-standard");
 
-    if (isExtended) {
-        const scale = cardWidth / widthExtended;
-        keysGroup.setAttribute('transform', `scale(${scale})`);
-    } else {
-        const scale = cardWidth / widthStandard;
-        // Ensure c2 sits at the left edge
-        keysGroup.setAttribute('transform', `translate(${-offsetC2 * scale},0) scale(${scale})`);
-    }
+function showExtendedPiano(isExtended) {
+  document.getElementById("piano-standard").style.display = isExtended ? "none" : "inline";
+  document.getElementById("piano-extended").style.display = isExtended ? "inline" : "none";
+  activePiano = document.getElementById(isExtended ? "piano-extended" : "piano-standard");
 }
 
 function updatePiano() {
     const isExtended = toggleExtended.checked;
-    showExtended(isExtended);
-    applyTransform(isExtended);
+    showExtendedPiano(isExtended);
 }
-
 // Initial setup
-document.addEventListener('DOMContentLoaded', updatePiano);
+document.addEventListener('DOMContentLoaded', () => {
+    updatePiano();
+});
 // Toggle handler
-toggleExtended.addEventListener('change', updatePiano);
+toggleExtended.addEventListener('change', () => {
+    updatePiano();
+});
 // Re‑scale on window resize
-window.addEventListener('resize', updatePiano);
+let resizeTO;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTO);
+    resizeTO = setTimeout(() => {
+        const isExtended = toggleExtended.checked;
+        updatePiano();
+    }, 100);
+});
