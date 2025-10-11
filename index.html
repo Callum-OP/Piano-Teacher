@@ -250,24 +250,24 @@
                     <div class="tempo-left text-start">
                     <label class="text-light">
                         Tempo
-                        <input id="tempo" type="range" min="0.5" max="2" step="0.1" value="1">
+                        <input id="tempo" type="range" min="0" max="2" step="0.1" value="1">
                     </label>
-                    <span class="text-light" id="tempoVal">1.0x</span>
+                    <span class="text-light" id="tempoVal">1x</span>
                     </div>
 
                     <!-- Center (play) -->
                     <div class="transport text-center">
                         <!-- Rewind -->
                         <button class="btn btn-outline-light mx-2" id="rewind" onclick="rewind();"><i class="bi bi-skip-backward-fill"></i></button>
-                        <!-- Play / Pause toggle -->
+                        <!-- Play / pause toggle -->
                         <button class="btn btn-outline-light mx-2" id="pause" onclick="togglePause();"><i class="bi bi-play-fill"></i></button>
                         <!-- Stop -->
                         <button class="btn btn-outline-light mx-2" id="stop" onclick="stopAll();"><i class="bi bi-stop-fill"></i></button>
-                        <!-- Fast Forward -->
+                        <!-- Fast forward -->
                         <button class="btn btn-outline-light mx-2" id="forward" onclick="fastForward();"><i class="bi bi-skip-forward-fill"></i></button>
                     </div>
 
-                    <!-- Right () -->
+                    <!-- Right (extend) -->
                     <div>
                         <div class="form-check form-switch mt-2 d-flex gap-2 justify-content-end">
                             <input class="form-check-input" type="checkbox" id="toggleExtended">
@@ -278,18 +278,18 @@
             </div>
         </section>
 
-        <!-- Controls (For Autoplay) -->
+        <!-- Controls (for autoplay) -->
         <section class="controls-card card shadow-sm mb-4">
         <div class="card-body">
             <div class="row g-3 align-items-center">
                 <!-- Checkbox for piano note labels -->
                 <div class="col-12 col-md-4">
                     <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="toggle-labels" checked>
-                    <label class="form-check-label" for="toggle-labels">Show note labels</label>
+                        <input class="form-check-input" type="checkbox" id="toggle-labels" checked>
+                        <label class="form-check-label" for="toggle-labels">Show note labels</label>
                     </div>
                 </div>
-                <!-- Additional Info -->
+                <!-- Additional info -->
                 <div class="col-12 col-md-8 text-md-end">
                     <span class="form-check-label">Autoplay mode:</span>
                     <span class="badge bg-light text-dark">Use + for chords</span>
@@ -299,7 +299,7 @@
 
             <hr class="my-1"> <!-- Gap -->
 
-            <!-- Form Input -->
+            <!-- Form input -->
             <div class="mb-3">
                 <label for="musicSelect" class="form-label">Choose from preset list of music</label>
                 <select id="musicSelect" class="form-select">
