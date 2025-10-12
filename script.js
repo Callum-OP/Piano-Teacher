@@ -232,15 +232,18 @@ function togglePause() {
     if (!isPaused) {
         btnIcon.classList.remove("bi-play-fill");
         btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
+        enableWakeLock(); // Keep screen open
     } else {
         btnIcon.classList.remove("bi-pause-fill");
         btnIcon.classList.add("bi-play-fill"); // Show play symbol
+        disableWakeLock(); // No longer need to keep screen open
     }
 }
 // Change tempo, making autoplay quicker or slower
 function setTempo(scale) { tempoScale = Number(scale); }
 // Stop audio and any falling notes as well as countdown and reset hero
 function stopAll() {
+    disableWakeLock(); // No longer need to keep screen open
     activeNotes.forEach(n => n.el.remove());
     activeNotes.length = 0;
     isPaused = false; tempoScale = 1; globalTime = 0; lastFrameTime = null;
@@ -251,6 +254,7 @@ function stopAll() {
 // Begin autoplay
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
+    enableWakeLock(); // Keep screen open
     stopAll(); // End previous run
     if (audioContext.state === "suspended") audioContext.resume();
     // Play sheet music
@@ -428,6 +432,7 @@ function checkIfFinished() {
         const btnIcon = document.querySelector("#pause i");
         btnIcon.classList.remove("bi-pause-fill");
         btnIcon.classList.add("bi-play-fill"); // Show play symbol
+        disableWakeLock(); // No longer need to keep screen open
     }
 }
 
@@ -509,4 +514,20 @@ function updateNoteTargets() {
     activeNotes.forEach(n => {
         n.targetTop = calcTargetTop(n.noteName);
     });
+}
+
+// --- Keep device screen from entering sleep mode while piano is running ---
+let wakeLock = null;
+async function enableWakeLock() {
+  try {
+    wakeLock = await navigator.wakeLock.request("screen");
+  } catch (err) {
+    console.error("Wake Lock error:", err);
+  }
+}
+function disableWakeLock() {
+  if (wakeLock) {
+    wakeLock.release();
+    wakeLock = null;
+  }
 }
