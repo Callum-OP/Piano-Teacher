@@ -96,7 +96,7 @@ function highlightKey(noteName, duration = 200) {
 
 // --- Falling note animation ---
 let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;
-const activeNotes = [];
+let activeNotes = [];
 const previewLayer = document.getElementById("note-overlay");
 // Get html items for piano keys
 function getRects(noteName) {
@@ -175,7 +175,7 @@ function playNotesFromInput(rawInput) {
         }
         timeOffset += delay;
     }
-    isPaused = false; lastFrameTime = null; globalTime = 0;
+    isPaused = false; lastFrameTime = null; globalTime = 0; // Reset everything
     requestAnimationFrame(tick); // Begin animation and audio playing
 }
 
@@ -243,7 +243,7 @@ function stopAll() {
     disableWakeLock(); // No longer need to keep screen open
     activeNotes.forEach(n => n.el.remove());
     activeNotes.length = 0;
-    isPaused = false; tempoScale = 1; globalTime = 0; lastFrameTime = null;
+    isPaused = false; globalTime = 0; lastFrameTime = null;
     resetCountdown();
     const hero = document.querySelector(".hero");
     hero.classList.remove("hidden");
@@ -254,6 +254,7 @@ function autoPlay() {
     enableWakeLock(); // Keep screen open
     stopAll(); // End previous run
     if (audioContext.state === "suspended") audioContext.resume();
+    activeNotes = [];
     // Play sheet music
     playNotesFromInput(document.getElementById("noteInputLeft").value);
     playNotesFromInput(document.getElementById("noteInputRight").value);
@@ -447,7 +448,6 @@ function updateTempoFill() {
         #fff ${percent}%,
         #fff 100%)`;
 }
-
 tempo.addEventListener("input", updateTempoFill);
 updateTempoFill();
 
