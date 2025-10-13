@@ -109,7 +109,6 @@ function getRects(noteName) {
 }
 // Create the html element for falling notes
 function createNoteDiv(noteName, delay) {
-    // Get html items
     const rects = getRects(noteName);
     if (!rects) return null;
     const { keyRect, previewRect } = rects;
@@ -119,14 +118,12 @@ function createNoteDiv(noteName, delay) {
     noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
     noteDiv.style.left = `${keyRect.left}px`; // Relative to viewport
     noteDiv.style.height = `${10 + delay / 10}px`; // Set height to length of note
-    noteDiv.style.setProperty("--target-top", `${keyRect.top}px`);
-    noteDiv.style.animationDuration = "9s"; // Lasts for 9 seconds
+    noteDiv.style.transform = "translateY(-100%)"; // Move upward by its own height
     previewLayer.appendChild(noteDiv);
-    noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
-    noteDiv.style.top = "-2000px"; // Start above piano
 
     return noteDiv;
 }
+
 // Calculate where falling notes end
 function calcTargetTop(noteName) {
     const rects = getRects(noteName);
@@ -215,7 +212,7 @@ function tick(ts) {
         // Update position
         const progress = elapsed / n.duration;
         const y = n.startTop + (n.targetTop - n.startTop) * progress;
-        n.el.style.top = y + "px";
+        n.el.style.transform = `translateY(${y - n.el.offsetHeight}px)`;
     }
     requestAnimationFrame(tick);
     checkIfFinished();
@@ -531,3 +528,12 @@ function disableWakeLock() {
     wakeLock = null;
   }
 }
+
+// --- AudioContext resume on first click ---
+document.body.addEventListener("click", () => {
+    if (audioContext.state === "suspended") {
+        audioContext.resume().then(() => {
+        console.log("AudioContext resumed");
+        });
+    }
+}, { once: true });
