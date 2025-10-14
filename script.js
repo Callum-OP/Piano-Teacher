@@ -97,6 +97,8 @@ function highlightKey(noteName, duration = 200) {
 // --- Falling note animation ---
 let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;
 let activeNotes = [];
+let scheduledNotes = []; // full schedule for lookahead spawning
+const LOOKAHEAD = 5000; // ms window to spawn upcoming notes
 const previewLayer = document.getElementById("note-overlay");
 // Get html items for piano keys
 function getRects(noteName) {
@@ -155,7 +157,7 @@ function playNotesFromInput(rawInput) {
     // Normalise input and split by commas
     const entries = normalise(rawInput).split(",").map(n => n.trim()).filter(Boolean);
     let timeOffset = 0;
-    const baseDuration = 9000;
+    const BASEDURATION = 9000;
     // Entries could be several notes at same time, eg: A1+B2+C2
     for (const entry of entries) {
         // Times delay by how many underscores there are 
@@ -167,13 +169,11 @@ function playNotesFromInput(rawInput) {
         const chordNotes = entry.split("+").map(n => translateNote(n));
         // Notes are the note letter and octave, eg: A1
         for (const noteName of chordNotes) {
-            const el = createNoteDiv(noteName, delay);
-            if (!el) continue;
-            const targetTop = calcTargetTop(noteName);
-            activeNotes.push({
-                el, scheduledStart: timeOffset, duration: baseDuration,
-                startTop: -window.innerHeight, targetTop, noteHeight: 20,
-                noteName, audioTriggered: false
+            // Push into full schedule;
+            scheduledNotes.push({
+                el: null, scheduledStart: timeOffset, duration: BASEDURATION,
+                startTop: -window.innerHeight, targetTop: null, noteHeight: 20,
+                noteName, audioTriggered: false, spawned: false, delay
             });
         }
         timeOffset += delay;
@@ -187,16 +187,30 @@ function tick(ts) {
     if (!lastFrameTime) lastFrameTime = ts;
     const delta = ts - lastFrameTime;
     lastFrameTime = ts;
+
     if (!isPaused) globalTime += delta * tempoScale;
 
+    // Lookahead and create DOM elements only for upcoming notes
+    for (let i = 0; i < scheduledNotes.length; i++) {
+        const sn = scheduledNotes[i];
+        if (!sn.spawned && sn.scheduledStart <= globalTime + LOOKAHEAD) {
+            const el = createNoteDiv(sn.noteName, sn.delay);
+            if (!el) continue;
+            const targetTop = calcTargetTop(sn.noteName);
+            sn.el = el;
+            sn.targetTop = targetTop;
+            sn.audioTriggered = false;
+            sn.spawned = true;
+            activeNotes.push(sn);
+        }
+    }
     for (let i = 0; i < activeNotes.length; i++) {
         const n = activeNotes[i];
         const elapsed = globalTime - n.scheduledStart;
         // Skip until note's time
         if (elapsed < 0) {
-            // Reset so it can trigger again if we rewound
             n.audioTriggered = false;
-            if (!document.body.contains(n.el)) previewLayer.appendChild(n.el);
+            if (n.el.parentNode !== previewLayer) previewLayer.appendChild(n.el);
             continue;
         }
         // Play note
@@ -207,9 +221,11 @@ function tick(ts) {
             setTimeout(() => stopNote(n.noteName), 400);
             n.audioTriggered = true;
         }
-        // Remove only if we've gone past its window AND we’re not rewinding
+        // Remove note when unneeded
         if (elapsed >= n.duration) {
             n.el.remove();
+            activeNotes.splice(i, 1);
+            i--;
             continue;
         }
         // Update position
@@ -217,6 +233,7 @@ function tick(ts) {
         const y = n.startTop + (n.targetTop - n.startTop) * progress;
         n.el.style.top = y + "px";
     }
+
     requestAnimationFrame(tick);
     checkIfFinished();
 }
@@ -244,8 +261,9 @@ function setTempo(scale) { tempoScale = Number(scale); }
 // Stop audio and any falling notes as well as countdown and reset hero
 function stopAll() {
     disableWakeLock(); // No longer need to keep screen open
-    activeNotes.forEach(n => n.el.remove());
+    activeNotes.forEach(n => n.el && n.el.remove());
     activeNotes.length = 0;
+    scheduledNotes.length = 0;
     isPaused = false; globalTime = 0; lastFrameTime = null;
     resetCountdown();
     const hero = document.querySelector(".hero");
@@ -258,6 +276,7 @@ function autoPlay() {
     stopAll(); // End previous run
     if (audioContext.state === "suspended") audioContext.resume();
     activeNotes = [];
+    scheduledNotes = [];
     // Play sheet music
     playNotesFromInput(document.getElementById("noteInputLeft").value);
     playNotesFromInput(document.getElementById("noteInputRight").value);
@@ -279,29 +298,73 @@ if (tempo && tempoVal) {
 function rewind() {
     globalTime = Math.max(0, globalTime - 2000); // Jump back 2s
     // Reset audio triggers for notes that are now in the future
-    activeNotes.forEach(n => {
-        if (globalTime < n.scheduledStart + n.duration) {
+    for (let i = 0; i < activeNotes.length; i++) {
+        const n = activeNotes[i];
+        const elapsed = globalTime - n.scheduledStart;
+        if (elapsed < 0) {
             n.audioTriggered = false;
-            if (!document.body.contains(n.el)) previewLayer.appendChild(n.el);
+            if (n.el && n.el.parentNode !== previewLayer) previewLayer.appendChild(n.el);
         }
-    });
+    }
+    // Allow re-spawn of notes that were jumped back into by clearing spawned flags
+    for (let i = 0; i < scheduledNotes.length; i++) {
+        const sn = scheduledNotes[i];
+        // If the note should still be visible after rewind, ensure it can spawn again
+        if (globalTime < sn.scheduledStart + sn.duration) {
+            // If it was removed earlier, mark for re-spawn
+            if (!sn.el || !document.body.contains(sn.el)) {
+                sn.spawned = false;
+                sn.el = null;
+            }
+            // If it was spawned and still needed, make sure it's in activeNotes
+            const isActive = activeNotes.includes(sn);
+            const elapsed = globalTime - sn.scheduledStart;
+            if (sn.spawned && elapsed < sn.duration && !isActive) {
+                activeNotes.push(sn);
+                if (sn.el && sn.el.parentNode !== previewLayer) previewLayer.appendChild(sn.el);
+                sn.audioTriggered = false;
+            }
+        }
+    }
 }
 function fastForward() {
     globalTime += 2000; // Jump forward 2s
+    // Remove any notes that are now past their window
+    for (let i = 0; i < activeNotes.length; i++) {
+        const n = activeNotes[i];
+        const elapsed = globalTime - n.scheduledStart;
+        if (elapsed >= n.duration) {
+            if (n.el) n.el.remove();
+            activeNotes.splice(i, 1);
+            i--;
+        }
+    }
+    // Prevent spawning notes that are entirely behind the new playhead
+    for (let i = 0; i < scheduledNotes.length; i++) {
+        const sn = scheduledNotes[i];
+        if (globalTime >= sn.scheduledStart + sn.duration) {
+            // If already spawned, ensure it's cleaned up
+            if (sn.el && document.body.contains(sn.el)) {
+                sn.el.remove();
+            }
+            sn.spawned = true; // Mark as spawned so tick won't try to spawn it
+        }
+    }
 }
 let rewindInterval, forwardInterval;
 function startRewind() {
-  rewindInterval = setInterval(() => rewind(), 200);
+    rewindInterval = setInterval(() => rewind(), 200);
 }
 function stopRewind() {
-  clearInterval(rewindInterval);
+    clearInterval(rewindInterval);
 }
 function startForward() {
-  forwardInterval = setInterval(() => fastForward(), 200);
+    forwardInterval = setInterval(() => fastForward(), 200);
 }
 function stopForward() {
-  clearInterval(forwardInterval);
+    clearInterval(forwardInterval);
 }
+
 // Attach in JS instead of inline onclick:
 document.getElementById("rewind").addEventListener("mousedown", startRewind);
 document.getElementById("rewind").addEventListener("mouseup", stopRewind);
@@ -460,10 +523,10 @@ const keysGroup = document.getElementById('keys');
 const pianoCard = document.querySelector('.piano-card');
 
 // Widths of ranges in px
-const widthStandard = 1168;  // C2–B5
-const widthExtended = 2047; // C1–B7
+const WIDTHSTANDARD = 1168;  // C2–B5
+const WIDTHEXTENDED = 2047; // C1–B7
 
-const offsetC2 = 210;
+const OFFSETC2 = 210;
 
 // Toggle visibility of extended-only elements
 let activePiano = document.getElementById("piano-standard");
