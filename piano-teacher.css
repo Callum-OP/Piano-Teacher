@@ -11,6 +11,7 @@
 }
 
 html, body {
+    color-scheme: light dark;
     min-height: 100%;
     background: linear-gradient(180deg, #0e1a26 0%, #132235 40%, #0e1a26 40%, #132235 100%);
     color: var(--text);
@@ -333,7 +334,7 @@ footer {
     }
     html, body {
         min-height: 100%;
-        background: linear-gradient(180deg,#050a0f 0%,#060b11 40%,#050a0f 40% #060b11 100%);
+        background: linear-gradient(180deg,#050a0f 0%,#060b11 40%,#050a0f 40%, #060b11 100%);
         color: var(--text);
         font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     }
@@ -373,6 +374,19 @@ footer {
         gap: 10px;
         align-items: center;
     }
+    /* Falling notes (autoplay) */
+    .falling-note {
+        position: absolute;
+        background: var(--highlight);
+        border-radius: 3px;
+        z-index: 9999;
+        contain: layout paint;
+    }
+    /* Keys */
+    .white-key { fill: var(--white); stroke: var(--stroke);}
+    .black-key { fill: var(--black); }
+    .white-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
+    .black-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
 }
 
 
