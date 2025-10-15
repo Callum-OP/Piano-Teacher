@@ -14,7 +14,7 @@ html, body {
     color-scheme: light dark;
     min-height: 100%;
     background: linear-gradient(180deg, #0e1a26 0%, #132235 40%, #0e1a26 40%, #132235 100%);
-    color: var(--text);
+    color: var(--text) !important;
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -37,7 +37,7 @@ html, body {
     font-weight: 600;
     font-size: clamp(2rem, 5vw, 4rem);
     letter-spacing: 0.5px;
-    color: var(--text);
+    color: var(--text) !important;
     text-shadow: 0 8px 30px rgba(0,0,0,0.35);
     text-align: center;
 }
@@ -80,13 +80,13 @@ html, body {
 
 /* Form elements (autoplay) */
 .form-label {
-    color: var(--text);
+    color: var(--text) !important;
     font-weight: 600;
 }
 .form-control {
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.12);
-    color: var(--text);
+    color: var(--text) !important;
     border-radius: 12px;
     padding: 0.7rem 0.9rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -104,7 +104,7 @@ html, body {
     border-color: var(--accent);
 }
 .form-check-label {
-    color: var(--text);
+    color: var(--text) !important;
 }
 
 /* Buttons */
@@ -185,7 +185,7 @@ html, body {
     transform: translateX(-50%); 
     font-size: 32px; 
     font-weight: bold; 
-    color: var(--highlight);
+    color: var(--highlight) !important;
     z-index: 10000; 
     display: none;
 }
@@ -231,12 +231,11 @@ html, body {
   display: inline;
 }
 
-
 /* Keys */
-.white-key { fill: var(--white); stroke: var(--stroke);}
-.black-key { fill: var(--black); }
-.white-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
-.black-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
+.white-key { fill: var(--white) !important; stroke: var(--stroke) !important;}
+.black-key { fill: var(--black) !important; }
+.white-key.active { fill: var(--highlight) !important; filter: drop-shadow(0 0 5px var(--highlight)) !important; box-shadow: 0 0 10px var(--highlight) !important; }
+.black-key.active { fill: var(--highlight) !important; filter: drop-shadow(0 0 5px var(--highlight)) !important; box-shadow: 0 0 10px var(--highlight) !important; }
 
 /* Labels */
 .label {
@@ -261,7 +260,7 @@ html, body {
 /* Falling notes (autoplay) */
 .falling-note {
     position: absolute;
-    background: var(--highlight);
+    background: var(--highlight) !important;
     border-radius: 3px;
     z-index: 9999;
     contain: layout paint;
@@ -330,7 +329,7 @@ footer {
         /* Piano */
         --white: #f0eeee;
         --stroke: #bfc6d0;
-        --black: #111111;
+        --black: #000000;
     }
     html, body {
         min-height: 100%;
@@ -377,16 +376,34 @@ footer {
     /* Falling notes (autoplay) */
     .falling-note {
         position: absolute;
-        background: var(--highlight);
+        background: var(--highlight) !important;
         border-radius: 3px;
         z-index: 9999;
         contain: layout paint;
     }
     /* Keys */
-    .white-key { fill: var(--white); stroke: var(--stroke);}
-    .black-key { fill: var(--black); }
-    .white-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
-    .black-key.active { fill: var(--highlight); filter: drop-shadow(0 0 5px var(--highlight)); box-shadow: 0 0 10px var(--highlight); }
+    .white-key { fill: var(--white) !important; stroke: var(--stroke) !important;}
+    .black-key { fill: var(--black) !important; }
+    .white-key.active { fill: var(--highlight) !important; filter: drop-shadow(0 0 5px var(--highlight)) !important; box-shadow: 0 0 10px var(--highlight) !important; }
+    .black-key.active { fill: var(--highlight) !important; filter: drop-shadow(0 0 5px var(--highlight)) !important; box-shadow: 0 0 10px var(--highlight) !important; }
+    /* Labels */
+    .label {
+        font: 12px 'Inter', sans-serif;
+        fill: #4d525c;
+        user-select: none;
+        pointer-events: none;
+    }
+    .countdown {
+        position: absolute; 
+        top: 450px; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        font-size: 32px; 
+        font-weight: bold; 
+        color: var(--highlight) !important;
+        z-index: 10000; 
+        display: none;
+    }
 }
 
 
