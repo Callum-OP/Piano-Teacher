@@ -317,4 +317,62 @@ footer {
     }
 }
 
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Colours */
+        --text: #e9edf1;
+        --accent: #d6ab2a;
+        --accent-2: #e0c24b;
+        --highlight: #e2be46;
+
+        /* Piano */
+        --white: #f0eeee;
+        --stroke: #bfc6d0;
+        --black: #111111;
+    }
+    html, body {
+        min-height: 100%;
+        background: linear-gradient(180deg,#050a0f 0%,#060b11 40%,#050a0f 40% #060b11 100%);
+        color: var(--text);
+        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+    .controls-card.card,
+    .piano-card.card {
+        background: linear-gradient(180deg, #0c1d30 0%, #0c2237 100%);
+        border: 1px solid rgba(255,255,255,0.04);
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        z-index: 1;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+    }
+    .piano-frame {
+        border-radius: 14px;
+        background: linear-gradient(180deg,#0e1c2c 0%,#0b1e2e 100%);
+        border: 1px solid rgba(255,255,255,0.06);
+        padding: 20px;
+        padding-bottom: 1px;
+        margin-bottom: 1rem;
+        padding-left: 32px;
+        z-index: 1;
+        height: auto;
+        transition: transform 0.3s ease;
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    #controls {
+        padding: 10px;
+        background: #155;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+}
+
 
