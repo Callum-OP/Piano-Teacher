@@ -21,8 +21,7 @@ Give the autoplay editor a faded look if no music has been started.
 ## Issues
 May make a popping sound when it has just began playing audio.
 Pressing the same note again in autoplay is quicker than playing a different note.
-Extremely high memory usage when playing music with lots of notes. (300-600mb, likely caused by the improved css and animation of the preview notes).
-The colours and layout on dark mode do not look quite right compared to the intended look.
+High memory usage when playing music with lots of notes.
+The colours and layout on dark mode on mobile do not look quite right compared to the intended look.
 Due to how audio now works it won't play correctly if the animation does not complete, so if the user switches windows or tabs the audio will stop.
 Notes may be too close together and it is hard to tell then if the note is held down or pressed several times.
-If started in standard notes for extended seem to be absent when the piano expands.
