@@ -224,11 +224,11 @@ html, body {
 }
 #piano-standard,
 #piano-extended {
-  display: none;
+    display: none;
 }
 #piano-standard.active,
 #piano-extended.active {
-  display: inline;
+    display: inline;
 }
 
 /* Keys */

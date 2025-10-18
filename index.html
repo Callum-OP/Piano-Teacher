@@ -78,10 +78,10 @@
                     <rect x="810" y="0" width="30" height="90" class="white-key" data-note="B5"/>
 
                     <!-- C labels -->
-                    <text x="15"   y="60" text-anchor="middle" class="label">C2</text>
-                    <text x="225"  y="60" text-anchor="middle" class="label">C3</text>
-                    <text x="435"  y="60" text-anchor="middle" class="label">C4</text>
-                    <text x="645"  y="60" text-anchor="middle" class="label">C5</text>
+                    <text x="15"   y="60" text-anchor="middle" class="label c">C2</text>
+                    <text x="225"  y="60" text-anchor="middle" class="label c">C3</text>
+                    <text x="435"  y="60" text-anchor="middle" class="label c">C4</text>
+                    <text x="645"  y="60" text-anchor="middle" class="label c">C5</text>
 
                     <!-- Beginner labels -->
                     <text x="255" y="60" text-anchor="middle" class="label">D</text>
@@ -268,9 +268,18 @@
                         <button class="btn btn-outline-light mx-2" id="forward" onclick="fastForward();"><i class="bi bi-skip-forward-fill"></i></button>
                     </div>
 
-                    <!-- Right (extend) -->
-                    <div>
-                        <div class="form-check form-switch mt-2 d-flex gap-2 justify-content-end">
+                    <!-- Right (octave change and extend) -->
+                    <div class="row">
+                        <div class="col-md-2">
+                            
+                        </div>
+                        <div id="octave-controls" class="col-md-6 mt-2 d-flex gap-2">
+                            <label class="form-check-label" for="decreaseOctave">Middle Octave</label>
+                            <button class="btn btn-primary" id="decreaseOctave" onclick="decreaseOctave()"></button>
+                            <label class="form-check-label" id="changeOctave" for="increaseOctave">4</label>
+                            <button class="btn btn-primary" id="increaseOctave" onclick="increaseOctave()"></button>
+                        </div>
+                        <div class="col form-check form-switch mt-2 d-flex gap-2 justify-content-end">
                             <input class="form-check-input" type="checkbox" id="toggleExtended">
                             <label class="form-check-label" for="toggleExtended">Extend piano</label>
                         </div>

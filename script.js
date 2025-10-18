@@ -364,12 +364,82 @@ function startForward() {
 function stopForward() {
     clearInterval(forwardInterval);
 }
+let baseOctave = 4;
+let octaveChange = 0;
+const MAXOCTAVE = 7;
+const MINOCTAVE = 1;
+function increaseOctave() {
+    // Grab all standard piano labels
+    const labels = document.querySelectorAll("#piano-standard .c");
 
-// Attach in JS instead of inline onclick:
-document.getElementById("rewind").addEventListener("mousedown", startRewind);
-document.getElementById("rewind").addEventListener("mouseup", stopRewind);
-document.getElementById("forward").addEventListener("mousedown", startForward);
-document.getElementById("forward").addEventListener("mouseup", stopForward);
+    // Add an octave number to each
+    if (baseOctave + 1 < MAXOCTAVE) {
+        labels.forEach((label, i) => {
+            const match = label.textContent.trim().match(/^([A-G][s#]?)(\d)$/);
+            if (match) {
+                const [, note, octave] = match;
+                label.textContent = note + (parseInt(octave, 10) + 1);
+            }
+        });
+        baseOctave = baseOctave + 1;
+        octaveChange = octaveChange + 1;
+
+        // Set button value label
+        const button = document.querySelector("#changeOctave");
+        button.textContent = baseOctave;
+
+        // Change note data of keys
+        updateKeyNotes();
+    }
+}
+function decreaseOctave() {
+    // Grab all standard piano labels
+    const labels = document.querySelectorAll("#piano-standard .c");
+
+    // Take away an octave number from each
+    if (baseOctave - 1 > MINOCTAVE) {
+        labels.forEach((label, i) => {
+            const match = label.textContent.trim().match(/^([A-G][s#]?)(\d)$/);
+            if (match) {
+                const [, note, octave] = match;
+                label.textContent = note + (parseInt(octave, 10) - 1);
+            }
+        });
+        baseOctave = baseOctave - 1;
+        octaveChange = octaveChange - 1;
+    }
+
+    // Set button value label
+    const button = document.querySelector("#changeOctave");
+    button.textContent = baseOctave;
+
+    // Change note data of keys
+    updateKeyNotes();
+}
+// Get up original keys
+const keys = document.querySelectorAll(
+  "#piano-standard .white-key, #piano-standard .black-key"
+);
+// Set up base keys using original keys
+keys.forEach(key => {
+  if (!key.dataset.baseNote) {
+    key.dataset.baseNote = key.dataset.note; // e.g. "C2"
+  }
+});
+function updateKeyNotes() {
+    keys.forEach(key => {
+        const base = key.dataset.baseNote; // The original keys
+        const match = base.match(/^([A-G][s#]?)(\d+)$/);
+        if (match) {
+        const [, noteName, octave] = match;
+        let newOctave = parseInt(octave, 10) + octaveChange;
+        if (newOctave < 0) newOctave = 0;
+        if (newOctave > 7) newOctave = 7;
+        key.dataset.note = noteName + newOctave;
+        }
+    });
+    updatePiano();
+}
 
 // --- Wire up SVG keys for manual play ---
 // Wire up the SVG keys
@@ -530,6 +600,7 @@ const OFFSETC2 = 210;
 
 // Toggle visibility of extended-only elements
 let activePiano = document.getElementById("piano-standard");
+let octaveControls = document.getElementById("octave-controls");
 // Change which piano is showing depending on extended toggle button
 function showExtendedPiano(isExtended) {
     document.getElementById("piano-standard").style.display = isExtended ? "none" : "inline";
@@ -542,6 +613,10 @@ function updatePiano() {
     showExtendedPiano(isExtended);
     updateNotePositions();
     updateNoteTargets();
+
+    // Hide octave controls when extended
+    const oc = document.getElementById("octave-controls");
+    oc.classList.toggle("d-none", isExtended);
 }
 // Initial setup
 document.addEventListener('DOMContentLoaded', () => {
