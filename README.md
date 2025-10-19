@@ -5,6 +5,7 @@ There is an autoplay feature that will visually show how to play sheet music.
 Select from a list of preset music or upload a MIDI file, alternatively enter the notes directly into the input in letter format (A1, As3+B4, etc), then click to start autoplay.
 
 Sites I found with MIDI files include: 
+https://onlinesequencer.net/
 https://flat.io/search/
 https://midifind.com/
 https://www.midiworld.com/
@@ -19,7 +20,7 @@ Show clearly which notes are the left and which are the right hand. (Use differe
 Give the autoplay editor a faded look if no music has been started.
 
 ## Issues
-May make a popping sound when it has just began playing audio.
+May make a popping sound when it has just begun playing audio.
 Pressing the same note again in autoplay is quicker than playing a different note.
 High memory usage when playing music with lots of notes.
 The colours and layout on dark mode on mobile do not look quite right compared to the intended look.
