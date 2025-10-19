@@ -95,6 +95,7 @@ html, body {
     color: #cbd5e1;
 }
 .form-control:focus {
+    color: black !important;
     border-color: var(--accent);
     box-shadow: 0 0 0 0.2rem rgba(244,196,48,0.25);
 }
