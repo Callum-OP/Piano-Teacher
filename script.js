@@ -249,11 +249,9 @@ function togglePause() {
     if (!isPaused) {
         btnIcon.classList.remove("bi-play-fill");
         btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
-        enableWakeLock(); // Keep screen open
     } else {
         btnIcon.classList.remove("bi-pause-fill");
         btnIcon.classList.add("bi-play-fill"); // Show play symbol
-        disableWakeLock(); // No longer need to keep screen open
     }
 }
 // Change tempo, making autoplay quicker or slower
