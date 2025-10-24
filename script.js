@@ -87,11 +87,19 @@ function stopNote(noteName) {
     }
 }
 // Highlight keys on the html keyboard piano
-function highlightKey(noteName, duration = 200) {
+function highlightKey(noteName, duration, hand) {
     const key = getKeyElement(noteName);
     if (!key) return;
-    key.classList.add("active");
-    setTimeout(() => key.classList.remove("active"), duration);
+    key.classList.add("active"); // Change the class to match expected class in css
+    
+    // Add a modifier for which hand
+    const handClass = hand === "Right" ? "right-hand" : "left-hand";
+    key.classList.add(handClass);
+
+    // Remove after a delay
+    setTimeout(() => {
+        key.classList.remove("active", handClass);
+    }, duration);
 }
 
 // --- Falling note animation ---
@@ -110,7 +118,7 @@ function getRects(noteName) {
     };
 }
 // Create the html element for falling notes
-function createNoteDiv(noteName, delay) {
+function createNoteDiv(noteName, delay, hand) {
     // Get html items
     const rects = getRects(noteName);
     if (!rects) return null;
@@ -123,6 +131,8 @@ function createNoteDiv(noteName, delay) {
     noteDiv.style.height = `${10 + delay / 10}px`; // Set height to length of note
     noteDiv.style.setProperty("--target-top", `${keyRect.top}px`);
     noteDiv.style.animationDuration = "9s"; // Lasts for 9 seconds
+    if(hand == "Right"){noteDiv.style.background = "var(--highlight)";} // Gold if on right hand
+    else{noteDiv.style.background = "var(--highlightAlt)";} // Blue if on left hand
     previewLayer.appendChild(noteDiv);
     noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
 
@@ -143,7 +153,7 @@ function getKeyElement(noteName) {
 
 // --- Play notes from input ---
 // Play sheet music automatically
-function playNotesFromInput(rawInput) {
+function playNotesFromInput(rawInput, hand) {
     // Hide hero section
     document.querySelector('.hero').classList.add('hidden');
     // Don't play if there is no input
@@ -172,7 +182,7 @@ function playNotesFromInput(rawInput) {
             scheduledNotes.push({
                 el: null, scheduledStart: timeOffset, duration: BASEDURATION,
                 startTop: -window.innerHeight, targetTop: null, noteHeight: 20,
-                noteName, audioTriggered: false, spawned: false, delay
+                noteName, audioTriggered: false, spawned: false, delay, hand
             });
         }
         timeOffset += delay;
@@ -193,7 +203,7 @@ function tick(ts) {
     for (let i = 0; i < scheduledNotes.length; i++) {
         const sn = scheduledNotes[i];
         if (!sn.spawned && sn.scheduledStart <= globalTime + LOOKAHEAD) {
-            const el = createNoteDiv(sn.noteName, sn.delay);
+            const el = createNoteDiv(sn.noteName, sn.delay, sn.hand);
             if (!el) continue;
             const targetTop = calcTargetTop(sn.noteName);
             sn.el = el;
@@ -216,7 +226,7 @@ function tick(ts) {
         if (!n.audioTriggered && elapsed >= n.duration) {
             const filePath = `./sounds/${n.noteName.toLowerCase()}.ogg`;
             playNote(filePath, n.noteName);
-            highlightKey(n.noteName, 200);
+            highlightKey(n.noteName, 200, n.hand);
             setTimeout(() => stopNote(n.noteName), 400);
             n.audioTriggered = true;
         }
@@ -275,8 +285,8 @@ function autoPlay() {
     activeNotes = [];
     scheduledNotes = [];
     // Play sheet music
-    playNotesFromInput(document.getElementById("noteInputLeft").value);
-    playNotesFromInput(document.getElementById("noteInputRight").value);
+    playNotesFromInput(document.getElementById("noteInputLeft").value, "Left");
+    playNotesFromInput(document.getElementById("noteInputRight").value, "Right");
     // Change pause button symbol
     const btnIcon = document.querySelector("#pause i");
     btnIcon.classList.remove("bi-play-fill");

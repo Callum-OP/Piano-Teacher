@@ -4,6 +4,7 @@
     --accent: #f4c430;
     --accent-2: #ffdd55;
     --highlight: #ffd54f;
+    --highlightAlt:#4fbcff;
     /* Piano */
     --white: #fff;
     --stroke: #d6dde7;
@@ -233,10 +234,21 @@ html, body {
 }
 
 /* Keys */
-.white-key { fill: var(--white) !important; stroke: var(--stroke) !important;}
-.black-key { fill: var(--black) !important; }
-.white-key.active { fill: var(--highlight) !important; filter: drop-shadow(0 0 5px var(--highlight)) !important; box-shadow: 0 0 10px var(--highlight) !important; }
-.black-key.active { fill: var(--highlight) !important; filter: drop-shadow(0 0 5px var(--highlight)) !important; box-shadow: 0 0 10px var(--highlight) !important; }
+.white-key { fill: var(--white); stroke: var(--stroke);}
+.black-key { fill: var(--black); }
+.white-key.active,
+.black-key.active {
+    filter: drop-shadow(0 0 5px currentColor);
+    box-shadow: 0 0 10px currentColor;
+}
+.active.right-hand {
+    color: var(--highlight);
+    fill: var(--highlight);
+}
+.active.left-hand {
+    color: var(--highlightAlt);
+    fill: var(--highlightAlt);
+}
 
 /* Labels */
 .label {
@@ -261,7 +273,7 @@ html, body {
 /* Falling notes (autoplay) */
 .falling-note {
     position: absolute;
-    background: var(--highlight) !important;
+    background: var(--highlight);
     border-radius: 3px;
     z-index: 9999;
     contain: layout paint;
@@ -383,10 +395,21 @@ footer {
         contain: layout paint;
     }
     /* Keys */
-    .white-key { fill: var(--white) !important; stroke: var(--stroke) !important;}
-    .black-key { fill: var(--black) !important; }
-    .white-key.active { fill: var(--highlight) !important; filter: drop-shadow(0 0 5px var(--highlight)) !important; box-shadow: 0 0 10px var(--highlight) !important; }
-    .black-key.active { fill: var(--highlight) !important; filter: drop-shadow(0 0 5px var(--highlight)) !important; box-shadow: 0 0 10px var(--highlight) !important; }
+    .white-key { fill: var(--white); stroke: var(--stroke);}
+    .black-key { fill: var(--black); }
+    .white-key.active,
+    .black-key.active {
+        filter: drop-shadow(0 0 5px currentColor);
+        box-shadow: 0 0 10px currentColor;
+    }
+    .active.right-hand {
+        color: var(--highlight);
+        fill: var(--highlight);
+    }
+    .active.left-hand {
+        color: var(--highlightAlt);
+        fill: var(--highlightAlt);
+    }
     /* Labels */
     .label {
         font: 12px 'Inter', sans-serif;
