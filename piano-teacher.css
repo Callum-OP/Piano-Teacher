@@ -4,7 +4,7 @@
     --accent: #f4c430;
     --accent-2: #ffdd55;
     --highlight: #ffd54f;
-    --highlightAlt:#4fbcff;
+    --highlightAlt:#95e8f4;
     /* Piano */
     --white: #fff;
     --stroke: #d6dde7;
@@ -15,6 +15,7 @@ html, body {
     color-scheme: light dark;
     min-height: 100%;
     background: linear-gradient(180deg, #0e1a26 0%, #132235 40%, #0e1a26 40%, #132235 100%);
+    background-blend-mode: screen;
     color: var(--text) !important;
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
