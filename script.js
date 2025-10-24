@@ -97,8 +97,8 @@ function highlightKey(noteName, duration = 200) {
 // --- Falling note animation ---
 let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;
 let activeNotes = [];
-let scheduledNotes = []; // full schedule for lookahead spawning
-const LOOKAHEAD = 5000; // ms window to spawn upcoming notes
+let scheduledNotes = []; // Full schedule for lookahead spawning
+const LOOKAHEAD = 5000; // Window to spawn upcoming notes
 const previewLayer = document.getElementById("note-overlay");
 // Get html items for piano keys
 function getRects(noteName) {
@@ -125,7 +125,6 @@ function createNoteDiv(noteName, delay) {
     noteDiv.style.animationDuration = "9s"; // Lasts for 9 seconds
     previewLayer.appendChild(noteDiv);
     noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
-    noteDiv.style.top = "-2000px"; // Start above piano
 
     return noteDiv;
 }
@@ -615,6 +614,11 @@ function updatePiano() {
     // Hide octave controls when extended
     const oc = document.getElementById("octave-controls");
     oc.classList.toggle("d-none", isExtended);
+    
+    // Mute audio
+    Object.values(activeAudio).forEach(({ gain }) => {
+        gain.gain.value = 0;
+    });
 }
 // Initial setup
 document.addEventListener('DOMContentLoaded', () => {
