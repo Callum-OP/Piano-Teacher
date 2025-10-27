@@ -238,59 +238,54 @@
                 </g>
             </svg>
             </div>
+                        <!-- Autoplay editor -->
+            <div class="d-grid align-items-center" style="grid-template-columns: 1fr auto 1fr;">
+                <!-- Left (tempo) -->
+                <div class="tempo-left text-start">
+                    <label class="text-light">
+                        Tempo
+                        <input id="tempo" type="range" min="0" max="2" step="0.1" value="1">
+                    </label>
+                    <span class="text-light" id="tempoVal">1x</span>
+                </div>
+
+                <!-- Center (play) -->
+                <div class="transport text-center">
+                    <!-- Rewind -->
+                    <button class="btn btn-outline-light mx-2" id="rewind" onclick="rewind();"><i class="bi bi-skip-backward-fill"></i></button>
+                    <!-- Play / pause toggle -->
+                    <button class="btn btn-outline-light mx-2" id="pause" onclick="togglePause();"><i class="bi bi-play-fill"></i></button>
+                    <!-- Stop -->
+                    <button class="btn btn-outline-light mx-2" id="stop" onclick="stopAll();"><i class="bi bi-stop-fill"></i></button>
+                    <!-- Fast forward -->
+                    <button class="btn btn-outline-light mx-2" id="forward" onclick="fastForward();"><i class="bi bi-skip-forward-fill"></i></button>
+                </div>
+
+                <!-- Right (octave + extend) -->
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    <!-- Octave controls -->
+                    <div id="octave-controls" class="transport d-flex align-items-center gap-2">
+                        <span class="text-light">Octave</span>
+                        <button class="btn btn-outline-light" id="decreaseOctave" onclick="decreaseOctave()">
+                            <i class="bi bi-dash"></i>
+                        </button>
+                        <span class="text-light" id="changeOctave">4</span>
+                        <button class="btn btn-outline-light" id="increaseOctave" onclick="increaseOctave()">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
+
+                    <!-- Extended toggle -->
+                    <div class="form-check form-switch d-flex align-items-center gap-2 mb-0">
+                        <input class="form-check-input" type="checkbox" id="toggleExtended">
+                        <label class="form-check-label mb-0" for="toggleExtended">Extend</label>
+                    </div>
+                </div>
+            </div>
         </div>
         </section>
 
         <br> <!-- Gap -->
-
-        <!-- Autoplay editor -->
-        <section class="controls-card card shadow-sm mb-4">
-            <div class="card-body">
-                <div class="d-grid align-items-center" style="grid-template-columns: 1fr auto 1fr;">
-                    <!-- Left (tempo) -->
-                    <div class="tempo-left text-start">
-                        <label class="text-light">
-                            Tempo
-                            <input id="tempo" type="range" min="0" max="2" step="0.1" value="1">
-                        </label>
-                        <span class="text-light" id="tempoVal">1x</span>
-                    </div>
-
-                    <!-- Center (play) -->
-                    <div class="transport text-center">
-                        <!-- Rewind -->
-                        <button class="btn btn-outline-light mx-2" id="rewind" onclick="rewind();"><i class="bi bi-skip-backward-fill"></i></button>
-                        <!-- Play / pause toggle -->
-                        <button class="btn btn-outline-light mx-2" id="pause" onclick="togglePause();"><i class="bi bi-play-fill"></i></button>
-                        <!-- Stop -->
-                        <button class="btn btn-outline-light mx-2" id="stop" onclick="stopAll();"><i class="bi bi-stop-fill"></i></button>
-                        <!-- Fast forward -->
-                        <button class="btn btn-outline-light mx-2" id="forward" onclick="fastForward();"><i class="bi bi-skip-forward-fill"></i></button>
-                    </div>
-
-                    <!-- Right (octave + extend) -->
-                    <div class="d-flex align-items-center justify-content-end gap-3">
-                        <!-- Octave controls -->
-                        <div id="octave-controls" class="transport d-flex align-items-center gap-2">
-                            <span class="text-light">Octave</span>
-                            <button class="btn btn-outline-light" id="decreaseOctave" onclick="decreaseOctave()">
-                                <i class="bi bi-dash"></i>
-                            </button>
-                            <span class="text-light" id="changeOctave">4</span>
-                            <button class="btn btn-outline-light" id="increaseOctave" onclick="increaseOctave()">
-                                <i class="bi bi-plus"></i>
-                            </button>
-                        </div>
-
-                        <!-- Extended toggle -->
-                        <div class="form-check form-switch d-flex align-items-center gap-2 mb-0">
-                            <input class="form-check-input" type="checkbox" id="toggleExtended">
-                            <label class="form-check-label mb-0" for="toggleExtended">Extend</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <!-- Controls (for autoplay) -->
         <section class="controls-card card shadow-sm mb-4">
