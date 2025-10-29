@@ -448,8 +448,8 @@ function updateKeyNotes() {
     updatePiano();
 }
 
-// --- Wire up SVG keys for manual play ---
-// Wire up the SVG keys
+// --- Wire up keys for manual play ---
+// Wire up the keys
 const piano = document.getElementById("piano");
 if (piano) {
     piano.querySelectorAll("[data-note]").forEach(key => {
@@ -459,6 +459,7 @@ if (piano) {
             e.preventDefault();
             key.classList.add("active");
             playNote("./sounds/" + noteName.toLowerCase() + ".ogg", noteName);
+            highlightKey(noteName.toLowerCase(), 200 , "Right");
         };
         // Stop a note
         const stop = () => {
