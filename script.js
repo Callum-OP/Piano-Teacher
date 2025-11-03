@@ -128,11 +128,11 @@ function createNoteDiv(noteName, delay, hand) {
     noteDiv.className = "falling-note"; // This is for css to detect the class
     noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
     noteDiv.style.left = `${keyRect.left}px`; // Relative to viewport
-    noteDiv.style.height = `${10 + delay / 10}px`; // Set height to length of note
+    noteDiv.style.height = `${delay / 8}px`; // Set height to length of note
     noteDiv.style.setProperty("--target-top", `${keyRect.top}px`);
     noteDiv.style.animationDuration = "9s"; // Lasts for 9 seconds
-    if(hand == "Right"){noteDiv.style.background = "var(--highlight)";} // Gold if on right hand
-    else{noteDiv.style.background = "var(--highlightAlt)";} // Blue if on left hand
+    if (hand == "Right") {noteDiv.style.background = "var(--highlight)";} // Gold if on right hand
+    else {noteDiv.style.background = "var(--highlightAlt)";} // Blue if on left hand
     previewLayer.appendChild(noteDiv);
     noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
 
