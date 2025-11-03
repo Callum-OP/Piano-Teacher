@@ -221,8 +221,6 @@ html, body {
     justify-content: center;
 }
 #piano {
-    width: 100%;
-    height: auto;
     display: block;
     z-index: 1;
 }
@@ -233,6 +231,9 @@ html, body {
 #piano-standard.active,
 #piano-extended.active {
     display: inline;
+}
+#piano-section {
+  margin-top: 11rem;
 }
 
 /* Keys */

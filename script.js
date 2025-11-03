@@ -625,6 +625,10 @@ function updatePiano() {
     // Hide octave controls when extended
     const oc = document.getElementById("octave-controls");
     oc.classList.toggle("d-none", isExtended);
+
+    // Set height of piano svg and card
+    if (isExtended) {piano.setAttribute("viewBox", "0 0 844 67");} 
+    else {piano.setAttribute("viewBox", "0 0 844 108");}
     
     // Mute audio
     Object.values(activeAudio).forEach(({ gain }) => {
