@@ -208,9 +208,10 @@ html, body {
     background: linear-gradient(180deg, #0b1a2a 0%, #0b2033 100%);
     border: 1px solid rgba(255,255,255,0.06);
     padding: 20px;
-    padding-bottom: 1px;
-    margin-bottom: 1rem;
-    padding-left: 32px;
+    padding-bottom: 0px;
+    margin-top: 10px; 
+    margin-bottom: 10px;
+    padding-left: 22px;
     z-index: 1;
     height: auto;
     transition: transform 0.3s ease;
