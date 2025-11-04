@@ -226,7 +226,7 @@ function tick(ts) {
         if (!n.audioTriggered && elapsed >= n.duration) {
             const filePath = `./sounds/${n.noteName.toLowerCase()}.ogg`;
             playNote(filePath, n.noteName);
-            highlightKey(n.noteName, 200, n.hand);
+            highlightKey(n.noteName, n.delay, n.hand);
             setTimeout(() => stopNote(n.noteName), 400);
             n.audioTriggered = true;
         }
@@ -459,7 +459,7 @@ if (piano) {
             e.preventDefault();
             key.classList.add("active");
             playNote("./sounds/" + noteName.toLowerCase() + ".ogg", noteName);
-            highlightKey(noteName.toLowerCase(), 200 , "Right");
+            highlightKey(noteName.toLowerCase(), 200, "Right");
         };
         // Stop a note
         const stop = () => {
@@ -587,8 +587,8 @@ function updateTempoFill() {
     const percent = ((val - min) / (max - min)) * 100;
 
     tempo.style.background = `linear-gradient(to right,
-        var(--accent-2) 0%,
-        var(--accent-2) ${percent}%,
+        var(--accent-3) 0%,
+        var(--accent-3) ${percent}%,
         #fff ${percent}%,
         #fff 100%)`;
 }
