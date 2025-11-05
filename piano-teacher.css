@@ -320,6 +320,21 @@ footer {
         margin-top: 0px;
     }
 }
+/* Change spacing depending on screen */
+@media (max-width: 800px) {
+    .main {
+        margin-top: 150px;
+    }
+    .hero {
+        margin-top: -111vh;
+    }
+    .hero-title {
+        font-size: clamp(2rem, 4.6vw, 4rem);
+    }
+    .hero-button .btn-primary {
+        margin-top: 0px;
+    }
+}
 @media (max-width: 450px) {
     .main {
         margin-top: 200px;
