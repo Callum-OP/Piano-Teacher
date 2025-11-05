@@ -9,8 +9,8 @@
     --highlight-2: #ff9d15;
     --highlightAlt:linear-gradient( #6dc5d2, #3d75b6);
     --highlightAlt-2: #54afd6;
-    --card: linear-gradient( rgb(11, 11, 35) 60%, rgb(10, 18, 35) 100% );
-    --card-2: linear-gradient( rgb(9, 9, 27) 60%, rgb(5, 9, 20) 100% );
+    --card: linear-gradient( rgb(9, 9, 28) 60%, rgb(8, 14, 27) 100% );
+    --card-2: linear-gradient( rgb(5, 5, 17) 60%, rgb(5, 9, 20) 100% );
     /* Piano */
     --white: #fff;
     --stroke: #d6dde7;
@@ -29,10 +29,12 @@ html, body {
 
 /* Hero */
 .hero {
+    z-index: 1;
     position: relative;
     padding: 96px 0 72px;
     overflow: hidden;
     text-align: center;
+    margin-top: -101vh;
 }
 .hero-overlay {
     position: absolute;
@@ -240,7 +242,7 @@ html, body {
     display: inline;
 }
 #piano-section {
-  margin-top: 11rem;
+    margin-top: 11rem;
 }
 
 /* Keys */
@@ -308,10 +310,28 @@ footer {
     .main {
         margin-top: 150px;
     }
+    .hero {
+        margin-top: -111vh;
+    }
+    .hero-title {
+        font-size: clamp(2rem, 4.8vw, 4rem);
+    }
+    .hero-button .btn-primary {
+        margin-top: 0px;
+    }
 }
 @media (max-width: 400px) {
     .main {
         margin-top: 200px;
+    }
+    .hero {
+        margin-top: -101vh;
+    }
+    .hero-title {
+        font-size: clamp(2rem, 4.8vw, 4rem);
+    }
+    .hero-button .btn-primary {
+        margin-top: 0px;
     }
 }
 

@@ -10,24 +10,138 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="./piano-teacher.css">
+    <link rel="stylesheet" type="text/css" href="./background.css">
 </head>
 
 <body>
+    <div id="background" class="background">
+        <div id="sky">
+            <div id="stars">
+                <!-- Dense cluster near upper-left -->
+                <div class="star" style="left: 3%;  top: 8%;  transform: scale(1.8);"></div>
+                <div class="star" style="left: 6%;  top: 14%; transform: scale(1.2);"></div>
+                <div class="star" style="left: 9%;  top: 6%;  transform: scale(2.2);"></div>
+                <div class="star" style="left: 12%; top: 18%; transform: scale(1.0);"></div>
+                <div class="star" style="left: 15%; top: 10%; transform: scale(1.6);"></div>
+
+                <!-- Mid-left spread -->
+                <div class="star" style="left: 10%; top: 32%; transform: scale(1.0);"></div>
+                <div class="star" style="left: 18%; top: 22%; transform: scale(1.3);"></div>
+                <div class="star" style="left: 22%; top: 35%; transform: scale(1.1);"></div>
+                <div class="star" style="left: 25%; top: 27%; transform: scale(1.5);"></div>
+
+                <!-- Central diagonal band -->
+                <div class="star" style="left: 35%; top: 12%; transform: scale(2.0);"></div>
+                <div class="star" style="left: 38%; top: 20%; transform: scale(1.2);"></div>
+                <div class="star" style="left: 42%; top: 16%; transform: scale(1.8);"></div>
+                <div class="star" style="left: 46%; top: 24%; transform: scale(1.0);"></div>
+                <div class="star" style="left: 49%; top: 30%; transform: scale(2.4);"></div>
+                <div class="star" style="left: 52%; top: 22%; transform: scale(1.1);"></div>
+
+                <!-- Right-mid constellation -->
+                <div class="star" style="left: 60%; top: 18%; transform: scale(1.4);"></div>
+                <div class="star" style="left: 63%; top: 26%; transform: scale(1.0);"></div>
+                <div class="star" style="left: 67%; top: 14%; transform: scale(1.7);"></div>
+                <div class="star" style="left: 70%; top: 28%; transform: scale(1.3);"></div>
+                <div class="star" style="left: 74%; top: 10%; transform: scale(2.0);"></div>
+
+                <!-- Far-right cluster -->
+                <div class="star" style="left: 82%; top: 22%; transform: scale(1.1);"></div>
+                <div class="star" style="left: 86%; top: 12%; transform: scale(1.6);"></div>
+                <div class="star" style="left: 90%; top: 26%; transform: scale(2.2);"></div>
+                <div class="star" style="left: 94%; top: 8%;  transform: scale(1.0);"></div>
+                <div class="star" style="left: 97%; top: 18%; transform: scale(2.6);"></div>
+
+                <!-- Low horizon shimmer (subtle) -->
+                <div class="star" style="left: 8%;  top: 48%; transform: scale(1.0);"></div>
+                <div class="star" style="left: 28%; top: 52%; transform: scale(1.2);"></div>
+                <div class="star" style="left: 46%; top: 54%; transform: scale(1.1);"></div>
+                <div class="star" style="left: 66%; top: 49%; transform: scale(1.3);"></div>
+                <div class="star" style="left: 88%; top: 55%; transform: scale(1.0);"></div>
+            </div>
+
+            <div id="sunWrap">
+                <div id="sun"></div>
+            </div>
+            
+            <div id="mountains">
+                <div id="mountains-left" class="mountain"></div>
+                <div id="mountains-right" class="mountain"></div>
+            </div>
+
+            <div id="cityWrap">
+                <div id="city">
+                    <!-- Left -->
+                    <div style="left: 3%;  height: 22%; width: 3%;" class="building"></div>
+                    <div style="left: 5%;  height: 35%; width: 2%;" class="building"></div>
+                    <div style="left: 7%;  height: 28%; width: 4%;" class="building"></div>
+                    <div style="left: 9%;  height: 40%; width: 3%;" class="building"></div>
+
+                    <!-- Mid-left -->
+                    <div style="left: 14%; height: 25%; width: 3%;" class="building"></div>
+                    <div style="left: 15.5%; height: 55%; width: 2%;" class="building"></div>
+                    <div style="left: 18%; height: 32%; width: 4%;" class="building"></div>
+                    <div style="left: 20%; height: 48%; width: 3%;" class="building"></div>
+
+                    <!-- Central tall -->
+                    <div style="left: 26%; height: 65%; width: 4%;" class="building"></div>
+                    <div style="left: 28%; height: 38%; width: 3%;" class="building"></div>
+                    <div style="left: 30%; height: 75%; width: 4%;" class="building"></div>
+                    <div style="left: 33%; height: 42%; width: 3%;" class="building"></div>
+                    <div style="left: 36%; height: 60%; width: 2%;" class="building"></div>
+                    <div style="left: 38%; height: 30%; width: 3%;" class="building"></div>
+
+                    <!-- Slight overlap -->
+                    <div style="left: 41%; height: 25%; width: 4%;" class="building"></div>
+                    <div style="left: 43%; height: 70%; width: 3%;" class="building"></div>
+                    <div style="left: 46%; height: 45%; width: 4%;" class="building"></div>
+
+                    <!-- Tallest towers -->
+                    <div style="left: 50%; height: 85%; width: 4%;" class="building"></div>
+                    <div style="left: 54%; height: 40%; width: 5%;" class="building"></div>
+                    <div style="left: 58%; height: 88%; width: 3%;" class="building"></div>
+                    <div style="left: 58.2%; height: 90%; width: 2.6%;" class="building"></div>
+
+                    <!-- Mid-right -->
+                    <div style="left: 64%; height: 32%; width: 4%;" class="building"></div>
+                    <div style="left: 67%; height: 55%; width: 3%;" class="building"></div>
+                    <div style="left: 70%; height: 42%; width: 4%;" class="building"></div>
+                    <div style="left: 72%; height: 68%; width: 2%;" class="building"></div>
+                    <div style="left: 74%; height: 50%; width: 4%;" class="building"></div>
+
+                    <!-- Right edge -->
+                    <div style="left: 80%; height: 28%; width: 3%;" class="building"></div>
+                    <div style="left: 84%; height: 35%; width: 4%;" class="building"></div>
+                    <div style="left: 88%; height: 25%; width: 3%;" class="building"></div>
+                    <div style="left: 91%; height: 45%; width: 4%;" class="building"></div>
+                    <div style="left: 94%; height: 20%; width: 3%;" class="building"></div>
+                    <div style="left: 97%; height: 30%; width: 2%;" class="building"></div>
+                    </div>
+            </div>
+        </div>
+
+        <div id="ground"></div>
+    </div>
+        
     <!-- Highlight bar for showing future notes to be pressed -->
     <div id="note-overlay" aria-hidden="true"></div> <!-- Where notes begin falling -->
     <!-- Hero -->
     <header class="hero">
         <div class="container">
-          <div class="hero-content">
-              <h1 class="hero-title">Piano Teacher</h1>
-              <p class="hero-subtitle" id="autoplay-section">Learn, play, and enjoy the music.</p>
-              <div class="hero-button">
-                  <a href="#piano-section" class="btn btn-primary">Start playing</a>
-              </div>
-          </div>
-          </div>
+            <div class="hero-content">
+                <h1 class="hero-title">Piano Teacher</h1>
+                <p class="hero-subtitle">Learn, play, and enjoy the music.</p>
+                <div class="hero-button">
+                    <a href="#piano-section" class="btn btn-primary">Start playing</a>
+                </div>
+            </div>
+        </div>
         <div class="hero-overlay"></div>
     </header>
+
+    <br><br><br><br><br><br><br><br><br>
+
+    <div id="autoplay-section"></div>
 
     <!-- Count down from 5 once autoplay starts -->
     <div class="countdown" id="countdown" aria-live="polite">Staring in 5...</div>
