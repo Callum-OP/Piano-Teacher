@@ -9,8 +9,8 @@
     --highlight-2: #ff9d15;
     --highlightAlt:linear-gradient( #6dc5d2, #3d75b6);
     --highlightAlt-2: #54afd6;
-    --card: linear-gradient( rgb(9, 9, 28) 60%, rgb(8, 14, 27) 100% );
-    --card-2: linear-gradient( rgb(5, 5, 17) 60%, rgb(5, 9, 20) 100% );
+    --card: linear-gradient( rgb(11, 11, 35) 60%, rgb(10, 18, 35) 100% );
+    --card-2: linear-gradient( rgb(9, 9, 27) 60%, rgb(5, 9, 20) 100% );
     /* Piano */
     --white: #fff;
     --stroke: #d6dde7;
