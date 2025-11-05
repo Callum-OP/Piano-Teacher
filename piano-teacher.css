@@ -325,7 +325,7 @@ footer {
         margin-top: 200px;
     }
     .hero {
-        margin-top: -101vh;
+        margin-top: -90vh;
     }
     .hero-title {
         font-size: clamp(2rem, 4.8vw, 4rem);
