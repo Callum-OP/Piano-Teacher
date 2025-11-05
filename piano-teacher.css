@@ -4,13 +4,13 @@
     --text: #eef2f6;
     --accent: linear-gradient( #ffb515, #ff7134);
     --accent-2: linear-gradient( #fcb51c, #fd753b);
-    --accent-3: #fcb51c;
+    --accent-3: #fc9f1c;
     --highlight: linear-gradient( #ffb515, #ff7134);
-    --highlight-2: #ffb515;
+    --highlight-2: #ff9d15;
     --highlightAlt:linear-gradient( #6dc5d2, #3d75b6);
     --highlightAlt-2: #54afd6;
-    --card: linear-gradient( rgb(15, 15, 46) 60%, rgb(15, 27, 54) 100% );
-    --card-2: linear-gradient( rgb(12, 10, 39) 60%, rgb(7, 14, 31) 100% );
+    --card: linear-gradient( rgb(9, 9, 28) 60%, rgb(8, 14, 27) 100% );
+    --card-2: linear-gradient( rgb(5, 5, 17) 60%, rgb(5, 9, 20) 100% );
     /* Piano */
     --white: #fff;
     --stroke: #d6dde7;
@@ -195,7 +195,7 @@ html, body {
     transform: translateX(-50%); 
     font-size: 32px; 
     font-weight: bold; 
-    color: var(--highlight) !important;
+    color: var(--highlight-2) !important;
     z-index: 10000; 
     display: none;
 }
@@ -344,99 +344,21 @@ footer {
 @media (prefers-color-scheme: dark) {
     :root {
         /* Colours */
-        --text: #e9edf1;
-        --accent: #d6ab2a;
-        --accent-2: #e0c24b;
-        --highlight: #e2be46;
-
+        --background: #08070d;
+        --text: #eef2f6;
+        --accent: linear-gradient( #c88e11, #c15628);
+        --accent-2: linear-gradient( #c58e18, #cc6133);
+        --accent-3: #b06f14;
+        --highlight: linear-gradient( #bd8712, #cb5c2d);
+        --highlight-2: #ad6b10;
+        --highlightAlt:linear-gradient( #52949e, #2c5482);
+        --highlightAlt-2: #3d7d98;
+        --card: linear-gradient( rgb(7, 7, 21) 60%, rgb(7, 12, 23) 100% );
+        --card-2: linear-gradient( rgb(5, 5, 17) 60%, rgb(4, 7, 15) 100% );
         /* Piano */
-        --white: #f0eeee;
-        --stroke: #bfc6d0;
-        --black: #000000;
-    }
-    html, body {
-        min-height: 100%;
-        background: linear-gradient(180deg,#050a0f 0%,#060b11 40%,#050a0f 40%, #060b11 100%);
-        color: var(--text);
-        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    }
-    .controls-card.card,
-    .piano-card.card {
-        background: linear-gradient(180deg, #0c1d30 0%, #0c2237 100%);
-        border: 1px solid rgba(255,255,255,0.04);
-        border-radius: 16px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-        z-index: 1;
-        width: 100%;
-        max-width: 100%;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-    }
-    .piano-frame {
-        border-radius: 14px;
-        background: linear-gradient(180deg,#0e1c2c 0%,#0b1e2e 100%);
-        border: 1px solid rgba(255,255,255,0.06);
-        padding: 20px;
-        padding-bottom: 1px;
-        margin-bottom: 1rem;
-        padding-left: 32px;
-        z-index: 1;
-        height: auto;
-        transition: transform 0.3s ease;
-        width: 100%;
-        max-width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-    #controls {
-        padding: 10px;
-        background: #155;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-    /* Falling notes (autoplay) */
-    .falling-note {
-        position: absolute;
-        background: var(--highlight) !important;
-        border-radius: 3px;
-        z-index: 9999;
-        contain: layout paint;
-    }
-    /* Keys */
-    .white-key { fill: var(--white); stroke: var(--stroke);}
-    .black-key { fill: var(--black); }
-    .white-key.active,
-    .black-key.active {
-        filter: drop-shadow(0 0 5px currentColor);
-        box-shadow: 0 0 10px currentColor;
-    }
-    .active.right-hand {
-        color: var(--highlight-2);
-        fill: var(--highlight-2);
-    }
-    .active.left-hand {
-        color: var(--highlightAlt-2);
-        fill: var(--highlightAlt-2);
-    }
-    /* Labels */
-    .label {
-        font: 12px 'Inter', sans-serif;
-        fill: #4d525c;
-        user-select: none;
-        pointer-events: none;
-    }
-    .countdown {
-        position: absolute; 
-        top: 450px; 
-        left: 50%; 
-        transform: translateX(-50%); 
-        font-size: 32px; 
-        font-weight: bold; 
-        color: var(--highlight) !important;
-        z-index: 10000; 
-        display: none;
+        --white: #ebebeb;
+        --stroke: #cfd6df;
+        --black: #121212;
     }
 }
 
