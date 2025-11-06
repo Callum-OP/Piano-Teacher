@@ -101,3 +101,37 @@ body {
     background-color: #08070d;
     transform: translateY(50%);
 }
+
+
+@media (max-width: 1000px) {
+    #background {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        height: 110%;
+        color: rgb(69, 37, 133);
+        background-color: #08070d;
+    }
+}
+
+@media (max-width: 750px) {
+    #background {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        height: 120%;
+        color: rgb(69, 37, 133);
+        background-color: #08070d;
+    }
+}
+
+@media (max-width: 500px) {
+    #background {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        height: 130%;
+        color: rgb(69, 37, 133);
+        background-color: #08070d;
+    }
+}
