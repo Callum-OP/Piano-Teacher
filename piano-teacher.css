@@ -194,8 +194,7 @@ html, body {
     min-height: 36px;
 }
 .countdown {
-    position: absolute; 
-    top: 450px; 
+    position: absolute;  
     left: 50%; 
     transform: translateX(-50%); 
     font-size: 32px; 
