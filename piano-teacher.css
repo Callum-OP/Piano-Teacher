@@ -309,6 +309,10 @@ footer {
     margin: 0 auto;
 }
 
+#autoplay-section {
+    margin-top: 430px;
+}
+
 /* Change spacing depending on screen */
 @media (max-width: 800px) {
     html, body { 
