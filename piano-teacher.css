@@ -38,6 +38,8 @@ html, body {
     overflow: hidden;
     text-align: center;
     margin-top: -101vh;
+    align-items: center;
+    justify-content: center;
 }
 .hero-overlay {
     position: absolute;
@@ -342,7 +344,7 @@ footer {
 /* Portrait */
 @media (orientation: portrait) {
     .hero {
-        margin-top: -101vh;
+        height: 100vh;
     }
     body {
         flex-direction: column;
