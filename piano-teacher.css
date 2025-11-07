@@ -37,7 +37,6 @@ html, body {
     padding: 96px 0 72px;
     overflow: hidden;
     text-align: center;
-    margin-top: -101vh;
     align-items: center;
     justify-content: center;
 }
@@ -281,7 +280,6 @@ html, body {
 #note-overlay {
     position: relative;
     top: 0; left: 0; right: 0;
-    height: 100%;
     pointer-events: none;
     z-index: 9999;
 }
@@ -312,6 +310,7 @@ footer {
 #autoplay-section {
     margin-top: 430px;
 }
+
 
 /* Change spacing depending on screen */
 @media (max-width: 800px) {
@@ -347,9 +346,6 @@ footer {
 
 /* Portrait */
 @media (orientation: portrait) {
-    .hero {
-        height: 100vh;
-    }
     body {
         flex-direction: column;
     }
