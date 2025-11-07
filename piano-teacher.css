@@ -20,8 +20,11 @@
 html, body {
     color-scheme: light dark;
     min-height: 100%;
-    background-image: linear-gradient( #000 0%, transparent );
-    background: var(--background);
+    background-color: var(--background);
+    background-image: url('background.jpg');
+    background-size: 140%;
+    background-repeat: no-repeat; 
+    background-position: top center;
     background-blend-mode: screen;
     color: var(--text) !important;
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
@@ -39,7 +42,6 @@ html, body {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.15), transparent 40%);
     pointer-events: none;
     text-align: center;
 }
@@ -306,75 +308,36 @@ footer {
 }
 
 /* Change spacing depending on screen */
-@media (max-width: 1200px) {
-    .main {
-        margin-top: 150px;
-    }
-    .hero {
-        margin-top: -111vh;
-    }
-    .hero-title {
-        font-size: clamp(2rem, 4.8vw, 4rem);
-    }
-    .hero-button .btn-primary {
-        margin-top: 0px;
+@media (max-width: 800px) {
+    html, body { 
+        background-size: 155%;
     }
 }
-/* Change spacing depending on screen */
-@media (max-width: 1000px) {
-    .main {
-        margin-top: 200px;
-    }
-    .hero {
-        margin-top: -106vh;
-    }
-    .hero-title {
-        font-size: clamp(2rem, 4.8vw, 4rem);
-    }
-    .hero-button .btn-primary {
-        margin-top: 0px;
+@media (max-width: 700px) {
+    html, body { 
+        background-size: 170%;
     }
 }
-@media (max-width: 750px) {
-    .main {
-        margin-top: 200px;
-    }
-    .hero {
-        margin-top: -101vh;
-    }
-    .hero-title {
-        font-size: clamp(2rem, 4.6vw, 4rem);
-    }
-    .hero-button .btn-primary {
-        margin-top: 0px;
+@media (max-width: 600px) {
+    html, body { 
+        background-size: 200%;
     }
 }
-@media (max-width: 680px) {
-    .main {
-        margin-top: 200px;
-    }
-    .hero {
-        margin-top: -93vh;
-    }
-    .hero-title {
-        font-size: clamp(2rem, 4.4vw, 4rem);
-        margin-top: 0px;
-        margin-bottom: 0px;
-        padding-top: 0px;
-        padding-bottom: 0px;
-    }
-    .hero-subtitle {
-        margin-top: 5px;
-        margin-bottom: 5px;
-        padding-top: 0px;
-        padding-bottom: 0px;
-    }
-    .hero-button .btn-primary {
-        margin-top: 0px;
-        margin-bottom: 0px;
+@media (max-width: 550px) {
+    html, body { 
+        background-size: 250%;
     }
 }
-
+@media (max-width: 450px) {
+    html, body { 
+        background-size: 300%;
+    }
+}
+@media (max-width: 350px) {
+    html, body { 
+        background-size: 350%;
+    }
+}
 
 /* Portrait */
 @media (orientation: portrait) {
@@ -401,6 +364,9 @@ footer {
 @media (orientation: landscape) {
     body {
         flex-direction: row;
+    }
+    .main {
+        margin-top: 200px;
     }
 }
 
