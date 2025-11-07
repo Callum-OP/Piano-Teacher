@@ -20,9 +20,8 @@ Improve ability to determine left or right hand based on notes in MIDI files (in
 Give the autoplay editor a faded look if no music has been started?
 
 ## Issues
-May make a popping sound when it has just begun playing audio.
 The colours and layout on dark mode on some mobile browsers does not look right compared to the intended look.
 If the user switches windows or tabs the audio and animation will stop playing. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab)
 Notes may be too close together making it hard to tell them apart if many notes are played in succession.
 If the tempo is changed the highlight on the piano keys will remain the same.
-Screen layout on different devices, especially mobile, is not as intended, most notably the title and hero section compared to the background.
+Older devices (10 years or more, expecially mobile will struggle to run the app as intended, either reduce lag or add an option to run the app in a simplified performance enhancing mode).
