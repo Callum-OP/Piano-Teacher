@@ -24,4 +24,4 @@ The colours and layout on dark mode on some mobile browsers does not look right 
 If the user switches windows or tabs the audio and animation will stop playing. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab)
 Notes may be too close together making it hard to tell them apart if many notes are played in succession.
 If the tempo is changed the highlight on the piano keys will remain the same.
-Older devices (10 years or more, expecially mobile will struggle to run the app as intended, either reduce lag or add an option to run the app in a simplified performance enhancing mode).
+Older devices (10 years or more, expecially mobile will struggle to run the app as intended, either reduce lag or add an option to run the app in a simplified performance enhancing mode). Might be able to use canvas instead, which may give better performance.
