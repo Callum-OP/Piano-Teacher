@@ -1,6 +1,28 @@
 // --- Audio setup ---
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeAudio = {};
+const audioBuffers = {};
+
+async function preloadNotes() {
+    const noteNames = [];
+    const baseNotes = ["C","Cs","D","Ds","E","F","Fs","G","Gs","A","As","B"];
+
+    // Octaves 1 through 7
+    for (let octave = 1; octave <= 7; octave++) {
+        for (const n of baseNotes) {
+            noteNames.push(`${n}${octave}`);
+        }
+    }
+
+    // Fetch and decode each note
+    for (const note of noteNames) {
+        const filePath = `./sounds/${note.toLowerCase()}.ogg`;
+        const res = await fetch(filePath);
+        const buf = await res.arrayBuffer();
+        audioBuffers[note.toLowerCase()] = await audioContext.decodeAudioData(buf);
+    }
+}
+preloadNotes();
 
 // --- Music library select ---
 // Set up default music to choose from
@@ -63,20 +85,18 @@ function transformNote(str) {
 // --- Audio play/stop ---
 // Play an audio file
 function playNote(filePath, noteName) {
-    fetch(filePath)
-        .then(res => res.arrayBuffer())
-        .then(buf => audioContext.decodeAudioData(buf))
-        .then(decoded => {
-        const gain = audioContext.createGain();
-        const src = audioContext.createBufferSource();
-        src.buffer = decoded;
-        src.connect(gain);
-        gain.connect(audioContext.destination);
-        const now = audioContext.currentTime;
-        src.start(now);
-        activeAudio[noteName] = { src, gain };
-        })
-        .catch(err => console.error("Error playing file:", err));
+    const decoded = audioBuffers[noteName.toLowerCase()];
+    if (!decoded) {
+        console.warn("Note not preloaded:", noteName);
+        return;
+    }
+    const gain = audioContext.createGain();
+    const src = audioContext.createBufferSource();
+    src.buffer = decoded;
+    src.connect(gain);
+    gain.connect(audioContext.destination);
+    src.start(audioContext.currentTime);
+    activeAudio[noteName] = { src, gain };
 }
 // Stop a note being played
 function stopNote(noteName) {
