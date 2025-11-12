@@ -126,7 +126,7 @@ function highlightKey(noteName, duration, hand) {
 let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;
 let activeNotes = [];
 let scheduledNotes = []; // Full schedule for lookahead spawning
-const LOOKAHEAD = 5000; // Window to spawn upcoming notes
+const LOOKAHEAD = 3000; // Window to spawn upcoming notes
 const previewLayer = document.getElementById("note-overlay");
 // Get html items for piano keys
 function getRects(noteName) {
