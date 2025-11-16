@@ -19,6 +19,7 @@ Show clearly the notes about to be played above the piano using letters.
 When playing several notes at once in autoplay the underscores are not considered seperate for each note. Could make it possible to have one note last longer than another.
 Improve ability to determine left or right hand based on notes in MIDI files (in midi-upload.js).
 Give the autoplay editor a faded look if no music has been started?
+Saving entered music notes into music.json? Maybe make it downloadable and then can be entered later to access saved music pieces in the preset list.
 
 ## Issues
 The colours and layout on dark mode on some mobile browsers does not look right compared to the intended look.
