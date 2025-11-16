@@ -1,5 +1,6 @@
 # How to run
 Visit the site on https://callum-op.github.io/Piano-Teacher/ 
+alternatively use the version on itch.io on https://callum-op.itch.io/piano-teacher
 If you have a touchscreen on a large screened device you can play the piano on screen.
 There is an autoplay feature that will visually show how to play sheet music.
 Select from a list of preset music or upload a MIDI file, alternatively enter the notes directly into the input in letter format (A1, As3+B4, etc), then click to start autoplay.
@@ -24,4 +25,5 @@ The colours and layout on dark mode on some mobile browsers does not look right 
 If the user switches windows or tabs the audio and animation will stop playing. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab)
 Notes may be too close together making it hard to tell them apart if many notes are played in succession.
 If the tempo is changed the highlight on the piano keys will remain the same.
+
 Older devices (10 years or more, expecially mobile will struggle to run the app as intended, either reduce lag or add an option to run the app in a simplified performance enhancing mode). Might be able to use canvas instead, which may give better performance.
