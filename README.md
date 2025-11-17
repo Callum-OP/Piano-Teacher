@@ -1,3 +1,8 @@
+# Demo Video
+
+
+https://github.com/user-attachments/assets/f39fad40-3f1e-4631-811e-6a548815874b
+
 # How to run
 Visit the site on https://callum-op.github.io/Piano-Teacher/ 
 alternatively use the version on itch.io on https://callum-op.itch.io/piano-teacher
@@ -28,3 +33,4 @@ Notes may be too close together making it hard to tell them apart if many notes 
 If the tempo is changed the highlight on the piano keys will remain the same.
 
 Older devices (10 years or more, expecially mobile will struggle to run the app as intended, either reduce lag or add an option to run the app in a simplified performance enhancing mode). Might be able to use canvas instead, which may give better performance.
+
