@@ -91,7 +91,29 @@ function chooseDelay(delayA, delayB) {
     const a = delayA || '';
     const b = delayB || '';
     return a.length >= b.length ? a : b;
+}
+
+// For segments that are very close to each other but still have a small delay between them, 
+// they should be considered as one block anyway (removing the tiny delay between them)
+function mergeCloseSegments(segments, tolerance = 2) {
+    const merged = [];
+    for (let i = 0; i < segments.length; i++) {
+        const seg = segments[i];
+        if (seg.type === 'delay' && seg.text.length <= tolerance) {
+            // Merge with previous notes if possible
+            const prev = merged[merged.length - 1];
+            const next = segments[i + 1];
+            if (prev && prev.type === 'notes' && next && next.type === 'notes') {
+                // Combine notes into one segment
+                prev.text += '+' + next.text;
+                i++;
+                continue;
+            }
+        }
+        merged.push(seg);
     }
+    return merged;
+}
 
 // Main function for sorting notes into proper hands
 function resortNotes() {
@@ -105,8 +127,8 @@ function resortNotes() {
             rightBlock = "";
     }
 
-    const tokensLeft = separateNotesAndDelays(leftBlock);
-    const tokensRight = separateNotesAndDelays(rightBlock);
+    const tokensLeft = mergeCloseSegments(separateNotesAndDelays(leftBlock));
+    const tokensRight = mergeCloseSegments(separateNotesAndDelays(rightBlock));
 
     const [A, B] = alignSegments(tokensLeft, tokensRight);
 
