@@ -1,3 +1,5 @@
+// This is the main script for the piano, buttons and autoplay functionality
+
 // --- Audio setup ---
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeAudio = {};

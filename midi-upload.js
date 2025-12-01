@@ -1,3 +1,5 @@
+// This script is responsible for translating MIDI files into the expected input for the app
+
 // Translate midi notes to the expected note name (A1, Fs3, etc)
 function midiToNoteName(midi) {
     const names = ["C","Cs","D","Ds","E","F","Fs","G","Gs","A","As","B"];
