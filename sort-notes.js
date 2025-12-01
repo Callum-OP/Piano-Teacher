@@ -80,7 +80,7 @@ function splitNotes(leftNotesText, rightNotesText) {
     notes.sort((a, b) => a.pitch - b.pitch);
 
     // Split in two
-    const half = Math.ceil(notes.length / 2);
+    const half = Math.floor(notes.length / 2);
     const left = notes.slice(0, half).map(n => n.note).join('+');
     const right = notes.slice(half).map(n => n.note).join('+');
     return { left, right };   
