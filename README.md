@@ -36,4 +36,4 @@ Older devices (10 years or more, expecially mobile will struggle to run the app 
 
 Resorting notes into left and right hands works when only one hand has the notes, but it starts to not work so well at sorting notes when both hands have notes.
 Another issue with sorting is pressing the button again and again results in additional delays/underscores being added.
-
+Also when sorting notes it may split them in a way that is inconvenient when playing such as a left and right hand note far too the left of the keyboard and another right hand note far to the right of the keyboard, so it should also consider distance between notes when sorting notes into hands.
