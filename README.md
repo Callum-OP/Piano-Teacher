@@ -34,6 +34,5 @@ If the tempo is changed the highlight on the piano keys will remain the same.
 
 Older devices (10 years or more, expecially mobile will struggle to run the app as intended, either reduce lag or add an option to run the app in a simplified performance enhancing mode). Might be able to use canvas instead, which may give better performance.
 
-Resorting notes into left and right hands works when only one hand has the notes, but it starts to not work so well at sorting notes when both hands have notes.
+Resorting notes into left and right hands works when only one hand has the notes, but it starts to not work so well at sorting notes when both hands have notes, it seems like the right hand get ignored.
 Another issue with sorting is pressing the button again and again results in additional delays/underscores being added.
-Also when sorting notes it may split them in a way that is inconvenient when playing such as a left and right hand note far too the left of the keyboard and another right hand note far to the right of the keyboard, so it should also consider distance between notes when sorting notes into hands.
