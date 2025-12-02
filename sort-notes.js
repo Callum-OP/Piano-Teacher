@@ -79,11 +79,27 @@ function splitNotes(leftNotesText, rightNotesText) {
     // Sort by true pitch
     notes.sort((a, b) => a.pitch - b.pitch);
 
-    // Split in two
-    const half = Math.floor(notes.length / 2);
-    const left = notes.slice(0, half).map(n => n.note).join('+');
-    const right = notes.slice(half).map(n => n.note).join('+');
-    return { left, right };   
+    // If only one note, keep it in whichever hand it came from
+    if (notes.length === 1) {
+        return { left: notes[0].note, right: '' };
+    }
+
+    // Find the largest gap between consecutive notes
+    let maxGap = -1;
+    let splitIndex = Math.floor(notes.length / 2);
+    for (let i = 0; i < notes.length - 1; i++) {
+        const gap = notes[i+1].pitch - notes[i].pitch;
+        if (gap > maxGap) {
+            maxGap = gap;
+            splitIndex = i + 1;
+        }
+    }
+
+    // Split at the largest gap
+    const left = notes.slice(0, splitIndex).map(n => n.note).join('+');
+    const right = notes.slice(splitIndex).map(n => n.note).join('+');
+
+    return { left, right };
 }
 
 // Choose the delay to output at this index: prefer the longer run of underscores
