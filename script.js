@@ -92,11 +92,22 @@ function playNote(filePath, noteName) {
         console.warn("Note not preloaded:", noteName);
         return;
     }
+
     const gain = audioContext.createGain();
     const src = audioContext.createBufferSource();
     src.buffer = decoded;
     src.connect(gain);
     gain.connect(audioContext.destination);
+
+    // Set initial volume from slider
+    const volumeSlider = document.getElementById("volume");
+    gain.gain.value = volumeSlider.value;
+
+    // Keep gain node accessible, so that it can be updated
+    volumeSlider.addEventListener("input", () => {
+        gain.gain.value = volumeSlider.value;
+    });
+
     src.start(audioContext.currentTime);
     activeAudio[noteName] = { src, gain };
 }

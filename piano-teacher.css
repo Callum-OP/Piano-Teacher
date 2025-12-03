@@ -161,10 +161,14 @@ html, body {
     font-size: 2rem;
     line-height: 1;
 }
+.volume-control i {
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0;
+}
 #tempo {
     -webkit-appearance: none;
     appearance: none;
-    width: 200px;
     height: 6px;
     border-radius: 3px;
     background: var(accent-3); /* Will be overridden by JS */
