@@ -122,20 +122,30 @@ function splitNotes(leftNotesText, rightNotesText) {
         : { left: '', right: single.note };
     }
 
-    // Split by largest gap split
+    // Split by largest gap
     let maxGap = -1;
-    let splitIndex = Math.floor(notes.length / 2);
+    let gapIndex = Math.floor(notes.length / 2);
     for (let i = 0; i < notes.length - 1; i++) {
         const gap = notes[i + 1].pitch - notes[i].pitch;
         if (gap > maxGap) {
         maxGap = gap;
-        splitIndex = i + 1;
+        gapIndex = i + 1;
         }
     }
+
+    // Split by largest gap if more than 6 keys apart (including black keys), else split them evenly
+    let splitIndex;
+    if (maxGap > 10) {
+        splitIndex = gapIndex;
+    } else {
+        splitIndex = Math.floor(notes.length / 2);
+    }
+
     const left = notes.slice(0, splitIndex).map(n => n.note).join('+');
     const right = notes.slice(splitIndex).map(n => n.note).join('+');
     return { left, right };
 }
+
 
 // Main function for sorting notes into proper hands
 function resortNotes() {
@@ -145,10 +155,10 @@ function resortNotes() {
     if (!/[A-Za-z]/.test(leftBlock)) leftBlock = "";
     if (!/[A-Za-z]/.test(rightBlock)) rightBlock = "";
 
-    // Build ordered segments and group only immediate pairs — no multi-chain collapsing
+    // Build ordered segments
     const leftOrdered = order(separateNotesAndDelays(leftBlock));
     const rightOrdered = order(separateNotesAndDelays(rightBlock));
-
+    // Group only immediate pairs of notes
     const leftGrouped = groupCloseSegments(leftOrdered, 2);
     const rightGrouped = groupCloseSegments(rightOrdered, 2);
 
