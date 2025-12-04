@@ -79,10 +79,17 @@ function splitNotes(leftNotesText, rightNotesText) {
     // Sort by true pitch
     notes.sort((a, b) => a.pitch - b.pitch);
 
-    // If only one note, keep it in whichever hand it came from
+    // If only one note, assign based on piano position
     if (notes.length === 1) {
-        return { left: notes[0].note, right: '' };
+        const single = notes[0];
+        const threshold = parseNote("C4").pitch; // Middle C as divider
+        if (single.pitch < threshold) {
+            return { left: single.note, right: '' };
+        } else {
+            return { left: '', right: single.note };
+        }
     }
+
 
     // Find the largest gap between consecutive notes
     let maxGap = -1;
