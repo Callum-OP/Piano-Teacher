@@ -1,12 +1,10 @@
-// This script is for sorting notes that are improperly ordered into the correct hands
-
 // Map note letters
 const noteOffsets = {
     C:0, Cs:1, D:2, Ds:3, E:4, F:5, Fs:6,
     G:7, Gs:8, A:9, As:10, B:11
 };
 
-// Split notes into letter and number
+// Split notes into letters and numbers
 function parseNote(note) {
     const match = note.trim().match(/^([A-G]s?)(\d+)$/);
     if (!match) return null;
@@ -14,13 +12,11 @@ function parseNote(note) {
     const octave = parseInt(octaveStr, 10);
     const offset = noteOffsets[letter];
     if (offset == null || Number.isNaN(octave)) return null;
-    // Pitch number
     const pitch = octave * 12 + offset;
     return { note: `${letter}${octave}`, pitch };
 }
 
-// Sort notes and delays
-// Returns an array such as: [{type:'notes', text:'B3+Gs3+B4'}, {type:'delay', text:'__________'}]
+// Split notes/delays into segments
 function separateNotesAndDelays(block) {
     const parts = block.split(/(_+)/);
     const segments = [];
@@ -33,31 +29,72 @@ function separateNotesAndDelays(block) {
     return segments;
 }
 
-// Ensure both token sequences (notes/delays) align by index 
-function alignSegments(left, right) {
-    const maxLen = Math.max(left.length, right.length);
-    const padDelay = { type: 'delay', text: '' };
-    const padNotes = { type: 'notes', text: '' };
+// Build ordered segments storing the type, note text and delays
+function order(segments) {
+    const ordered = [];
+    let i = 0;
+    while (i < segments.length) {
+        const seg = segments[i];
+        // Store following delay if present
+        if (seg.type === 'notes') {
+            const next = segments[i + 1];
+            const delayAfter = next && next.type === 'delay' ? next.text : '';
+            ordered.push({ type: 'segment', notesText: seg.text.trim(), delayAfter });
+            i += delayAfter ? 2 : 1;
+        // Store leading delay
+        } else if (seg.type === 'delay') {
+            ordered.push({ type: 'segment', notesText: '', delayAfter: seg.text });
+            i += 1;
+        // Skip
+        } else {
+            i += 1;
+        }
+    }
+    return ordered;
+}
+
+// Group only notes that are close together
+function groupCloseSegments(orderedSegments, tolerance = 2) {
+    const out = [];
+    for (let i = 0; i < orderedSegments.length; i++) {
+        const curr = orderedSegments[i];
+        const next = orderedSegments[i + 1];
+        if (
+            next &&
+            curr.notesText &&
+            curr.delayAfter &&
+            curr.delayAfter.length <= tolerance &&
+            next.notesText
+        ) {
+            // Combine notes for splitting
+            out.push({
+                type: 'segment',
+                notesText: `${curr.notesText}+${next.notesText}`,
+                delayAfter: next.delayAfter,
+                grouped: true,
+                closeDelay: curr.delayAfter
+            });
+            i += 1;
+        } else {
+            out.push(curr);
+        }
+    }
+    return out;
+}
+
+// Align ordered segment streams by index (keeps timing order)
+function alignSegments(leftSegments, rightSegments) {
+    const maxLen = Math.max(leftSegments.length, rightSegments.length);
     const outA = [];
     const outB = [];
     for (let i = 0; i < maxLen; i++) {
-        const a = left[i] || (right[i] ? (right[i].type === 'delay' ? padDelay : padNotes) : padNotes);
-        const b = right[i] || (left[i] ? (left[i].type === 'delay' ? padDelay : padNotes) : padNotes);
-        // If mismatched types at same index, try to correct:
-        if (a.type !== b.type) {
-        // Prefer keeping the existing type from A, and convert B to same type with empty text
-        const fixedB = { type: a.type, text: '' };
-        outA.push(a);
-        outB.push(fixedB);
-        } else {
-        outA.push(a);
-        outB.push(b);
-        }
+        outA.push(leftSegments[i] || { type: 'segment', notesText: '', delayAfter: '' });
+        outB.push(rightSegments[i] || { type: 'segment', notesText: '', delayAfter: '' });
     }
     return [outA, outB];
 }
 
-// Merge the notes and sort by pitch, then split into left/right; ignoring invalid notes
+// Split combined notes into left/right
 function splitNotes(leftNotesText, rightNotesText) {
     const raw = (leftNotesText ? leftNotesText.trim() : '') +
                 (leftNotesText && rightNotesText ? '+' : '') +
@@ -72,70 +109,32 @@ function splitNotes(leftNotesText, rightNotesText) {
         .map(parseNote)
         .filter(n => n);
 
-    if (notes.length === 0) {
-        return { left: '', right: '' };
-    }
+    if (notes.length === 0) return { left: '', right: '' };
 
-    // Sort by true pitch
     notes.sort((a, b) => a.pitch - b.pitch);
 
-    // If only one note, assign based on piano position
+    // Assign hand based on position on piano (Middle C as divider)
     if (notes.length === 1) {
         const single = notes[0];
-        const threshold = parseNote("C4").pitch; // Middle C as divider
-        if (single.pitch < threshold) {
-            return { left: single.note, right: '' };
-        } else {
-            return { left: '', right: single.note };
-        }
+        const threshold = parseNote("C4").pitch;
+        return single.pitch < threshold
+        ? { left: single.note, right: '' }
+        : { left: '', right: single.note };
     }
 
-
-    // Find the largest gap between consecutive notes
+    // Split by largest gap split
     let maxGap = -1;
     let splitIndex = Math.floor(notes.length / 2);
     for (let i = 0; i < notes.length - 1; i++) {
-        const gap = notes[i+1].pitch - notes[i].pitch;
+        const gap = notes[i + 1].pitch - notes[i].pitch;
         if (gap > maxGap) {
-            maxGap = gap;
-            splitIndex = i + 1;
+        maxGap = gap;
+        splitIndex = i + 1;
         }
     }
-
-    // Split at the largest gap
     const left = notes.slice(0, splitIndex).map(n => n.note).join('+');
     const right = notes.slice(splitIndex).map(n => n.note).join('+');
-
     return { left, right };
-}
-
-// Choose the delay to output at this index: prefer the longer run of underscores
-function chooseDelay(delayA, delayB) {
-    const a = delayA || '';
-    const b = delayB || '';
-    return a.length >= b.length ? a : b;
-}
-
-// For segments that are very close to each other but still have a small delay between them, 
-// they should be considered as one block anyway (removing the tiny delay between them)
-function mergeCloseSegments(segments, tolerance = 2) {
-    const merged = [];
-    for (let i = 0; i < segments.length; i++) {
-        const seg = segments[i];
-        if (seg.type === 'delay' && seg.text.length <= tolerance) {
-            // Merge with previous notes if possible
-            const prev = merged[merged.length - 1];
-            const next = segments[i + 1];
-            if (prev && prev.type === 'notes' && next && next.type === 'notes') {
-                // Combine notes into one segment
-                prev.text += '+' + next.text;
-                i++;
-                continue;
-            }
-        }
-        merged.push(seg);
-    }
-    return merged;
 }
 
 // Main function for sorting notes into proper hands
@@ -143,17 +142,17 @@ function resortNotes() {
     let leftBlock = document.getElementById("noteInputLeft").value || '';
     let rightBlock = document.getElementById("noteInputRight").value || '';
 
-    if (!/[A-Za-z]/.test(leftBlock)) {
-            leftBlock = "";
-    }
-    if (!/[A-Za-z]/.test(rightBlock)) {
-            rightBlock = "";
-    }
+    if (!/[A-Za-z]/.test(leftBlock)) leftBlock = "";
+    if (!/[A-Za-z]/.test(rightBlock)) rightBlock = "";
 
-    const tokensLeft = mergeCloseSegments(separateNotesAndDelays(leftBlock));
-    const tokensRight = mergeCloseSegments(separateNotesAndDelays(rightBlock));
+    // Build ordered segments and group only immediate pairs — no multi-chain collapsing
+    const leftOrdered = order(separateNotesAndDelays(leftBlock));
+    const rightOrdered = order(separateNotesAndDelays(rightBlock));
 
-    const [A, B] = alignSegments(tokensLeft, tokensRight);
+    const leftGrouped = groupCloseSegments(leftOrdered, 2);
+    const rightGrouped = groupCloseSegments(rightOrdered, 2);
+
+    const [A, B] = alignSegments(leftGrouped, rightGrouped);
 
     const outLeft = [];
     const outRight = [];
@@ -162,25 +161,25 @@ function resortNotes() {
         const a = A[i];
         const b = B[i];
 
-        if (a.type === 'delay' && b.type === 'delay') {
-        const delay = chooseDelay(a.text, b.text);
-        outLeft.push(delay);
-        outRight.push(delay);
-        } else if (a.type === 'notes' && b.type === 'notes') {
-        const { left, right } = splitNotes(a.text, b.text);
+        // Split notes into hands
+        const { left, right } = splitNotes(a.notesText, b.notesText);
         if (left) outLeft.push(left);
         if (right) outRight.push(right);
-        // If both empty, push nothing
-        } else {
-        const delay = chooseDelay(a.type === 'delay' ? a.text : '', b.type === 'delay' ? b.text : '');
-        outLeft.push(delay);
-        outRight.push(delay);
+
+        // Add delay
+        const delay =
+        (a.delayAfter && b.delayAfter)
+            ? (a.delayAfter.length >= b.delayAfter.length ? a.delayAfter : b.delayAfter)
+            : (a.delayAfter || b.delayAfter || '');
+        if (delay) {
+            outLeft.push(delay);
+            outRight.push(delay);
         }
     }
 
     const leftOut = outLeft.join('');
     const rightOut = outRight.join('');
 
-    document.getElementById("noteInputLeft").value = leftOut || '(empty)';
-    document.getElementById("noteInputRight").value = rightOut || '(empty)';
+    document.getElementById("noteInputLeft").value = leftOut || '';
+    document.getElementById("noteInputRight").value = rightOut || '';
 }
