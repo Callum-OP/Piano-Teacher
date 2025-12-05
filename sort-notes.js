@@ -109,6 +109,39 @@ function whiteKeyDistance(p1, p2) {
     return count;
 }
 
+// Balance each hand so that none are too long (over 8 keys wide)
+function balanceClusters(leftCluster, rightCluster) {
+    const HAND_LIMIT = 8;
+
+    // Measure span in white keys
+    const span = cluster => {
+        if (cluster.length < 2) return 0;
+        return whiteKeyDistance(cluster[0].pitch, cluster[cluster.length - 1].pitch);
+    };
+
+    let leftSpan = span(leftCluster);
+    let rightSpan = span(rightCluster);
+
+    // While left is too wide, move furthest notes to right
+    while (leftSpan > HAND_LIMIT) {
+        const donate = leftCluster.pop(); // Note on left that is most right
+        rightCluster.unshift(donate); // Move to right
+        leftSpan = span(leftCluster);
+        rightSpan = span(rightCluster);
+        if (rightSpan > HAND_LIMIT) break;
+    }
+    // While right is too wide, move furthest notes to left
+    while (rightSpan > HAND_LIMIT) {
+        const donate = rightCluster.shift(); // Note on right that is most left
+        leftCluster.push(donate); // Move to left
+        leftSpan = span(leftCluster);
+        rightSpan = span(rightCluster);
+        if (leftSpan > HAND_LIMIT) break;
+    }
+
+    return { leftCluster, rightCluster };
+}
+
 // Split combined notes into left/right
 function splitNotes(leftNotesText, rightNotesText) {
     const raw = (leftNotesText ? leftNotesText.trim() : '') +
@@ -157,10 +190,10 @@ function splitNotes(leftNotesText, rightNotesText) {
             gapIndex = i + 1;
         }
     }
+    // Balance each cluster
+    let { leftCluster, rightCluster } = balanceClusters(notes.slice(0, gapIndex), notes.slice(gapIndex));
 
     // If one side is a single note and the other is a cluster, keep the cluster intact
-    const leftCluster = notes.slice(0, gapIndex);
-    const rightCluster = notes.slice(gapIndex);
     if (leftCluster.length === 1 && rightCluster.length > 1) {
         return { left: leftCluster[0].note, right: rightCluster.map(n => n.note).join('+') };
     }
@@ -193,20 +226,48 @@ function resortNotes() {
     const outLeft = [];
     const outRight = [];
 
+    // Track last notes assigned
+    let lastLeft = [];
+    let lastRight = [];
+
+
     for (let i = 0; i < A.length; i++) {
         const a = A[i];
         const b = B[i];
 
+        let { left, right } = splitNotes(a.notesText, b.notesText);
+
+        // Reuse last hand assignment for repeated notes
+        const currentNotes = (a.notesText + (b.notesText ? '+' + b.notesText : ''))
+            .split('+').map(s => s.trim()).filter(Boolean);
+
+        currentNotes.forEach(n => {
+            if (lastLeft.includes(n)) {
+                left = (left ? left + '+' : '') + n;
+                right = right.split('+').filter(x => x && x !== n).join('+');
+            } else if (lastRight.includes(n)) {
+                right = (right ? right + '+' : '') + n;
+                left = left.split('+').filter(x => x && x !== n).join('+');
+            }
+        });
+
         // Split notes into hands
-        const { left, right } = splitNotes(a.notesText, b.notesText);
-        if (left) outLeft.push(left);
-        if (right) outRight.push(right);
+        if (left) {
+            outLeft.push(left);
+            lastLeft = left.split('+');
+            lastRight = [];
+        }
+        if (right) {
+            outRight.push(right);
+            lastRight = right.split('+');
+            lastLeft = [];
+        }
 
         // Add delay
         const delay =
-        (a.delayAfter && b.delayAfter)
-            ? (a.delayAfter.length >= b.delayAfter.length ? a.delayAfter : b.delayAfter)
-            : (a.delayAfter || b.delayAfter || '');
+            (a.delayAfter && b.delayAfter)
+                ? (a.delayAfter.length >= b.delayAfter.length ? a.delayAfter : b.delayAfter)
+                : (a.delayAfter || b.delayAfter || '');
         if (delay) {
             outLeft.push(delay);
             outRight.push(delay);
