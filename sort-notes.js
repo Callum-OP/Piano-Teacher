@@ -138,8 +138,8 @@ function splitNotes(leftNotesText, rightNotesText) {
     }
 
     // Keep clusters of notes together on same hand
-    const HAND_SPAN = 10;
-    const span = notes[notes.length - 1].pitch - notes[0].pitch;
+    const HAND_SPAN = 8;
+    const span = whiteKeyDistance(notes[0].pitch, notes[notes.length - 1].pitch);
     if (span <= HAND_SPAN) {
         const joined = notes.map(n => n.note).join('+');
         const C4 = parseNote("C4").pitch;
