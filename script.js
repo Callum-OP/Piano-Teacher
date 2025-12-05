@@ -39,7 +39,7 @@ function populateMusicSelect(list) {
     list.forEach((music, index) => {
         const option = document.createElement("option");
         option.value = index;
-        option.textContent = `${music.title} – ${music.composer}`;
+        option.textContent = `${music.title} – by ${music.composer}`;
         musicSelect.appendChild(option);
     });
     musicSelect.addEventListener("change", (e) => {
