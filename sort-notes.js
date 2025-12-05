@@ -94,6 +94,21 @@ function alignSegments(leftSegments, rightSegments) {
     return [outA, outB];
 }
 
+// Check if a note is for a white key
+function isWhiteKey(pitch) {
+    const offset = pitch % 12;
+    return [0,2,4,5,7,9,11].includes(offset);
+}
+
+// Count white keys
+function whiteKeyDistance(p1, p2) {
+    let count = 0;
+    for (let p = p1 + 1; p <= p2; p++) {
+        if (isWhiteKey(p)) count++;
+    }
+    return count;
+}
+
 // Split combined notes into left/right
 function splitNotes(leftNotesText, rightNotesText) {
     const raw = (leftNotesText ? leftNotesText.trim() : '') +
@@ -118,34 +133,45 @@ function splitNotes(leftNotesText, rightNotesText) {
         const single = notes[0];
         const threshold = parseNote("C4").pitch;
         return single.pitch < threshold
-        ? { left: single.note, right: '' }
-        : { left: '', right: single.note };
+            ? { left: single.note, right: '' }
+            : { left: '', right: single.note };
     }
 
-    // Split by largest gap
+    // Keep clusters of notes together on same hand
+    const HAND_SPAN = 10;
+    const span = notes[notes.length - 1].pitch - notes[0].pitch;
+    if (span <= HAND_SPAN) {
+        const joined = notes.map(n => n.note).join('+');
+        const C4 = parseNote("C4").pitch;
+        const centroid = notes.reduce((sum, n) => sum + n.pitch, 0) / notes.length;
+        return centroid < C4 ? { left: joined, right: '' } : { left: '', right: joined };
+    }
+
+    // Find largest gap
     let maxGap = -1;
     let gapIndex = Math.floor(notes.length / 2);
     for (let i = 0; i < notes.length - 1; i++) {
-        const gap = notes[i + 1].pitch - notes[i].pitch;
+        const gap = whiteKeyDistance(notes[i].pitch, notes[i+1].pitch);
         if (gap > maxGap) {
-        maxGap = gap;
-        gapIndex = i + 1;
+            maxGap = gap;
+            gapIndex = i + 1;
         }
     }
 
-    // Split by largest gap if more than 6 keys apart (including black keys), else split them evenly
-    let splitIndex;
-    if (maxGap > 10) {
-        splitIndex = gapIndex;
-    } else {
-        splitIndex = Math.floor(notes.length / 2);
+    // If one side is a single note and the other is a cluster, keep the cluster intact
+    const leftCluster = notes.slice(0, gapIndex);
+    const rightCluster = notes.slice(gapIndex);
+    if (leftCluster.length === 1 && rightCluster.length > 1) {
+        return { left: leftCluster[0].note, right: rightCluster.map(n => n.note).join('+') };
+    }
+    if (rightCluster.length === 1 && leftCluster.length > 1) {
+        return { left: leftCluster.map(n => n.note).join('+'), right: rightCluster[0].note };
     }
 
-    const left = notes.slice(0, splitIndex).map(n => n.note).join('+');
-    const right = notes.slice(splitIndex).map(n => n.note).join('+');
+    const left = leftCluster.map(n => n.note).join('+');
+    const right = rightCluster.map(n => n.note).join('+');
     return { left, right };
 }
-
 
 // Main function for sorting notes into proper hands
 function resortNotes() {
