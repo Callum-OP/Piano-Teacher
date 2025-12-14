@@ -1,7 +1,7 @@
 # Demo Video
 
+https://github.com/user-attachments/assets/e3545791-7b0c-4742-944d-777b0df4bf59
 
-https://github.com/user-attachments/assets/f39fad40-3f1e-4631-811e-6a548815874b
 
 # How to run
 Visit the site on https://callum-op.github.io/Piano-Teacher/ 
@@ -35,4 +35,5 @@ If the tempo is changed the highlight on the piano keys will remain the same.
 Older devices (10 years or more, expecially mobile will struggle to run the app as intended, either reduce lag or add an option to run the app in a simplified performance enhancing mode). Might be able to use canvas instead, which may give better performance.
 
 Resorting notes into left and right hands works when only one hand has the notes, but it starts to not work so well at sorting notes when both hands have notes, it seems like the right hand get ignored.
+
 Another issue with sorting is pressing the button again and again results in additional delays/underscores being added.
