@@ -481,22 +481,23 @@ function updateKeyNotes() {
     updatePiano();
 }
 
-// --- Wire up keys for manual play ---
-// Wire up the keys
+// --- Connect piano keys to allow for manual playing ---
 const piano = document.getElementById("piano");
 if (piano) {
     piano.querySelectorAll("[data-note]").forEach(key => {
-        const noteName = key.getAttribute("data-note");
         // Play a note
         const start = (e) => {
             e.preventDefault();
             key.classList.add("active");
+            const noteName = key.dataset.note;
             playNote("./sounds/" + noteName.toLowerCase() + ".ogg", noteName);
             highlightKey(noteName.toLowerCase(), 200, "Right");
         };
+
         // Stop a note
         const stop = () => {
             key.classList.remove("active");
+            const noteName = key.dataset.note;
             stopNote(noteName);
         };
         // Call function depending on event detected
