@@ -23,7 +23,7 @@ https://bitmidi.com/
 https://musescore.com/
 
 ## Features to consider
---- Delays ---
+--- Better Rests ---
 When playing several notes at once in autoplay the underscores are not considered seperate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another.
 
 --- Graphics ---
