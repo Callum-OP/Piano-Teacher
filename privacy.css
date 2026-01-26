@@ -1,0 +1,16 @@
+:root {
+    /* Colours */
+    --background: #08070d;
+    --text: #eef2f6;
+}
+html, body {
+    color-scheme: light dark;
+    min-height: 100%;
+    background-color: var(--background);
+    background-size: 140%;
+    background-repeat: no-repeat; 
+    background-position: top center;
+    background-blend-mode: screen;
+    color: var(--text) !important;
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
