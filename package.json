@@ -1,12 +1,29 @@
 {
-  "name": "piano-teacher",
+  "name": "piano-learner",
   "version": "1.0.0",
+  "description": "An interactive way to learn piano using a visual piano interface.",
+  "author": "Callum O'Prey callumoprey@gmail.com",
   "main": "main.js",
   "scripts": {
+    "build": "electron-builder --win appx",
     "test": "echo \"Error: no test specified\" && exit 1",
     "desktop": "electron ."
   },
   "devDependencies": {
-    "electron": "^33.0.0"
+    "electron": "^33.4.11"
+  },
+  "build": {
+    "appx": {
+      "identityName": "Callum-OP.PianoTeacherbyCallum-OP",
+      "publisher": "CN=08FEADE4-7024-438F-99AB-86942FD832C3",
+      "publisherDisplayName": "Callum-OP",
+      "displayName": "Piano Teacher by Callum-OP",
+      "applicationId": "PianoTeacherbyCallumOP",
+      "backgroundColor": "#F0E4D0"
+    },
+    "win": {
+      "target": "appx",
+      "icon": "build/icon.ico"
+    }
   }
 }
