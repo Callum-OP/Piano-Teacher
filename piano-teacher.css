@@ -381,11 +381,11 @@ footer {
         /* Colours */
         --background: #08070d;
         --text: #eef2f6;
-        --accent: linear-gradient( #c88e11, #c15628);
-        --accent-2: linear-gradient( #c58e18, #cc6133);
-        --accent-3: #b06f14;
-        --highlight: linear-gradient( #bd8712, #cb5c2d);
-        --highlight-2: #ad6b10;
+        --accent: linear-gradient( #d39714, #cb5b2a);
+        --accent-2: linear-gradient( #cc9319, #d46637);
+        --accent-3: #be7817;
+        --highlight: linear-gradient( #c68e13, #cd5e2e);
+        --highlight-2: #b67212;
         --highlightAlt:linear-gradient( #52949e, #2c5482);
         --highlightAlt-2: #3d7d98;
         --card: linear-gradient( rgb(7, 7, 21) 60%, rgb(7, 12, 23) 100% );
