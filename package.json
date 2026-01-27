@@ -9,6 +9,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "desktop": "electron ."
   },
+  "dependencies": {
+    "@electron/remote": "^2.1.2"
+  },
   "devDependencies": {
     "electron": "^33.4.11"
   },
@@ -21,6 +24,13 @@
       "applicationId": "PianoTeacherbyCallumOP",
       "backgroundColor": "#F0E4D0"
     },
+    "files": [
+      "**/*", 
+      "!dist/*",
+      "!node_modules/*"
+    ],
+    "asar": true,
+    "asarUnpack": ["**/sounds/*"],
     "win": {
       "target": "appx",
       "icon": "build/icon.ico"

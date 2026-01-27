@@ -1,5 +1,10 @@
 // This is the main script for the piano, buttons and autoplay functionality
 
+// Only show experimental buttons in Development mode
+if (window.env.isPackaged) {
+    document.getElementById('experimental-btn').style.display = 'none';
+}
+
 // --- Audio setup ---
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeAudio = {};
@@ -18,7 +23,7 @@ async function preloadNotes() {
 
     // Fetch and decode each note
     for (const note of noteNames) {
-        const filePath = `./sounds/${note.toLowerCase()}.ogg`;
+        const filePath = new URL(`sounds/${note.toLowerCase()}.ogg`, window.location.href).href;
         const res = await fetch(filePath);
         const buf = await res.arrayBuffer();
         audioBuffers[note.toLowerCase()] = await audioContext.decodeAudioData(buf);
