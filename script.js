@@ -1,7 +1,8 @@
 // This is the main script for the piano, buttons and autoplay functionality
 
-// Only show experimental buttons in Development mode
-if (window.env.isPackaged) {
+// Only show experimental buttons in development or web mode
+const isPackaged = window.env ? window.env.isPackaged : false;
+if (isPackaged) {
     document.getElementById('experimental-btn').style.display = 'none';
 }
 
