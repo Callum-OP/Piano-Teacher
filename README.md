@@ -52,5 +52,4 @@ If the user switches windows or tabs the audio and animation will stop playing. 
 Older devices (10 years or more, expecially mobile will struggle to run the app as intended, either reduce lag or add an option to run the app in a simplified performance enhancing mode). Might be able to use canvas instead, which may give better performance.
 
 --- Sort Notes Feature ---
-Resorting notes into left and right hands works when only one hand has the notes, but it starts to not work so well at sorting notes when both hands have notes, it seems like the right hand get ignored.
-Another issue with sorting is pressing the button again and again results in additional delays/underscores being added.
+Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function.
