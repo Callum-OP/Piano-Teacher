@@ -3,13 +3,15 @@
 https://github.com/user-attachments/assets/e3545791-7b0c-4742-944d-777b0df4bf59
 
 
-# How to run
-Visit the site on https://callum-op.github.io/Piano-Teacher/ 
-alternatively use the version on itch.io on https://callum-op.itch.io/piano-teacher
+# Versions
+The Microsoft Store desktop app version: https://apps.microsoft.com/detail/9ngq60108m5s?hl=en-GB&gl=GB
+The Itch.io web app version: https://callum-op.itch.io/piano-teacher
+The development web app version: https://callum-op.github.io/Piano-Teacher/ 
 
+# How to run
 To run locally on localhost:3000 you can use a command like: python -m http.server 3000
 Alternatively to run locally as a desktop app use: npx electron-builder --win appx
-Assuming you have node and electron installed: npm install electron
+Assuming you have node, electron and the other dependencies in package.json installed, use: npm install
 
 If you have a touchscreen on a large screened device you can play the piano on screen.
 There is an autoplay feature that will visually show how to play sheet music.
