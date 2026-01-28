@@ -1,5 +1,8 @@
 // This script is responsible for translating MIDI files into the expected input for the app
 
+// --- Toggle auto sort ---
+const toggleSort = document.getElementById("auto-sort");
+
 // Translate midi notes to the expected note name (A1, Fs3, etc)
 function midiToNoteName(midi) {
     const names = ["C","Cs","D","Ds","E","F","Fs","G","Gs","A","As","B"];
@@ -148,8 +151,18 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
         }
     }
     // Add the output to the note input area in html
-    document.getElementById("noteInputRight").value = rightStr;
-    document.getElementById("noteInputLeft").value  = leftStr;
+    if (toggleSort && toggleSort.checked) {
+        // Merge both hands into right hand input only
+        document.getElementById("noteInputRight").value = rightStr + leftStr;
+        document.getElementById("noteInputLeft").value  = "";
+        // Call resortNotes() to split them properly
+        if (typeof resortNotes === 'function') {
+            resortNotes();
+        }
+    } else {
+        document.getElementById("noteInputRight").value = rightStr;
+        document.getElementById("noteInputLeft").value  = leftStr;
+    }
     // Reset music select dropdown box
     const musicSelect = document.getElementById("musicSelect");
     if (musicSelect) {

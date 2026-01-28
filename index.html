@@ -314,9 +314,13 @@
             <div class="row g-3 align-items-center">
                 <!-- Checkbox for piano note labels -->
                 <div class="col-12 col-md-4">
-                    <div class="form-check form-switch">
+                    <div class="col form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="toggle-labels" checked>
                         <label class="form-check-label" for="toggle-labels">Show note labels</label>
+                    </div>
+                    <div class="col form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="auto-sort" checked>
+                        <label class="form-check-label" for="auto-sort">Auto sort MIDI notes</label>
                     </div>
                 </div>
                 <!-- Additional info -->
@@ -357,7 +361,6 @@
                 </div>
                 <div class="col-12 col-lg-6 mt-3 d-flex gap-2 justify-content-end"> <!-- Set to right -->
                     <button class="btn btn-primary" id="play" onclick="autoPlay(); location.href='#autoplay-section';">Start autoplay</button>
-                    <button id="experimental-btn" class="btn btn-primary" onclick="resortNotes()">Sort Notes (Experimental)</button>
                     <button class="btn btn-outline-primary" id="clear" onclick="clearAutoPlay();">Clear</button>
                 </div>
             </div>
