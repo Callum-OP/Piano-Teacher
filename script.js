@@ -1,10 +1,63 @@
 // This is the main script for the piano, buttons and autoplay functionality
 
-// --- Audio setup ---
+// Audio setup
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeAudio = {};
 const audioBuffers = {};
 
+// Preset music
+let musicLibrary = [];
+const musicSelect = document.getElementById("musicSelect");
+
+// Timeline set up
+let totalDuration = 0;
+let isScrubbingTimeline = false;
+let rewindInterval, forwardInterval;
+
+// Octave set up
+let baseOctave = 4;
+let octaveChange = 0;
+const MAXOCTAVE = 7;
+const MINOCTAVE = 1;
+
+// Range inputs
+const timeline = document.getElementById("timeline");
+const tempo = document.getElementById("tempo");
+const tempoVal = document.getElementById("tempoVal");
+
+// Falling notes
+let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;
+let activeNotes = [];
+let scheduledNotes = []; // Full schedule for lookahead spawning
+const LOOKAHEAD = 3000; // Window to spawn upcoming notes
+const previewLayer = document.getElementById("note-overlay");
+
+// Toggle inputs
+const toggleLabels = document.getElementById("toggle-labels");
+
+// Countdown
+let countdownSeconds = 0;
+let countdownInterval = null;
+let countdownPaused = false;
+
+// Extend piano
+const toggleExtended = document.getElementById('toggleExtended');
+const keysGroup = document.getElementById('keys');
+const pianoCard = document.querySelector('.piano-card');
+
+// Widths of ranges in px
+const WIDTHSTANDARD = 1168;  // C2–B5
+const WIDTHEXTENDED = 2047; // C1–B7
+const OFFSETC2 = 210;
+
+// Piano control inputs
+let activePiano = document.getElementById("piano-standard");
+let octaveControls = document.getElementById("octave-controls");
+
+// Wakelock
+let wakeLock = null;
+
+// Preload notes so they are ready to go
 async function preloadNotes() {
     const noteNames = [];
     const baseNotes = ["C","Cs","D","Ds","E","F","Fs","G","Gs","A","As","B"];
@@ -28,8 +81,6 @@ preloadNotes();
 
 // --- Music library select ---
 // Set up default music to choose from
-let musicLibrary = [];
-const musicSelect = document.getElementById("musicSelect");
 fetch('./music.json')
     .then(r => r.json())
     .then(data => { musicLibrary = data; populateMusicSelect(musicLibrary); })
@@ -136,11 +187,6 @@ function highlightKey(noteName, duration, hand) {
 }
 
 // --- Falling note animation ---
-let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;
-let activeNotes = [];
-let scheduledNotes = []; // Full schedule for lookahead spawning
-const LOOKAHEAD = 3000; // Window to spawn upcoming notes
-const previewLayer = document.getElementById("note-overlay");
 // Get html items for piano keys
 function getRects(noteName) {
     const key = getKeyElement(noteName);
@@ -232,6 +278,8 @@ function tick(ts) {
 
     if (!isPaused) globalTime += delta * tempoScale;
 
+    updateTimelineDisplay(); // Update the timeline bar
+
     // Lookahead and create DOM elements only for upcoming notes
     for (let i = 0; i < scheduledNotes.length; i++) {
         const sn = scheduledNotes[i];
@@ -317,17 +365,21 @@ function autoPlay() {
     if (audioContext.state === "suspended") audioContext.resume();
     activeNotes = [];
     scheduledNotes = [];
+    
     // Play sheet music
     playNotesFromInput(document.getElementById("noteInputLeft").value, "Left");
     playNotesFromInput(document.getElementById("noteInputRight").value, "Right");
+
+    // Set up timeline
+    totalDuration = calculateTotalDuration();
+    updateTimelineDisplay();
+
     // Change pause button symbol
     const btnIcon = document.querySelector("#pause i");
     btnIcon.classList.remove("bi-play-fill");
     btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
 }
 // Tempo slider
-const tempo = document.getElementById("tempo");
-const tempoVal = document.getElementById("tempoVal");
 if (tempo && tempoVal) {
   tempo.oninput = () => {
     setTempo(tempo.value);
@@ -391,7 +443,6 @@ function fastForward() {
         }
     }
 }
-let rewindInterval, forwardInterval;
 function startRewind() {
     rewindInterval = setInterval(() => rewind(), 200);
 }
@@ -404,10 +455,6 @@ function startForward() {
 function stopForward() {
     clearInterval(forwardInterval);
 }
-let baseOctave = 4;
-let octaveChange = 0;
-const MAXOCTAVE = 7;
-const MINOCTAVE = 1;
 function increaseOctave() {
     // Grab all standard piano labels
     const labels = document.querySelectorAll("#piano-standard .c");
@@ -510,7 +557,6 @@ if (piano) {
 }
 
 // --- Toggle labels on/off ---
-const toggleLabels = document.getElementById("toggle-labels");
 // Toggle button for labels on the piano
 if (toggleLabels) {
   toggleLabels.addEventListener("change", function () {
@@ -552,9 +598,6 @@ function clearAutoPlay() {
 }
 
 // --- Countdown overlay before autoplay ---
-let countdownSeconds = 0;
-let countdownInterval = null;
-let countdownPaused = false;
 // Count down from 5 
 function startCountdown() {
     const countdown = document.getElementById("countdown");
@@ -612,37 +655,28 @@ function checkIfFinished() {
     }
 }
 
-// --- Update tempo live ---
-function updateTempoFill() {
-    const min = parseFloat(tempo.min);
-    const max = parseFloat(tempo.max);
-    const val = parseFloat(tempo.value);
+// --- Update ranges live, such as tempo or timeline ---
+function updateRangeFill(range) {
+    const min = parseFloat(range.min);
+    const max = parseFloat(range.max);
+    const val = parseFloat(range.value);
 
     const percent = ((val - min) / (max - min)) * 100;
 
-    tempo.style.background = `linear-gradient(to right,
+    range.style.background = `linear-gradient(to right,
         var(--accent-3) 0%,
         var(--accent-3) ${percent}%,
         #fff ${percent}%,
         #fff 100%)`;
 }
-tempo.addEventListener("input", updateTempoFill);
-updateTempoFill();
+tempo.addEventListener("input", (e) => {
+    setTempo(tempo.value);
+    tempoVal.textContent = `${tempo.value}x`;
+    updateRangeFill(tempo);
+});
+updateRangeFill(tempo);
 
 // --- Extend piano ---
-const toggleExtended = document.getElementById('toggleExtended');
-const keysGroup = document.getElementById('keys');
-const pianoCard = document.querySelector('.piano-card');
-
-// Widths of ranges in px
-const WIDTHSTANDARD = 1168;  // C2–B5
-const WIDTHEXTENDED = 2047; // C1–B7
-
-const OFFSETC2 = 210;
-
-// Toggle visibility of extended-only elements
-let activePiano = document.getElementById("piano-standard");
-let octaveControls = document.getElementById("octave-controls");
 // Change which piano is showing depending on extended toggle button
 function showExtendedPiano(isExtended) {
     document.getElementById("piano-standard").style.display = isExtended ? "none" : "inline";
@@ -672,7 +706,96 @@ function updatePiano() {
 // Initial setup
 document.addEventListener('DOMContentLoaded', () => {
     updatePiano();
+    
+    // Handle timeline events
+    if (timeline) {
+        updateRangeFill(timeline);
+
+        timeline.addEventListener("mousedown", () => {
+            isScrubbingTimeline = true;
+        });
+        
+        timeline.addEventListener("input", (e) => {
+            updateRangeFill(e.target);
+
+            if (isScrubbingTimeline) {
+                const newTime = (e.target.value / 100) * totalDuration;
+                globalTime = newTime;
+                
+                // Reset audio triggers and clean up notes
+                activeNotes.forEach(n => {
+                    // Mute audio
+                    Object.values(activeAudio).forEach(({ gain }) => {
+                        gain.gain.value = 0;
+                    });
+                    const elapsed = globalTime - n.scheduledStart;
+                    if (elapsed < 0 || elapsed >= n.duration) {
+                        if (n.el) n.el.remove();
+                    } else {
+                        n.audioTriggered = false;
+                    }
+                });
+                
+                // Clear falling notes
+                const allNoteDivs = previewLayer.querySelectorAll('.falling-note');
+                allNoteDivs.forEach(div => div.remove());
+
+                // Clear active notes
+                activeNotes.length = 0;
+
+                // Reset ALL scheduled notes based on new timeline position
+                scheduledNotes.forEach(sn => {
+                    const elapsed = globalTime - sn.scheduledStart;
+                    
+                    // If note is in the past
+                    if (elapsed >= sn.duration) {
+                        // Mark as spawned and remove if exists
+                        if (sn.el && document.body.contains(sn.el)) {
+                            sn.el.remove();
+                        }
+                        sn.spawned = true;
+                        sn.audioTriggered = true;
+                    }
+                    // If note is in the future or currently playing
+                    else if (elapsed < sn.duration) {
+                        // Reset spawn flag so it can play again
+                        sn.spawned = false;
+                        sn.audioTriggered = false;
+                        sn.el = null;
+                        
+                        // If it should be visible now, add to active notes
+                        if (elapsed >= 0 && elapsed < sn.duration) {
+                            const existing = activeNotes.find(n => n === sn);
+                            if (!existing) {
+                                activeNotes.push(sn);
+                            }
+                        }
+                    }
+                })
+                updateTimelineDisplay();
+            }
+        });
+        
+        timeline.addEventListener("mouseup", () => {
+            isScrubbingTimeline = false;
+            // Ensure animation loop is running
+            if (!lastFrameTime) {
+                lastFrameTime = null;
+                requestAnimationFrame(tick);
+            }
+        });
+        
+        timeline.addEventListener("mouseleave", () => {
+            isScrubbingTimeline = false;
+            // Ensure animation loop is running
+            if (!lastFrameTime) {
+                lastFrameTime = null;
+                requestAnimationFrame(tick);
+            }
+        });
+    }
 });
+
 // Toggle handler
 toggleExtended.addEventListener('change', () => {
     updatePiano();
@@ -706,7 +829,6 @@ function updateNoteTargets() {
 }
 
 // --- Keep device screen from entering sleep mode while piano is running ---
-let wakeLock = null;
 async function enableWakeLock() {
   try {
     wakeLock = await navigator.wakeLock.request("screen");
@@ -729,3 +851,36 @@ document.body.addEventListener("click", () => {
         });
     }
 }, { once: true });
+
+// --- Timeline bar feature ---
+// Calculate total duration
+function calculateTotalDuration() {
+    if (scheduledNotes.length === 0) return 0;
+    const lastNote = scheduledNotes[scheduledNotes.length - 1];
+    return lastNote.scheduledStart + lastNote.duration;
+}
+
+// Format time
+function formatTime(ms) {
+    const seconds = Math.floor(ms / 1000);
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Update timeline display
+function updateTimelineDisplay() {
+    const timeline = document.getElementById("timeline");
+    const currentTimeEl = document.getElementById("currentTime");
+    const totalTimeEl = document.getElementById("totalTime");
+    
+    if (!timeline || !currentTimeEl || !totalTimeEl) return;
+    
+    if (!isScrubbingTimeline && totalDuration > 0) {
+        timeline.value = (globalTime / totalDuration) * 100;
+        updateRangeFill(timeline);
+    }
+    
+    currentTimeEl.textContent = formatTime(globalTime);
+    totalTimeEl.textContent = formatTime(totalDuration);
+}

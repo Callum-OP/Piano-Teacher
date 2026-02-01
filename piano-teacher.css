@@ -171,7 +171,7 @@ html, body {
     appearance: none;
     height: 6px;
     border-radius: 3px;
-    background: var(accent-3); /* Will be overridden by JS */
+    background: var(--accent-3); /* Will be overridden by JS */
     outline: none;
 }
 /* Thumb */
@@ -186,6 +186,33 @@ html, body {
     margin-top: -1px;
 }
 #tempo::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+}
+#timeline {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    width: 500px;
+    border-radius: 3px;
+    background: var(--accent-3); /* Will be overridden by JS */
+    outline: none;
+}
+/* Thumb */
+#timeline::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+    margin-top: -1px;
+}
+#timeline::-moz-range-thumb {
     width: 16px;
     height: 16px;
     border-radius: 50%;

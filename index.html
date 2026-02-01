@@ -295,7 +295,12 @@
                 </div>
                 <!-- Center (under play) -->
                 <div class="transport text-center">
-
+                    <div class="timeline-container">
+                        <input type="range" id="timeline" min="0" max="100" value="0" step="0.1">
+                        <div class="timeline-time text-light">
+                            <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+                        </div>
+                    </div>
                 </div>
                 <!-- Right (volume) -->
                 <div class="volume-control d-flex align-items-center justify-content-end gap-3">
