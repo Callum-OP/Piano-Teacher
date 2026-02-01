@@ -276,7 +276,15 @@ function tick(ts) {
     const delta = ts - lastFrameTime;
     lastFrameTime = ts;
 
-    if (!isPaused) globalTime += delta * tempoScale;
+    if (!isPaused) {
+        globalTime += delta * tempoScale;
+
+        // Stop updating if reached the end of music piece
+        if (globalTime >= totalDuration && totalDuration > 0) {
+            globalTime = totalDuration;
+            isPaused = true; // Stop timeline from continuing
+        }
+    }
 
     updateTimelineDisplay(); // Update the timeline bar
 
