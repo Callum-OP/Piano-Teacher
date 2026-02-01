@@ -302,6 +302,7 @@ function tick(ts) {
             activeNotes.push(sn);
         }
     }
+    const updates = [];
     for (let i = 0; i < activeNotes.length; i++) {
         const n = activeNotes[i];
         const elapsed = globalTime - n.scheduledStart;
@@ -321,16 +322,25 @@ function tick(ts) {
         }
         // Remove note when unneeded
         if (elapsed >= n.duration) {
-            n.el.remove();
+            if (n.el) n.el.remove(); // Null check
             activeNotes.splice(i, 1);
-            i--;
             continue;
         }
-        // Update position
-        const progress = elapsed / n.duration;
-        const y = n.startTop + (n.targetTop - n.startTop) * progress;
-        n.el.style.top = y + "px";
+        
+        // Get position updates
+        if (n.el) {
+            const progress = elapsed / n.duration;
+            const y = n.startTop + (n.targetTop - n.startTop) * progress;
+            updates.push({ el: n.el, y });
+        }
     }
+
+    // Update positions
+    updates.forEach(({ el, y }) => {
+        if (el) { // Null check
+            el.style.top = y + "px";
+        }
+    });
 
     requestAnimationFrame(tick);
     checkIfFinished();
@@ -354,6 +364,7 @@ function togglePause() {
 }
 // Change tempo, making autoplay quicker or slower
 function setTempo(scale) { tempoScale = Number(scale); }
+
 // Stop audio and any falling notes as well as countdown and reset hero
 function stopAll() {
     disableWakeLock(); // No longer need to keep screen open
@@ -364,7 +375,20 @@ function stopAll() {
     resetCountdown();
     const hero = document.querySelector(".hero");
     hero.classList.remove("hidden");
+
+    // Hide timeline
+    const timelineContainer = document.querySelector(".timeline-container");
+    if (timelineContainer) timelineContainer.style.display = "none";
+    
+    // Reset timeline values
+    const timeline = document.getElementById("timeline");
+    if (timeline) {
+        timeline.value = 0;
+        updateRangeFill(timeline);
+    }
+    updateTimelineDisplay();
 }
+
 // Begin autoplay
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
@@ -381,12 +405,17 @@ function autoPlay() {
     // Set up timeline
     totalDuration = calculateTotalDuration();
     updateTimelineDisplay();
+    
+    // Show timeline
+    const timelineContainer = document.querySelector(".timeline-container");
+    if (timelineContainer) timelineContainer.style.display = "block";
 
     // Change pause button symbol
     const btnIcon = document.querySelector("#pause i");
     btnIcon.classList.remove("bi-play-fill");
     btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
 }
+
 // Tempo slider
 if (tempo && tempoVal) {
   tempo.oninput = () => {
@@ -603,6 +632,18 @@ function clearAutoPlay() {
     // Reset countdown
     const countdown = document.getElementById("countdown");
     if (countdown) countdown.style.display = "none";
+
+    // Hide timeline
+    const timelineContainer = document.querySelector(".timeline-container");
+    if (timelineContainer) timelineContainer.style.display = "none";
+    
+    // Reset timeline values
+    const timeline = document.getElementById("timeline");
+    if (timeline) {
+        timeline.value = 0;
+        updateRangeFill(timeline);
+    }
+    updateTimelineDisplay();
 }
 
 // --- Countdown overlay before autoplay ---
@@ -822,6 +863,7 @@ window.addEventListener('resize', () => {
 // Calculate width for all active notes based on current key rects
 function updateNotePositions() {
     activeNotes.forEach(n => {
+        if (!n.el) return; // Null check
         const rects = getRects(n.noteName);
         if (!rects) return;
         const { keyRect, previewRect } = rects;
@@ -832,6 +874,7 @@ function updateNotePositions() {
 // Calculate targetTop after layout changes
 function updateNoteTargets() {
     activeNotes.forEach(n => {
+        if (!n.el) return; // Null check
         n.targetTop = calcTargetTop(n.noteName);
     });
 }

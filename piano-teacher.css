@@ -219,6 +219,11 @@ html, body {
     background: var(--accent-2);
     cursor: pointer;
 }
+.timeline-container {
+    margin: 1rem 0;
+    width: 100%;
+    display: none; /* Hidden by default */
+}
 
 /* Countdown (autoplay) */
 .countdown-wrap {
