@@ -825,6 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
+        // Computer mouse
         timeline.addEventListener("mouseup", () => {
             isScrubbingTimeline = false;
             // Ensure animation loop is running
@@ -842,6 +843,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 requestAnimationFrame(tick);
             }
         });
+
+        // Touch screen
+        timeline.addEventListener("touchend", () => {
+            isScrubbingTimeline = false;
+            // Ensure animation loop is running
+            if (!lastFrameTime) {
+                lastFrameTime = null;
+                requestAnimationFrame(tick);
+            }
+        }, { passive: true });
+        
+        timeline.addEventListener("touchcancel", () => {
+            isScrubbingTimeline = false;
+            // Ensure animation loop is running
+            if (!lastFrameTime) {
+                lastFrameTime = null;
+                requestAnimationFrame(tick);
+            }
+        }, { passive: true });
     }
 });
 
