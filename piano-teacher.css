@@ -200,6 +200,7 @@ html, body {
     border-radius: 3px;
     background: var(--accent-3); /* Will be overridden by JS */
     outline: none;
+    touch-action: none
 }
 /* Thumb */
 #timeline::-webkit-slider-thumb {

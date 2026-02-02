@@ -760,9 +760,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (timeline) {
         updateRangeFill(timeline);
 
+        // Computer mouse
         timeline.addEventListener("mousedown", () => {
             isScrubbingTimeline = true;
         });
+
+        // Touch screen
+        timeline.addEventListener("touchstart", (e) => {
+            if (scheduledNotes.length === 0) return;
+            isScrubbingTimeline = true;
+            muteAllAudio();
+        }, { passive: true });
         
         timeline.addEventListener("input", (e) => {
             updateRangeFill(e.target);
