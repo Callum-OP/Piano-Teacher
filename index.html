@@ -246,11 +246,9 @@
             <!-- Row 1 -->
             <div class="d-grid align-items-center" style="grid-template-columns: 1fr auto 1fr; margin-top: 0px; margin-bottom: 0px;">
                 <!-- Left (tempo) -->
-                <div class="tempo-left text-start">
-                    <label class="text-light">
-                        Tempo
-                        <input id="tempo" type="range" min="0" max="2" step="0.1" value="1">
-                    </label>
+                <div class="tempo-left text-start d-flex align-items-center gap-3">
+                    <label class="text-light mb-0">Tempo</label>
+                    <input class="range" id="tempo" type="range" min="0" max="2" step="0.1" value="1">
                     <span class="text-light" id="tempoVal">1x</span>
                 </div>
 
@@ -266,11 +264,34 @@
                     <button class="btn btn-outline-light mx-2" id="forward" onclick="fastForward();"><i class="bi bi-skip-forward-fill"></i></button>
                 </div>
 
+                <!-- Right (volume) -->
+                <div class="volume-control d-flex align-items-center justify-content-end gap-3">
+                    <i class="text-light bi bi-volume-up"></i>
+                    <input class="range" type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
+                </div>
+            </div>
+            <!-- Row 2 -->
+            <div class="d-grid align-items-center" style="grid-template-columns: 1fr auto 1fr; margin-top: 0px; margin-bottom: 0px;">
+                <!-- Left (under tempo) -->
+                <div class="tempo-left">
+                
+                </div>
+
+                <!-- Center (timeline) -->
+                <div class="transport text-center">
+                    <div class="timeline-container">
+                        <input type="range" id="timeline" min="0" max="100" value="0" step="0.1">
+                        <div class="timeline-time text-light">
+                            <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Right (octave + extend) -->
-                <div class="d-flex align-items-center justify-content-end gap-3">
+                <div class="extend-ocatve d-flex align-items-center justify-content-end gap-3">
                     <!-- Octave controls -->
                     <div id="octave-controls" class="transport d-flex align-items-center gap-2">
-                        <span class="text-light">Octave</span>
+                        <i class="bi bi-music-note-beamed text-light"></i>
                         <button class="btn btn-outline-light" id="decreaseOctave" onclick="decreaseOctave()">
                             <i class="bi bi-dash"></i>
                         </button>
@@ -285,27 +306,6 @@
                         <input class="form-check-input" type="checkbox" id="toggleExtended">
                         <label class="form-check-label mb-0" for="toggleExtended">Extend</label>
                     </div>
-                </div>
-            </div>
-            <!-- Row 2 -->
-            <div class="d-grid align-items-center" style="grid-template-columns: 1fr auto 1fr; margin-top: 0px; margin-bottom: 0px;">
-                <!-- Left (under tempo) -->
-                <div class="tempo-left text-start">
-                    
-                </div>
-                <!-- Center (under play) -->
-                <div class="transport text-center">
-                    <div class="timeline-container">
-                        <input type="range" id="timeline" min="0" max="100" value="0" step="0.1">
-                        <div class="timeline-time text-light">
-                            <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Right (volume) -->
-                <div class="volume-control d-flex align-items-center justify-content-end gap-3">
-                    <i class="text-light bi bi-volume-up"></i>
-                    <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5">
                 </div>
             </div>
         </div>

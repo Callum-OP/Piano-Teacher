@@ -41,7 +41,6 @@ Saving entered music notes into music.json? Maybe make it downloadable and then 
 ## Issues
 --- Timeline bar ---
 On mobile the css is a bit wide.
-At the end of hungarian dance the last two notes are stuck in place, perhaps the timeline pauser ends too suddenly?
 
 --- Dark mode ---
 The colours and layout on dark mode on some mobile browsers does not look right compared to the intended look.

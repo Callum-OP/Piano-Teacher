@@ -24,6 +24,7 @@ const MINOCTAVE = 1;
 const timeline = document.getElementById("timeline");
 const tempo = document.getElementById("tempo");
 const tempoVal = document.getElementById("tempoVal");
+const volume = document.getElementById("volume");
 
 // Falling notes
 let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;
@@ -724,6 +725,14 @@ tempo.addEventListener("input", (e) => {
     updateRangeFill(tempo);
 });
 updateRangeFill(tempo);
+// Volume slider
+if (volume) {
+    volume.addEventListener("input", (e) => {
+        updateRangeFill(volume);
+    });
+    updateRangeFill(volume); // Initial fill on page load
+}
+
 
 // --- Extend piano ---
 // Change which piano is showing depending on extended toggle button

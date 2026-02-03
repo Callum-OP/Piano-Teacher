@@ -163,10 +163,33 @@ html, body {
 }
 .volume-control i {
     font-size: 1.5rem;
-    line-height: 1;
     padding: 0;
 }
-#tempo {
+.extend-ocatve {
+    padding: 0;
+    margin: 0;
+    gap: 0.15rem !important;  /* Reduce gap between elements */
+}
+#octave-controls {
+    padding: 0;
+    margin: 0;
+}
+#octave-controls i {
+    font-size: 1.5rem;
+    padding: 0;
+    margin: 0;
+}
+.bi-music-note-beamed  {
+    font-size: 1rem;
+}
+#octave-controls {
+    gap: 0.15rem !important;  /* Reduce gap between elements */
+}
+#octave-controls .btn {
+    padding: 0.25rem 0.5rem;
+    min-width: 12px;
+}
+.range {
     -webkit-appearance: none;
     appearance: none;
     height: 6px;
@@ -175,7 +198,7 @@ html, body {
     outline: none;
 }
 /* Thumb */
-#tempo::-webkit-slider-thumb {
+.range::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 16px;
@@ -185,7 +208,7 @@ html, body {
     cursor: pointer;
     margin-top: -1px;
 }
-#tempo::-moz-range-thumb {
+.range::-moz-range-thumb {
     width: 16px;
     height: 16px;
     border-radius: 50%;
@@ -193,10 +216,14 @@ html, body {
     cursor: pointer;
 }
 #timeline {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
     -webkit-appearance: none;
     appearance: none;
     height: 6px;
-    width: 500px;
+    width: 90vw;
+    max-width: 500px;
     border-radius: 3px;
     background: var(--accent-3); /* Will be overridden by JS */
     outline: none;
@@ -204,6 +231,8 @@ html, body {
 }
 /* Thumb */
 #timeline::-webkit-slider-thumb {
+    margin-bottom: 0px;
+    padding: 0px;
     -webkit-appearance: none;
     appearance: none;
     width: 16px;
@@ -214,6 +243,9 @@ html, body {
     margin-top: -1px;
 }
 #timeline::-moz-range-thumb {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
     width: 16px;
     height: 16px;
     border-radius: 50%;
@@ -221,9 +253,16 @@ html, body {
     cursor: pointer;
 }
 .timeline-container {
+    margin-top: -1px;
+    margin-bottom: 0px;
+    padding: 0px;
     margin: 1rem 0;
     width: 100%;
     display: none; /* Hidden by default */
+}
+#currentTime {
+    margin-bottom: 0px;
+    padding: 0px;
 }
 
 /* Countdown (autoplay) */
@@ -395,6 +434,21 @@ footer {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+    }
+    #timeline {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        padding-right: 15px;
+        margin-right: 5px;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 6px;
+        width: 90vw;
+        max-width: 200px;
+        border-radius: 3px;
+        background: var(--accent-3); /* Will be overridden by JS */
+        outline: none;
+        touch-action: none
     }
 }
 
