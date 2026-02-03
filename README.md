@@ -39,9 +39,6 @@ Customisation? Such as dark mode, text size and colour theme selection.
 Saving entered music notes into music.json? Maybe make it downloadable and then can be entered later to access saved music pieces in the preset list.
 
 ## Issues
---- Timeline bar ---
-On mobile the css is a bit wide.
-
 --- Dark mode ---
 The colours and layout on dark mode on some mobile browsers does not look right compared to the intended look.
 
@@ -49,7 +46,10 @@ The colours and layout on dark mode on some mobile browsers does not look right 
 If the user switches windows or tabs the audio and animation will stop playing. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab)
 
 --- Performance ---
-Older devices (10 years or more, expecially mobile will struggle to run the app as intended, either reduce lag or add an option to run the app in a simplified performance enhancing mode). Might be able to use canvas instead, which may give better performance.
+Older devices (10 years or more, will struggle to run the app as intended).
+Add an option to run the app in a simplified performance enhancing mode (Removing the fancy visuals and focusing on running the app at the bare minimum requirements).
+Might be able to use canvas?, could give better performance.
+Look for any chance to optimise, focusing on tick() animation loop in JS, DOM manipulations (creating/removing note divs) and Audio processing.
 
 --- Sort Notes Feature ---
 Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function.
