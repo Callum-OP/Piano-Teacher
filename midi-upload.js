@@ -131,38 +131,51 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
         const t0 = timeline[i], t1 = timeline[i+1];
         const sliceDur = t1 - t0;
 
-        // Notes that start at this slice
-        const rightNew = allNotes.filter(n => n.hand==="right" && n.start === t0);
-        const leftNew  = allNotes.filter(n => n.hand==="left"  && n.start === t0);
-        // Build chord strings
-        const rightChord = rightNew.length ? rightNew.map(n=>midiToNoteName(n.pitch)).sort().join("+") : "";
-        const leftChord  = leftNew.length  ? leftNew.map(n=>midiToNoteName(n.pitch)).sort().join("+") : "";
-        const underscores = durationToUnderscores(sliceDur, tpq);
-        // Append to right/left strings
-        if (rightChord) {
-            rightStr += rightChord + underscores;
+        if (toggleSort && toggleSort.checked) {
+            // Combine both hands into the right hand output
+            const combinedNew = allNotes.filter(n => n.start === t0);
+            const combinedChord = combinedNew.length ? combinedNew.map(n=>midiToNoteName(n.pitch)).sort().join("+") : "";
+            const underscores = durationToUnderscores(sliceDur, tpq);
+            
+            if (combinedChord) {
+                rightStr += combinedChord + underscores;
+            } else {
+                rightStr += underscores;
+            }
+            leftStr = ""; // Keep left empty for merged view
         } else {
-            rightStr += underscores;
-        }
-        if (leftChord) {
-            leftStr += leftChord + underscores;
-        } else {
-            leftStr += underscores;
+            // Separate tracks
+            const rightNew = allNotes.filter(n => n.hand==="right" && n.start === t0);
+            const leftNew  = allNotes.filter(n => n.hand==="left"  && n.start === t0);
+            
+            const rightChord = rightNew.length ? rightNew.map(n=>midiToNoteName(n.pitch)).sort().join("+") : "";
+            const leftChord  = leftNew.length  ? leftNew.map(n=>midiToNoteName(n.pitch)).sort().join("+") : "";
+            const underscores = durationToUnderscores(sliceDur, tpq);
+
+            if (rightChord) {
+                rightStr += rightChord + underscores;
+            } else {
+                rightStr += underscores;
+            }
+            if (leftChord) {
+                leftStr += leftChord + underscores;
+            } else {
+                leftStr += underscores;
+            }
         }
     }
+
     // Add the output to the note input area in html
+    document.getElementById("noteInputRight").value = rightStr;
+    document.getElementById("noteInputLeft").value  = leftStr;
+
     if (toggleSort && toggleSort.checked) {
-        // Merge both hands into right hand input only
-        document.getElementById("noteInputRight").value = rightStr + leftStr;
-        document.getElementById("noteInputLeft").value  = "";
         // Call resortNotes() to split them properly
         if (typeof resortNotes === 'function') {
             resortNotes();
         }
-    } else {
-        document.getElementById("noteInputRight").value = rightStr;
-        document.getElementById("noteInputLeft").value  = leftStr;
     }
+    
     // Reset music select dropdown box
     const musicSelect = document.getElementById("musicSelect");
     if (musicSelect) {
