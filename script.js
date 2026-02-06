@@ -945,7 +945,7 @@ document.body.addEventListener("click", () => {
 function calculateTotalDuration() {
     if (scheduledNotes.length === 0) return 0;
     const lastNote = scheduledNotes[scheduledNotes.length - 1];
-    return lastNote.scheduledStart + lastNote.duration + 5000; // Add 5000ms buffer to ensure last notes finish playing
+    return lastNote.scheduledStart + lastNote.duration + 7000; // Add 7000ms buffer to ensure last notes finish playing
 }
 
 // Format time
