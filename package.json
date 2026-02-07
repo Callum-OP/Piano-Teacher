@@ -1,6 +1,6 @@
 {
   "name": "piano-teacher",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An interactive way to learn piano using a visual piano interface.",
   "author": "Callum O'Prey callumoprey@gmail.com",
   "main": "main.js",
@@ -25,12 +25,14 @@
       "backgroundColor": "#F0E4D0"
     },
     "files": [
-      "**/*", 
+      "**/*",
       "!dist/*",
       "!node_modules/*"
     ],
     "asar": true,
-    "asarUnpack": ["**/sounds/*"],
+    "asarUnpack": [
+      "**/sounds/*"
+    ],
     "win": {
       "target": "appx",
       "icon": "build/icon.ico"
