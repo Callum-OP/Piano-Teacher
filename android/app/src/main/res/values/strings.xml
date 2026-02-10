@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Piano Teacher by Callum-OP</string>
+    <string name="title_activity_main">Piano Teacher by Callum-OP</string>
+    <string name="package_name">io.github.callumop.pianoteacher</string>
+    <string name="custom_url_scheme">io.github.callumop.pianoteacher</string>
+</resources>

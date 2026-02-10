@@ -18,6 +18,7 @@ _UpgradeReport_Files/
 *.pks
 .env
 .env.local
+.jks
 
 .DS_Store
 Thumbs.db

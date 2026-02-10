@@ -7,9 +7,13 @@
   "scripts": {
     "build": "electron-builder --win appx",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "desktop": "electron ."
+    "desktop": "electron .",
+    "build:samsung": "powershell -Command 'Remove-Item -Recurse -Force build -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Force build; Copy-Item index.html build/; Copy-Item styles.css build/; Copy-Item -Recurse sounds build/; Copy-Item -Recurse build_icons build/; npx cap sync'"
   },
   "dependencies": {
+    "@capacitor/android": "^8.0.2",
+    "@capacitor/cli": "^8.0.2",
+    "@capacitor/core": "^8.0.2",
     "@electron/remote": "^2.1.2"
   },
   "devDependencies": {
@@ -24,14 +28,12 @@
       "applicationId": "PianoTeacherbyCallumOP",
       "backgroundColor": "#F0E4D0"
     },
-    "files": [
-      "**/*",
-      "!dist/*",
-      "!node_modules/*"
+    "files": [ 
+      "build/**/*","main.js", "preload.js", "package.json" 
     ],
     "asar": true,
     "asarUnpack": [
-      "**/sounds/*"
+      "build/sounds/*"
     ],
     "win": {
       "target": "appx",

@@ -20,7 +20,7 @@ function createWindow() {
   });
 
   // This loads index.html
-  win.loadFile(path.join(__dirname, 'index.html')); 
+  win.loadFile(path.join(__dirname, 'build/index.html')); 
 }
 
 app.whenReady().then(createWindow);
