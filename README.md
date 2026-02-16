@@ -54,3 +54,6 @@ Look for any chance to optimise, focusing on tick() animation loop in JS, DOM ma
 
 --- Sort Notes Feature ---
 Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function.
+
+--- Timing ---
+Some MIDI files the music/timeline ends long before it has fully completed meaning there may be issues when calculating the full length.
