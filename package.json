@@ -17,6 +17,7 @@
     "@electron/remote": "^2.1.2"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "electron": "^33.4.11"
   },
   "build": {
@@ -28,8 +29,11 @@
       "applicationId": "PianoTeacherbyCallumOP",
       "backgroundColor": "#F0E4D0"
     },
-    "files": [ 
-      "build/**/*","main.js", "preload.js", "package.json" 
+    "files": [
+      "build/**/*",
+      "main.js",
+      "preload.js",
+      "package.json"
     ],
     "asar": true,
     "asarUnpack": [
