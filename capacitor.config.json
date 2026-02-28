@@ -1,5 +1,8 @@
 {
   "appId": "io.github.callumop.pianoteacher",
   "appName": "Piano Teacher by Callum-OP",
-  "webDir": "build"
+  "webDir": "build",
+  "android": {
+    "screenOrientation": "landscape"
+  }
 }
