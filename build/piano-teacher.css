@@ -422,10 +422,6 @@ footer {
 /* If Screen A Bit Thin */
 @media screen and (max-width: 720px) {
     /* Shrink font and buttons */
-    #piano-section, #autoplay-section {
-        margin-top: 1.5rem !important; 
-    }
-
     .transport i {
         font-size: 1.5rem !important;
     }
@@ -446,15 +442,15 @@ footer {
     #changeOctave, #tempoVal {
         font-size: 0.9rem;
     }
+
+    .countdown {
+        font-size: 16px; 
+    }
 }
 
 /* If Screen Is Too Thin */
 @media screen and (max-width: 660px) {
     /* Stack screen vertically */
-    #piano-section, #autoplay-section {
-        margin-top: 2rem !important; 
-    }
-
     .d-grid {
         grid-template-columns: 1fr !important;
         gap: 15px;
