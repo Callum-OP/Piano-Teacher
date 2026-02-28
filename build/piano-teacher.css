@@ -419,6 +419,78 @@ footer {
     }
 }
 
+/* If Screen A Bit Thin */
+@media screen and (max-width: 720px) {
+    /* Shrink font and buttons */
+    #piano-section, #autoplay-section {
+        margin-top: 1.5rem !important; 
+    }
+
+    .transport i {
+        font-size: 1.5rem !important;
+    }
+
+    .volume-control i, #octave-controls i {
+        font-size: 1.2rem !important;
+    }
+
+    .transport button {
+        width: 34px;
+        height: 34px;
+    }
+
+    #tempo, #volume {
+        width: 120px;
+    }
+
+    #changeOctave, #tempoVal {
+        font-size: 0.9rem;
+    }
+}
+
+/* If Screen Is Too Thin */
+@media screen and (max-width: 660px) {
+    /* Stack screen vertically */
+    #piano-section, #autoplay-section {
+        margin-top: 2rem !important; 
+    }
+
+    .d-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .tempo-left, .volume-control, .extend-ocatve {
+        justify-content: center !important;
+        width: 100%;
+    }
+
+    .piano-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 20px;
+    }
+
+    #piano {
+        width: 100%;
+        height: auto;
+        display: block;
+        max-width: 100%;
+    }
+
+    .piano-frame {
+        padding-left: 1;
+        padding-right: 1;
+        display: flex;
+        justify-content: center;
+    }
+
+    .hero {
+        padding: 40px 0 20px;
+    }
+}
+
 /* Portrait */
 @media (orientation: portrait) {
     body {
