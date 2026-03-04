@@ -8,11 +8,16 @@ The Microsoft Store desktop app version: https://apps.microsoft.com/detail/9ngq6
 The Itch.io web app version: https://callum-op.itch.io/piano-teacher
 The development web app version: https://callum-op.github.io/Piano-Teacher/ 
 
+Version number can be found:
+android/app/build.gradle
+package.json
+
 # How to run
 To set up dependencies, assuming you have node installed, use: npm install 
 To run locally on localhost:3000 you can use a command like: python -m http.server 3000 or npx http-server . 
 Alternatively to build locally as a desktop app use: npx electron-builder --win appx 
-If you want to build for samsung/android use: npm run build:samsung 
+If you want to build for android use: npm run build:samsung 
+Then to sync: npx cap sync android
 
 If you have a touchscreen on a large screened device you can play the piano on screen.
 There is an autoplay feature that will visually show how to play sheet music.
