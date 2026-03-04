@@ -4,6 +4,18 @@
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeAudio = {};
 const audioBuffers = {};
+const masterGain = audioContext.createGain();
+const compressor = audioContext.createDynamicsCompressor(); // Prevents static/clipping
+masterGain.connect(compressor);
+compressor.connect(audioContext.destination);
+
+// Set initial volume from slider
+masterGain.gain.value = document.getElementById("volume").value;
+
+// Listen if volume input has changed
+document.getElementById("volume").addEventListener("input", (e) => {
+    masterGain.gain.value = e.target.value;
+});
 
 // Preset music
 let musicLibrary = [];
@@ -145,23 +157,16 @@ function playNote(filePath, noteName) {
         return;
     }
 
-    const gain = audioContext.createGain();
+    // If note is already playing, stop the old one first
+    if (activeAudio[noteName]) {
+        stopNote(noteName);
+    }
+
     const src = audioContext.createBufferSource();
     src.buffer = decoded;
-    src.connect(gain);
-    gain.connect(audioContext.destination);
-
-    // Set initial volume from slider
-    const volumeSlider = document.getElementById("volume");
-    gain.gain.value = volumeSlider.value;
-
-    // Keep gain node accessible, so that it can be updated
-    volumeSlider.addEventListener("input", () => {
-        gain.gain.value = volumeSlider.value;
-    });
-
+    src.connect(masterGain);
     src.start(audioContext.currentTime);
-    activeAudio[noteName] = { src, gain };
+    activeAudio[noteName] = src;
 }
 // Stop a note being played
 function stopNote(noteName) {
