@@ -1,6 +1,6 @@
 {
   "name": "piano-teacher",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "An interactive way to learn piano using a visual piano interface.",
   "author": "Callum O'Prey callumoprey@gmail.com",
   "main": "main.js",
