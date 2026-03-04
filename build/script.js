@@ -167,7 +167,10 @@ function playNote(filePath, noteName) {
 function stopNote(noteName) {
     const note = activeAudio[noteName];
     if (note) {
-        note.gain.gain.setTargetAtTime(0, audioContext.currentTime, 0.7);
+        try {
+            // Stop this sound in 0.1 seconds
+            src.stop(audioContext.currentTime + 0.1); 
+        } catch (e) {}
         delete activeAudio[noteName];
     }
 }
