@@ -161,6 +161,28 @@ html, body {
     font-size: 2rem;
     line-height: 1;
 }
+.transport button:hover,
+.transport button:focus,
+.transport button:active,
+.transport button:focus-visible {
+    outline: none;
+    box-shadow: none !important;
+    background: transparent !important;
+    color: var(--accent-3) !important;
+}
+.transport button:hover i,
+.transport button:focus i,
+.transport button:active i,
+.transport button:focus-visible i {
+    color: var(--accent-3) !important;
+}
+.transport .btn:hover,
+.transport .btn:active,
+.transport .btn:focus {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: var(--accent-3) !important;
+}
 .volume-control i {
     font-size: 1.5rem;
     padding: 0;
