@@ -5,7 +5,7 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const activeAudio = {};
 const audioBuffers = {};
 const masterGain = audioContext.createGain();
-const compressor = audioContext.createDynamicsCompressor(); // Prevents static/clipping
+const compressor = audioContext.createDynamicsCompressor();
 masterGain.connect(compressor);
 compressor.connect(audioContext.destination);
 
@@ -173,8 +173,8 @@ function stopNote(noteName) {
     const note = activeAudio[noteName];
     if (note) {
         try {
-            // Stop this sound in 0.1 seconds
-            src.stop(audioContext.currentTime + 0.1); 
+            // Stop this sound in 2 seconds
+            note.stop(audioContext.currentTime + 2); 
         } catch (e) {}
         delete activeAudio[noteName];
     }
@@ -765,9 +765,9 @@ function updatePiano() {
     else {piano.setAttribute("viewBox", "0 0 844 108");}
     
     // Mute audio
-    Object.values(activeAudio).forEach(({ gain }) => {
-        gain.gain.value = 0;
-    });
+    for (let note in activeAudio) {
+        stopNote(note);
+    }
 }
 // Initial setup
 document.addEventListener('DOMContentLoaded', () => {
@@ -786,7 +786,6 @@ document.addEventListener('DOMContentLoaded', () => {
         timeline.addEventListener("touchstart", (e) => {
             if (scheduledNotes.length === 0) return;
             isScrubbingTimeline = true;
-            muteAllAudio();
         }, { passive: true });
         
         timeline.addEventListener("input", (e) => {
@@ -799,9 +798,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Reset audio triggers and clean up notes
                 activeNotes.forEach(n => {
                     // Mute audio
-                    Object.values(activeAudio).forEach(({ gain }) => {
-                        gain.gain.value = 0;
-                    });
+                    for (let note in activeAudio) {
+                        stopNote(note);
+                    }
                     const elapsed = globalTime - n.scheduledStart;
                     if (elapsed < 0 || elapsed >= n.duration) {
                         if (n.el) n.el.remove();
