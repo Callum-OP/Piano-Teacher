@@ -69,6 +69,7 @@ let octaveControls = document.getElementById("octave-controls");
 
 // Wakelock
 let wakeLock = null;
+let pauseWakeLockTimer = null;
 
 // Preload notes so they are ready to go
 async function preloadNotes() {
@@ -369,6 +370,18 @@ function togglePause() {
 
     isPaused = !isPaused; // Pause autoplay
     togglePauseCountdown(); // Pause countdown
+
+    if (isPaused) {
+        // Start 5 minute timer to release wake lock when paused
+        pauseWakeLockTimer = setTimeout(() => {
+            disableWakeLock();
+        }, 5 * 60 * 1000);
+    } else {
+        // Resumed, so cancel timer and re-enable wake lock
+        clearTimeout(pauseWakeLockTimer);
+        pauseWakeLockTimer = null;
+        enableWakeLock();
+    }
 
     // Get pause button and change symbol based on state
     const btnIcon = document.querySelector("#pause i");
