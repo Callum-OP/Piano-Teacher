@@ -361,6 +361,12 @@ function tick(ts) {
 // --- Button controls ---
 // Pause falling notes as well as countdown
 function togglePause() { 
+    // If nothing is playing, start autoplay
+    if (scheduledNotes.length === 0) {
+        autoPlay();
+        return;
+    }
+
     isPaused = !isPaused; // Pause autoplay
     togglePauseCountdown(); // Pause countdown
 
