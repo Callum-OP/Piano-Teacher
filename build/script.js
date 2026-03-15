@@ -163,18 +163,21 @@ function playNote(filePath, noteName) {
     }
 
     const src = audioContext.createBufferSource();
+    const gain = audioContext.createGain();
     src.buffer = decoded;
-    src.connect(masterGain);
+    src.connect(gain);
+    gain.connect(masterGain);
     src.start(audioContext.currentTime);
-    activeAudio[noteName] = src;
+    activeAudio[noteName] = { src, gain };
 }
 // Stop a note being played
 function stopNote(noteName) {
     const note = activeAudio[noteName];
     if (note) {
         try {
+            note.gain.gain.setTargetAtTime(0, audioContext.currentTime, 0.7);
             // Stop this sound in 2 seconds
-            note.stop(audioContext.currentTime + 2); 
+            note.src.stop(audioContext.currentTime + 2);
         } catch (e) {}
         delete activeAudio[noteName];
     }
