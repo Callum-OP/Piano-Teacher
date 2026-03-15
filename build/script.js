@@ -441,6 +441,13 @@ if (tempo && tempoVal) {
     tempoVal.textContent = `${tempo.value}x`;
   };
 }
+// Volume slider
+if (volume) {
+    volume.addEventListener("input", (e) => {
+        updateRangeFill(volume);
+    });
+    updateRangeFill(volume); // Initial fill on page load
+}
 // Rewind or fast Forward
 function rewind() {
     globalTime = Math.max(0, globalTime - 2000); // Jump back 2s
@@ -742,13 +749,6 @@ tempo.addEventListener("input", (e) => {
     updateRangeFill(tempo);
 });
 updateRangeFill(tempo);
-// Volume slider
-if (volume) {
-    volume.addEventListener("input", (e) => {
-        updateRangeFill(volume);
-    });
-    updateRangeFill(volume); // Initial fill on page load
-}
 
 
 // --- Extend piano ---
