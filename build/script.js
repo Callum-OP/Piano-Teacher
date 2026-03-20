@@ -30,7 +30,7 @@ let rewindInterval, forwardInterval;
 let baseOctave = 4;
 let octaveChange = 0;
 const MAXOCTAVE = 7;
-const MINOCTAVE = 1;
+const MINOCTAVE = 2;
 
 // Range inputs
 const timeline = document.getElementById("timeline");
