@@ -42,23 +42,20 @@ Give the autoplay editor a faded look if no music has been started?
 Customisation? Such as dark mode, text size and colour theme selection.
 
 --- Save custom music selections ---
-Saving entered music notes into music.json? Maybe make it downloadable and then can be entered later to access saved music pieces in the preset list.
+Saving entered music notes into music.json and saving it to device? Could be limited to native apps only.
 
 ## Issues
 --- Dark mode ---
-The colours and layout on dark mode on some mobile browsers does not look right compared to the intended look.
+The colours and layout on dark mode specifically on the web on some mobile browsers does not look right compared to the intended look.
 
 --- Audio ---
-If the user switches windows or tabs the audio and animation will stop playing. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab)
+If the user switches windows or tabs the audio and animation will stop playing. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab).
 
 --- Performance ---
 Older devices (10 years or more, will struggle to run the app as intended).
-Add an option to run the app in a simplified performance enhancing mode (Removing the fancy visuals and focusing on running the app at the bare minimum requirements).
-Might be able to use canvas?, could give better performance.
-Look for any chance to optimise, focusing on tick() animation loop in JS, DOM manipulations (creating/removing note divs) and Audio processing.
+Add an option to run the app in a simplified performance enhancing mode (Removing the fancy visuals and focusing on running the app at the bare minimum requirements)?
+Tried using canvas but not much difference to performance, if anything worse.
+Look for any chance to optimise, focusing on tick() animation loop in JS, creating/removing note divs and Audio processing.
 
 --- Sort Notes Feature ---
 Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function.
-
---- Timing ---
-Some MIDI files the music/timeline ends long before it has fully completed meaning there may be issues when calculating the full length.
