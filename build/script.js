@@ -959,6 +959,20 @@ function disableWakeLock() {
     wakeLock = null;
   }
 }
+// Enable wake lock when user has returned to the app
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+        if (!isPaused && scheduledNotes.length > 0) {
+            enableWakeLock();
+        } else if (isPaused && scheduledNotes.length > 0) {
+            // If returned while paused, restart the 5 minute sleep timer
+            clearTimeout(pauseWakeLockTimer);
+            pauseWakeLockTimer = setTimeout(() => {
+                disableWakeLock();
+            }, 5 * 60 * 1000);
+        }
+    }
+});
 
 // --- AudioContext resume on first click ---
 document.body.addEventListener("click", () => {
