@@ -12,7 +12,10 @@ function midiToNoteName(midi) {
 }
 
 // Translate note holds into underscores
-function durationToUnderscores(ticks, tpq, scale=10) {
+function durationToUnderscores(ticks, tpq, uspq) {
+    const msPerQuarter = uspq / 1000;
+    const msPerUnderscore = 75;
+    const scale = msPerQuarter / msPerUnderscore;
     const quarters = ticks / tpq;
     return "_".repeat(Math.max(1, Math.round(quarters * scale)));
 }
@@ -21,7 +24,7 @@ function durationToUnderscores(ticks, tpq, scale=10) {
 function parseMIDI(arrayBuffer) {
     const data = new DataView(arrayBuffer);
     let pos = 0;
-    // Read characters as string
+    let tempoValue = 500000;
     function readStr(n) {
         let s = "";
         for (let i=0;i<n;i++) s += String.fromCharCode(data.getUint8(pos++));
@@ -47,8 +50,8 @@ function parseMIDI(arrayBuffer) {
     if (readStr(4)!=="MThd") throw "Not a MIDI file";
         readInt(4);
         readInt(2);
-        const trackNum = readInt(2); // Number of tracks
-        const division = readInt(2); // Ticks per quarter note
+        const trackNum = readInt(2);
+        const division = readInt(2);
         const tracks = [];
 
         // Read each track
@@ -60,8 +63,7 @@ function parseMIDI(arrayBuffer) {
         const events=[];
         let runningStatus=null;
         while (pos<end) {
-            time += readVarLen(); // Add delta time
-            // Handle running status
+            time += readVarLen();
             let status = data.getUint8(pos);
             if (status<0x80) {
             status = runningStatus;
@@ -76,15 +78,22 @@ function parseMIDI(arrayBuffer) {
             const type = (status & 0xf0)===0x90 && vel>0 ? "on":"off";
             events.push({time, pitch, vel, type, channel: status&0x0f});
             } else {
-                // Skip other event types
-                if (status===0xff) { pos++; const l=readVarLen(); pos+=l; }
+                if (status===0xff) {
+                    const metaType = data.getUint8(pos++);
+                    const l=readVarLen();
+                    // Read tempo from MIDI file
+                    if (metaType === 0x51 && l === 3) {
+                        tempoValue = (data.getUint8(pos) << 16) | (data.getUint8(pos+1) << 8) | data.getUint8(pos+2);
+                    }
+                    pos+=l;
+                }
                 else if ((status & 0xf0)===0xc0 || (status & 0xf0)===0xd0) pos++;
                 else { pos+=2; }
             }
         }
         tracks.push({events});
     }
-    return {division, tracks};
+    return {division, tracks, tempo: tempoValue};
 }
 
 // Get user input, read it and get the note strings
@@ -135,7 +144,7 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
             // Combine both hands into the right hand output
             const combinedNew = allNotes.filter(n => n.start === t0);
             const combinedChord = combinedNew.length ? combinedNew.map(n=>midiToNoteName(n.pitch)).sort().join("+") : "";
-            const underscores = durationToUnderscores(sliceDur, tpq);
+            const underscores = durationToUnderscores(sliceDur, tpq, midi.tempo);
             
             if (combinedChord) {
                 rightStr += combinedChord + underscores;
@@ -150,7 +159,7 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
             
             const rightChord = rightNew.length ? rightNew.map(n=>midiToNoteName(n.pitch)).sort().join("+") : "";
             const leftChord  = leftNew.length  ? leftNew.map(n=>midiToNoteName(n.pitch)).sort().join("+") : "";
-            const underscores = durationToUnderscores(sliceDur, tpq);
+            const underscores = durationToUnderscores(sliceDur, tpq, midi.tempo);
 
             if (rightChord) {
                 rightStr += rightChord + underscores;
