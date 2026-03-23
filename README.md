@@ -44,7 +44,14 @@ Customisation? Such as dark mode, text size and colour theme selection.
 --- Save custom music selections ---
 Saving entered music notes into music.json and saving it to device? Could be limited to native apps only.
 
-## Issues
+## Top Issues
+--- Mobile display ---
+The latest operating system update for androids (One UI 7.0) causes issues with display as it overlays buttons over apps instead of creating space, this causes the phone screen buttons to overlay with buttons on the app meaning a section of the screen can not be used properly.
+
+--- Wakelock stays enabled ---
+The screen should turn off automatically once a music piece has ended or 5 minutes after it has paused, while this previously worked, it no longer seems to be the case.
+
+## Minor Issues
 --- Dark mode ---
 The colours and layout on dark mode specifically on the web on some mobile browsers does not look right compared to the intended look.
 
