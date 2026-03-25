@@ -361,12 +361,18 @@ function tick(ts) {
 
 // --- Button controls ---
 // Pause falling notes as well as countdown
-function togglePause() { 
+function togglePause() {
     // If nothing is playing, start autoplay
     if (scheduledNotes.length === 0) {
+        const left = document.getElementById("noteInputLeft").value.trim();
+        const right = document.getElementById("noteInputRight").value.trim();
+        if (!left && !right) return; // Do nothing if no music selected
         autoPlay();
         return;
     }
+
+    // Prevent toggling if music has finished
+    if (globalTime >= totalDuration) return;
 
     isPaused = !isPaused; // Pause autoplay
     togglePauseCountdown(); // Pause countdown
@@ -417,6 +423,12 @@ function stopAll() {
         timeline.value = 0;
         updateRangeFill(timeline);
     }
+
+    // Change pause button symbol
+    const btnIcon = document.querySelector("#pause i");
+    btnIcon.classList.remove("bi-pause-fill");
+    btnIcon.classList.add("bi-play-fill"); // Show play symbol
+
     updateTimelineDisplay();
 }
 
@@ -730,7 +742,7 @@ function resetCountdown() {
 // --- Check if autoplay is over ---
 function checkIfFinished() {
     // All notes are finished if every note has elapsed past its duration
-    const allDone = activeNotes.every(n => globalTime > n.scheduledStart + n.duration);
+    const allDone = scheduledNotes.length > 0 && scheduledNotes.every(n => globalTime > n.scheduledStart + n.duration);
     if (allDone && !isPaused) {
         const hero = document.querySelector(".hero");
         hero.classList.remove("hidden");
@@ -868,6 +880,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 })
                 updateTimelineDisplay();
+
+                if (globalTime >= totalDuration) {
+                    isPaused = true;
+                    // Change pause button symbol
+                    const btnIcon = document.querySelector("#pause i");
+                    if (btnIcon) {
+                        btnIcon.classList.remove("bi-pause-fill");
+                        btnIcon.classList.add("bi-play-fill"); // Show play symbol
+                    }
+                }
             }
         });
         
@@ -962,14 +984,15 @@ function disableWakeLock() {
 // Enable wake lock when user has returned to the app
 document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
-        if (!isPaused && scheduledNotes.length > 0) {
+        if (!isPaused && scheduledNotes.length > 0 && globalTime < totalDuration) {
             enableWakeLock();
         } else if (isPaused && scheduledNotes.length > 0) {
-            // If returned while paused, restart the 5 minute sleep timer
             clearTimeout(pauseWakeLockTimer);
             pauseWakeLockTimer = setTimeout(() => {
                 disableWakeLock();
             }, 5 * 60 * 1000);
+        } else {
+            disableWakeLock();
         }
     }
 });
