@@ -544,6 +544,8 @@ footer {
 @media (orientation: landscape) {
     body {
         flex-direction: row;
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
     }
     .main {
         margin-top: 200px;
