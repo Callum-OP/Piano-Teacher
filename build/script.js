@@ -381,7 +381,7 @@ function togglePause() {
         // Start 5 minute timer to release wake lock when paused
         pauseWakeLockTimer = setTimeout(() => {
             disableWakeLock();
-        }, 5 * 60 * 1000);
+        }, 1 * 60 * 1000);
     } else {
         // Resumed, so cancel timer and re-enable wake lock
         clearTimeout(pauseWakeLockTimer);
@@ -969,30 +969,34 @@ function updateNoteTargets() {
 
 // --- Keep device screen from entering sleep mode while piano is running ---
 async function enableWakeLock() {
-  try {
-    wakeLock = await navigator.wakeLock.request("screen");
-  } catch (err) {
-    console.error("Wake Lock error:", err);
-  }
+    try {
+        wakeLock = await navigator.wakeLock.request("screen");
+    } catch (err) {
+        console.error("Wake Lock error:", err);
+    }
 }
 function disableWakeLock() {
-  if (wakeLock) {
-    wakeLock.release();
-    wakeLock = null;
-  }
+    if (wakeLock) {
+        wakeLock.release();
+        wakeLock = null;
+    }
 }
 // Enable wake lock when user has returned to the app
 document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
-        if (!isPaused && scheduledNotes.length > 0 && globalTime < totalDuration) {
+        // If music finished, disable wake lock
+        if (globalTime >= totalDuration && totalDuration > 0) {
+            disableWakeLock();
+            return;
+        } else {
+            // Resumed, so re-enable wake lock
             enableWakeLock();
-        } else if (isPaused && scheduledNotes.length > 0) {
-            clearTimeout(pauseWakeLockTimer);
+        }
+        if (isPaused) {
+            // Start 5 minute timer to release wake lock when paused
             pauseWakeLockTimer = setTimeout(() => {
                 disableWakeLock();
-            }, 5 * 60 * 1000);
-        } else {
-            disableWakeLock();
+            }, 1 * 60 * 1000);
         }
     }
 });
@@ -1037,4 +1041,15 @@ function updateTimelineDisplay() {
     
     currentTimeEl.textContent = formatTime(globalTime);
     totalTimeEl.textContent = formatTime(totalDuration);
+
+    // Check if music has finished
+    if (globalTime >= totalDuration && totalDuration > 0) {
+        isPaused = true;
+        disableWakeLock();
+        const btnIcon = document.querySelector("#pause i");
+        if (btnIcon) {
+            btnIcon.classList.remove("bi-pause-fill");
+            btnIcon.classList.add("bi-play-fill");
+        }
+    }
 }
