@@ -46,7 +46,7 @@ Saving entered music notes into music.json and saving it to device? Could be lim
 
 ## Top Issues
 --- Note preloading ---
-Notes preload before playing, but sometimes take longer than expected, if this happens then no music will not play until the notes have loaded several seconds later.
+Notes preload before playing, but sometimes take longer than expected, if this happens then no music will play until the notes have loaded several seconds later.
 
 ## Minor Issues
 --- Dark mode ---
