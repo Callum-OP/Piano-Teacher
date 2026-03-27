@@ -19,6 +19,8 @@ Alternatively to build locally as a desktop app use: npx electron-builder --win 
 If you want to build for android use: npm run build:samsung 
 Then to sync: npx cap sync android
 
+npx electron-builder --win --x64
+
 If you have a touchscreen on a large screened device you can play the piano on screen.
 There is an autoplay feature that will visually show how to play sheet music.
 Select from a list of preset music or upload a MIDI file, then click to start autoplay.
