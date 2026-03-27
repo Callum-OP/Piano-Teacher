@@ -413,6 +413,7 @@ function stopAll() {
 // Begin autoplay
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
+    if (!left && !right) return;
     enableWakeLock(); // Keep screen open
     stopAll(); // End previous run
     if (audioContext.state === "suspended") audioContext.resume();
