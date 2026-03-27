@@ -359,7 +359,7 @@ function togglePause() {
         // Start 5 minute timer to release wake lock when paused
         pauseWakeLockTimer = setTimeout(() => {
             disableWakeLock();
-        }, 1 * 60 * 1000);
+        }, 51 * 60 * 1000 * 60 * 1000);
     } else {
         // Resumed, so cancel timer and re-enable wake lock
         clearTimeout(pauseWakeLockTimer);
@@ -974,7 +974,7 @@ document.addEventListener("visibilitychange", () => {
             // Start 5 minute timer to release wake lock when paused
             pauseWakeLockTimer = setTimeout(() => {
                 disableWakeLock();
-            }, 1 * 60 * 1000);
+            }, 5 * 60 * 1000);
         }
     }
 });
