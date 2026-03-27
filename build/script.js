@@ -413,9 +413,14 @@ function stopAll() {
 // Begin autoplay
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
+    // Check if there is notes entered
+    const left = document.getElementById("noteInputLeft").value.trim();
+    const right = document.getElementById("noteInputRight").value.trim();
     if (!left && !right) return;
-    enableWakeLock(); // Keep screen open
+
     stopAll(); // End previous run
+    enableWakeLock(); // Keep screen open
+    
     if (audioContext.state === "suspended") audioContext.resume();
     activeNotes = [];
     scheduledNotes = [];
@@ -967,7 +972,7 @@ document.addEventListener("visibilitychange", () => {
         if (globalTime >= totalDuration && totalDuration > 0) {
             disableWakeLock();
             return;
-        } else {
+        } else if (!isPaused) {
             // Resumed, so re-enable wake lock
             enableWakeLock();
         }
