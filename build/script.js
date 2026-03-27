@@ -356,10 +356,10 @@ function togglePause() {
     togglePauseCountdown(); // Pause countdown
 
     if (isPaused) {
-        // Start 5 minute timer to release wake lock when paused
+        // Start 4 minute timer to release wake lock when paused
         pauseWakeLockTimer = setTimeout(() => {
             disableWakeLock();
-        }, 51 * 60 * 1000 * 60 * 1000);
+        }, 4 * 60 * 1000);
     } else {
         // Resumed, so cancel timer and re-enable wake lock
         clearTimeout(pauseWakeLockTimer);
@@ -971,10 +971,10 @@ document.addEventListener("visibilitychange", () => {
             enableWakeLock();
         }
         if (isPaused) {
-            // Start 5 minute timer to release wake lock when paused
+            // Start 4 minute timer to release wake lock when paused
             pauseWakeLockTimer = setTimeout(() => {
                 disableWakeLock();
-            }, 5 * 60 * 1000);
+            }, 4 * 60 * 1000);
         }
     }
 });
