@@ -45,8 +45,7 @@ Customisation? Such as dark mode, text size and colour theme selection.
 Saving entered music notes into music.json and saving it to device? Could be limited to native apps only.
 
 ## Top Issues
---- Note preloading ---
-Notes preload before playing, but sometimes take longer than expected, if this happens then no music will play until the notes have loaded several seconds later.
+None currently
 
 ## Minor Issues
 --- Dark mode ---

@@ -71,28 +71,6 @@ let octaveControls = document.getElementById("octave-controls");
 let wakeLock = null;
 let pauseWakeLockTimer = null;
 
-// Preload notes so they are ready to go
-async function preloadNotes() {
-    const noteNames = [];
-    const baseNotes = ["C","Cs","D","Ds","E","F","Fs","G","Gs","A","As","B"];
-
-    // Octaves 1 through 7
-    for (let octave = 1; octave <= 7; octave++) {
-        for (const n of baseNotes) {
-            noteNames.push(`${n}${octave}`);
-        }
-    }
-
-    // Fetch and decode each note
-    for (const note of noteNames) {
-        const filePath = new URL(`sounds/${note.toLowerCase()}.ogg`, window.location.href).href;
-        const res = await fetch(filePath);
-        const buf = await res.arrayBuffer();
-        audioBuffers[note.toLowerCase()] = await audioContext.decodeAudioData(buf);
-    }
-}
-preloadNotes();
-
 // --- Music library select ---
 // Set up default music to choose from
 fetch('./music.json')
@@ -151,21 +129,21 @@ function transformNote(str) {
 
 // --- Audio play/stop ---
 // Play an audio file
-function playNote(filePath, noteName) {
-    const decoded = audioBuffers[noteName.toLowerCase()];
-    if (!decoded) {
-        console.warn("Note not preloaded:", noteName);
-        return;
+async function playNote(filePath, noteName) {
+    const key = noteName.toLowerCase();
+    
+    // Load and cache if note not already loaded
+    if (!audioBuffers[key]) {
+        const res = await fetch(filePath);
+        const buf = await res.arrayBuffer();
+        audioBuffers[key] = await audioContext.decodeAudioData(buf);
     }
 
-    // If note is already playing, stop the old one first
-    if (activeAudio[noteName]) {
-        stopNote(noteName);
-    }
+    if (activeAudio[noteName]) stopNote(noteName);
 
     const src = audioContext.createBufferSource();
     const gain = audioContext.createGain();
-    src.buffer = decoded;
+    src.buffer = audioBuffers[key];
     src.connect(gain);
     gain.connect(masterGain);
     src.start(audioContext.currentTime);
