@@ -370,6 +370,28 @@
             </div>
         </div>
         </section>
+
+        <!-- Custom music list -->
+        <div class="card controls-card mb-3">
+            <div class="card-body">
+                <p class="form-label">Save to custom music list</p>
+                
+                <!-- Save current music -->
+                <div class="d-flex gap-2 mb-3 align-items-center">
+                    <input type="text" id="customMusicTitle" class="form-control" placeholder="Enter title before saving">
+                    <button class="btn btn-primary" onclick="saveCustomMusic()">Save</button>
+                </div>
+
+                <!-- Saved music dropdown -->
+                <div class="d-flex gap-2 align-items-center">
+                    <select id="customMusicSelect" class="form-control">
+                        <option value="">-- Saved Music --</option>
+                    </select>
+                    <button class="btn btn-outline-primary" onclick="loadSelectedCustomMusic()">Load</button>
+                    <button class="btn btn-outline-danger" onclick="deleteSelectedCustomMusic()">Delete</button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <br>
@@ -383,5 +405,6 @@
     <script src="./script.js"></script>
     <script src="./midi-upload.js"></script>
     <script src="./sort-notes.js"></script>
+    <script src="./save-music.js"></script>
 </body>
 </html>

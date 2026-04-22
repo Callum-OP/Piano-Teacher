@@ -35,6 +35,9 @@ https://bitmidi.com/
 https://musescore.com/
 
 ## Features to consider
+--- Toggle Input Data ---
+A toggle/option that only enters midi input within current piano size? If piano is smaller and there are notes not within that size then could discard them from the input.
+
 --- Better Rests ---
 When playing several notes at once in autoplay the underscores are not considered seperate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another.
 
