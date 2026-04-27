@@ -6,9 +6,12 @@
   "main": "main.js",
   "scripts": {
     "build": "electron-builder --win appx",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "desktop": "electron .",
     "build:samsung": "powershell -Command 'Remove-Item -Recurse -Force build -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Force build; Copy-Item index.html build/; Copy-Item styles.css build/; Copy-Item -Recurse sounds build/; Copy-Item -Recurse build_icons build/; npx cap sync'"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.2",
@@ -18,7 +21,9 @@
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
-    "electron": "^33.4.11"
+    "electron": "^33.4.11",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0"
   },
   "build": {
     "appx": {

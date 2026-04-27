@@ -3,23 +3,6 @@
 // --- Toggle auto sort ---
 const toggleSort = document.getElementById("auto-sort");
 
-// Translate midi notes to the expected note name (A1, Fs3, etc)
-function midiToNoteName(midi) {
-    const names = ["C","Cs","D","Ds","E","F","Fs","G","Gs","A","As","B"];
-    const name = names[midi % 12];
-    const octave = Math.floor(midi / 12) - 1;
-    return name + octave;
-}
-
-// Translate note holds into underscores
-function durationToUnderscores(ticks, tpq, uspq) {
-    const msPerQuarter = uspq / 1000;
-    const msPerUnderscore = 75;
-    const scale = msPerQuarter / msPerUnderscore;
-    const quarters = ticks / tpq;
-    return "_".repeat(Math.max(1, Math.round(quarters * scale)));
-}
-
 // Read the midi file and put it into a simpler structure
 function parseMIDI(arrayBuffer) {
     const data = new DataView(arrayBuffer);

@@ -415,3 +415,8 @@ function resortNotes() {
     document.getElementById("noteInputLeft").value = leftOut || '';
     document.getElementById("noteInputRight").value = rightOut || '';
 }
+
+// Export code for tests
+if (typeof module !== 'undefined') {
+    module.exports = { calculateSpan, isWhiteKey, balanceClusters };
+}

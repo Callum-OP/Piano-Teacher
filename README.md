@@ -14,12 +14,15 @@ package.json
 
 # How to run
 To set up dependencies, assuming you have node installed, use: npm install 
-To run locally on localhost:3000 you can use a command like: python -m http.server 3000 or npx http-server . 
-Alternatively to build locally as a desktop app use: npx electron-builder --win appx 
-If you want to build for android use: npm run build:samsung 
-Then to sync: npx cap sync android
 
-npx electron-builder --win --x64
+To run locally on localhost:3000 you can use a command like: python -m http.server 3000 or npx http-server . 
+
+Alternatively to build locally as a desktop app use: npx electron-builder --win appx 
+Or: npx electron-builder --win --x64
+
+If you want to build for android you'll need something like Android Studio and can sync changes with: npx cap sync android
+
+To run tests use: npm test
 
 If you have a touchscreen on a large screened device you can play the piano on screen.
 There is an autoplay feature that will visually show how to play sheet music.

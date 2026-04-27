@@ -94,39 +94,6 @@ function populateMusicSelect(list) {
     });
 }
 
-// --- Input normalisation & translation ---
-// Ensure that input is what is expected
-function normalise(input) {
-    if (!input) return "";
-    // Change spaces into underscores and change to uppercase
-    let normalised = input.replace(/ /g, "_").toUpperCase();
-    // Ensure notes match expected values
-    const tokens = normalised.match(/([\^v]*[A-G](?:#|S)?\d*_*(?:\+[\^v]*[A-G](?:#|S)?\d*_*)*|_+)/g);
-    // Add comma before letter if not already there
-    return tokens ? tokens.join(",") : "";
-}
-// Translate notes into the expected format I need
-function translateNote(input) {
-    let baseOctave = 4;
-    let note = input.toUpperCase();
-    // Count ^ and v symbols
-    let upCount = (note.match(/\^/g) || []).length;
-    let downCount = (note.match(/v/g) || []).length;
-
-    // Remove these symbols from note name
-    note = note.replace(/\^/g, ""); // Remove ^
-    note = note.replace(/v/g, "") // Remove v
-    note = note.replace(/_/g, ""); // Remove underscores
-    note = note.replace("#", "s"); // Convert # symbol to s
-    const finalOctave = baseOctave + upCount - downCount;
-    return /\d/.test(note) ? note : note + finalOctave;
-}
-// Translate into notes by making all letters uppercase apart from s
-// Removes case sensitivity issues when entering sheet music
-function transformNote(str) {
-    return str.split("").map(c => (c.toLowerCase() === "s" ? "s" : c.toUpperCase())).join("");
-}
-
 // --- Audio play/stop ---
 // Play an audio file
 async function playNote(filePath, noteName) {
@@ -1000,14 +967,6 @@ function calculateTotalDuration() {
     if (scheduledNotes.length === 0) return 0;
     const lastEnd = Math.max(...scheduledNotes.map(n => n.scheduledStart + n.duration));
     return lastEnd + 2000; // Add 2000ms buffer to ensure last notes finish playing
-}
-
-// Format time
-function formatTime(ms) {
-    const seconds = Math.floor(ms / 1000);
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
 // Update timeline display
