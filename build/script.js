@@ -383,7 +383,9 @@ function autoPlay() {
     // Check if there is notes entered
     const left = document.getElementById("noteInputLeft").value.trim();
     const right = document.getElementById("noteInputRight").value.trim();
-    if (!left && !right) return;
+
+    // Check if there is at least one valid note in the input
+    if (!isValidMusicInput(left, right)) return;
 
     stopAll(); // End previous run
     enableWakeLock(); // Keep screen open

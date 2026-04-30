@@ -30,6 +30,13 @@ function transformNote(str) {
     return str.split("").map(c => (c.toLowerCase() === "s" ? "s" : c.toUpperCase())).join("");
 }
 
+// Ensure the input is a valid music note in letter notation
+function isValidMusicInput(left, right) {
+    if (!left && !right) return false;
+    const hasValidNote = /[A-Ga-g]/.test(left) || /[A-Ga-g]/.test(right);
+    return hasValidNote;
+}
+
 // --- Timeline bar feature ---
 // Format time
 function formatTime(ms) {
@@ -60,5 +67,5 @@ function midiToNoteName(midi) {
 
 // Export code for tests
 if (typeof module !== 'undefined') {
-    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName };
+    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput };
 }

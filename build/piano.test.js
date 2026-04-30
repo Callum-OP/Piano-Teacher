@@ -1,9 +1,10 @@
-const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, calculateTotalDurationFromNotes } = require('./utils.js');
+const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput } = require('./utils.js');
 const { calculateSpan, isWhiteKey, balanceClusters } = require('./sort-notes.js');
 
 //------------------------
 // Utilities
 
+// normalise()
 test('normalise should convert spaces to underscores and uppercase', () => {
     expect(normalise("a,b,c")).toBe("A,B,C");
 });
@@ -13,6 +14,7 @@ test('normalise should handle empty or null input gracefully', () => {
     expect(normalise(null)).toBe("");
 });
 
+// translateNote()
 test('translateNote should correctly handle octave shifts', () => {
     expect(translateNote("^C")).toBe("C5");
     expect(translateNote("vC")).toBe("C3");
@@ -40,6 +42,7 @@ test('transformNote should keep s lowercase but uppercase everything else', () =
     expect(transformNote("FS3")).toBe("Fs3");
 });
 
+// formatTime()
 test('formatTime should format milliseconds into m:ss', () => {
     expect(formatTime(0)).toBe("0:00");
     expect(formatTime(1000)).toBe("0:01");
@@ -48,6 +51,7 @@ test('formatTime should format milliseconds into m:ss', () => {
     expect(formatTime(3600000)).toBe("60:00");
 });
 
+// midiToNoteName
 test('midiToNoteName should convert MIDI number to note name', () => {
     expect(midiToNoteName(60)).toBe("C4");  // Middle C
     expect(midiToNoteName(61)).toBe("Cs4"); // C#4
@@ -56,6 +60,7 @@ test('midiToNoteName should convert MIDI number to note name', () => {
     expect(midiToNoteName(0)).toBe("C-1");
 });
 
+// durationToUnderscores
 test('durationToUnderscores should return correct number of underscores', () => {
     const tpq = 480;
     const uspq = 500000;
@@ -66,6 +71,31 @@ test('durationToUnderscores should return at least 1 underscore', () => {
     expect(durationToUnderscores(1, 480, 500000)).toBe("_"); // 1
 });
 
+// isValidMusicInput()
+test('isValidMusicInput should reject empty inputs', () => {
+    expect(isValidMusicInput("", "")).toBe(false);
+});
+
+test('isValidMusicInput should reject inputs with no valid notes', () => {
+    expect(isValidMusicInput("___", "123")).toBe(false);
+    expect(isValidMusicInput("", "___")).toBe(false);
+});
+
+test('isValidMusicInput should accept valid note inputs', () => {
+    expect(isValidMusicInput("A4", "")).toBe(true);
+    expect(isValidMusicInput("", "C4_E4")).toBe(true);
+    expect(isValidMusicInput("A4", "C4")).toBe(true);
+});
+
+test('isValidMusicInput should accept if only one hand has notes', () => {
+    expect(isValidMusicInput("C4_E4_G4", "")).toBe(true);
+    expect(isValidMusicInput("", "A3_C4")).toBe(true);
+});
+
+//------------------------
+// Main Script
+
+// LOOKAHEAD
 test('should identify notes that need to be spawned', () => {
     const globalTime = 1000;
     const LOOKAHEAD = 3000;
