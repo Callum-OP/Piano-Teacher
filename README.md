@@ -53,7 +53,7 @@ Customisation? Such as dark mode, text size and colour theme selection.
 Saving entered music notes into music.json and saving it to device? Could be limited to native apps only.
 
 ## Top Issues
-When not extended, and after loading a saved music piece, falling notes land one key to the right of the key that lights up, this continues to happen if you change music piece but only for the first few notes in that music piece/saved music, the rest of it would be fine? It is the falling notes that are incorrect. Only seems to happen on mobile currently. May be due to how noteDiv.style.left is set in create note div so will attempt update and see if that resolves the issue.
+No urgent issues
 
 ## Minor Issues
 --- Dark mode ---
@@ -70,3 +70,7 @@ Look for any chance to optimise, focusing on tick() animation loop in JS, creati
 
 --- Sort Notes Feature ---
 Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function.
+
+## Old/Resolved Issues
+--- Falling Notes Misplacement ---
+When not extended, and after loading a saved music piece, falling notes land one key to the right of the key that lights up, this continues to happen if you change music piece but only for the first few notes in that music piece/saved music, the rest of it would be fine? It is the falling notes that are incorrect. Only seems to happen on mobile currently. Changed how noteDiv.style.left is set in create note div by copying how it is set in the update code (which works) which has seemingly now resolved this issue.
