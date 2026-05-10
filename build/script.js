@@ -164,7 +164,7 @@ function createNoteDiv(noteName, delay, hand) {
     const noteDiv = document.createElement("div");
     noteDiv.className = "falling-note"; // This is for css to detect the class
     noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
-    noteDiv.style.left = `${keyRect.left}px`; // Relative to viewport
+    noteDiv.style.left = `${keyRect.left - previewRect.left}px`;
     noteDiv.style.height = `${delay / 8}px`; // Set height to length of note
     noteDiv.style.setProperty("--target-top", `${keyRect.top}px`);
     noteDiv.style.animationDuration = "9s"; // Lasts for 9 seconds
