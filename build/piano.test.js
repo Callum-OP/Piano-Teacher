@@ -15,6 +15,19 @@ test('normalise should handle empty or null input gracefully', () => {
 });
 
 // translateNote()
+test('transformNote should produce consistent output for the same note regardless of input case', () => {
+    expect(transformNote("cs4")).toBe(transformNote("Cs4"));
+    expect(transformNote("CS4")).toBe(transformNote("cs4"));
+    expect(transformNote("as3")).toBe(transformNote("As3"));
+});
+
+test('translateNote output should be compatible with transformNote', () => {
+    // Notes that go through translateNote then transformNote should be stable
+    const translated = translateNote("^C");
+    const transformed = transformNote(translated);
+    expect(transformed).toBe(translated); // Should already be in correct format
+});
+
 test('translateNote should correctly handle octave shifts', () => {
     expect(translateNote("^C")).toBe("C5");
     expect(translateNote("vC")).toBe("C3");
