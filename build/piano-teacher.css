@@ -57,7 +57,7 @@ html, body {
 }
 .hero-subtitle {
     margin-top: 12px;
-    color: #a8b3c1;
+    color: #bcc9da;
     font-size: clamp(1rem, 2.5vw, 1.25rem);
     text-align: center;
 }
@@ -400,7 +400,7 @@ footer {
 /* Main container */
 .main {
     width: 100%;
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
