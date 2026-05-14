@@ -55,7 +55,8 @@ Customisation? Such as dark mode, text size and colour theme selection.
 A toggle/option that only enters midi input within current piano size? If piano is smaller and there are notes not within that size then could discard them from the input.
 
 ## Top issues
-No urgent issues
+--- Wakelock Inconsistency ---
+The wakelock is still not always working as intended and keeping the screen awake when it should be closed. I'll need to retest it thouroughly and only allow it to keep the screen awake when it is playing audio, and ideally for only a minute or two if paused part way through, otherwise it should never keep the screen awake.
 
 ## Minor issues
 --- Dark mode ---
