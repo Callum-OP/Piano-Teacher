@@ -70,6 +70,77 @@ let octaveControls = document.getElementById("octave-controls");
 // Wakelock
 let wakeLock = null;
 let pauseWakeLockTimer = null;
+const PAUSE_WAKELOCK_TIMEOUT = 2 * 60 * 1000; // 2 minutes
+
+// --- Wake lock helpers ---
+// Only returns true if music is actively playing
+function isPlaying() {
+    return scheduledNotes.length > 0 && !isPaused && globalTime < totalDuration;
+}
+
+async function enableWakeLock() {
+    if (!isPlaying()) {
+        console.log('[WakeLock] enableWakeLock skipped, not playing');
+        return;
+    }
+    try {
+        if (!wakeLock || wakeLock.released) {
+            wakeLock = await navigator.wakeLock.request("screen");
+            console.log('[WakeLock] Acquired');
+        } else {
+            console.log('[WakeLock] Already active, skipped');
+        }
+    } catch (err) {
+        console.error("Wake Lock error:", err);
+    }
+}
+
+function disableWakeLock() {
+    clearTimeout(pauseWakeLockTimer);
+    pauseWakeLockTimer = null;
+    if (wakeLock && !wakeLock.released) {
+        wakeLock.release();
+        wakeLock = null;
+        console.log('[WakeLock] Released');
+    }
+}
+
+function startPauseWakeLockTimer() {
+    // Only start timer if music is mid-piece (not finished)
+    if (scheduledNotes.length === 0 || globalTime >= totalDuration) {
+        console.log('[WakeLock] No timer started — music not mid-piece');
+        return;
+    }
+    clearTimeout(pauseWakeLockTimer);
+    pauseWakeLockTimer = setTimeout(() => {
+        console.log('[WakeLock] Pause timer fired — releasing');
+        disableWakeLock();
+    }, PAUSE_WAKELOCK_TIMEOUT);
+    console.log('[WakeLock] Pause timer started');
+}
+
+// Handle returning to app
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+        if (isPlaying()) {
+            enableWakeLock();
+        } else if (isPaused && scheduledNotes.length > 0 && globalTime < totalDuration) {
+            // Only restart timer if wake lock is still active
+            // If 2 minute timer already fired, leave wake lock off
+            if (wakeLock && !wakeLock.released) {
+                startPauseWakeLockTimer();
+            } else {
+                console.log('[WakeLock] Returned while paused but wake lock already released — leaving off');
+            }
+        } else {
+            disableWakeLock();
+        }
+    } else {
+        clearTimeout(pauseWakeLockTimer);
+        pauseWakeLockTimer = null;
+        console.log('[WakeLock] App hidden — pause timer cleared');
+    }
+});
 
 // --- Music library select ---
 // Set up default music to choose from
@@ -304,6 +375,39 @@ function tick(ts) {
     checkIfFinished();
 }
 
+// --- Button state helpers ---
+function setButtonToRestart() {
+    const btn = document.querySelector("#pause");
+    const btnIcon = document.querySelector("#pause i");
+    if (!btnIcon || !btn) return;
+    btnIcon.classList.remove("bi-pause-fill", "bi-play-fill");
+    btnIcon.classList.add("bi-arrow-counterclockwise"); // Show restart symbol
+    btn.setAttribute("onclick", "restartPlay()");
+}
+
+function setButtonToPlay() {
+    const btn = document.querySelector("#pause");
+    const btnIcon = document.querySelector("#pause i");
+    if (!btnIcon || !btn) return;
+    btnIcon.classList.remove("bi-pause-fill", "bi-arrow-counterclockwise");
+    btnIcon.classList.add("bi-play-fill"); // Show play symbol
+    btn.setAttribute("onclick", "togglePause()");
+}
+
+function setButtonToPause() {
+    const btn = document.querySelector("#pause");
+    const btnIcon = document.querySelector("#pause i");
+    if (!btnIcon || !btn) return;
+    btnIcon.classList.remove("bi-play-fill", "bi-arrow-counterclockwise");
+    btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
+    btn.setAttribute("onclick", "togglePause()");
+}
+
+// Restart autoplay from beginning
+function restartPlay() {
+    autoPlay();
+}
+
 // --- Button controls ---
 // Pause falling notes as well as countdown
 function togglePause() {
@@ -323,25 +427,15 @@ function togglePause() {
     togglePauseCountdown(); // Pause countdown
 
     if (isPaused) {
-        // Start 4 minute timer to release wake lock when paused
-        pauseWakeLockTimer = setTimeout(() => {
-            disableWakeLock();
-        }, 4 * 60 * 1000);
+        // Start timer to release wake lock after 2 minutes of being paused
+        startPauseWakeLockTimer();
+        setButtonToPlay();
     } else {
         // Resumed, so cancel timer and re-enable wake lock
         clearTimeout(pauseWakeLockTimer);
         pauseWakeLockTimer = null;
         enableWakeLock();
-    }
-
-    // Get pause button and change symbol based on state
-    const btnIcon = document.querySelector("#pause i");
-    if (!isPaused) {
-        btnIcon.classList.remove("bi-play-fill");
-        btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
-    } else {
-        btnIcon.classList.remove("bi-pause-fill");
-        btnIcon.classList.add("bi-play-fill"); // Show play symbol
+        setButtonToPause();
     }
 }
 // Change tempo, making autoplay quicker or slower
@@ -369,10 +463,8 @@ function stopAll() {
         updateRangeFill(timeline);
     }
 
-    // Change pause button symbol
-    const btnIcon = document.querySelector("#pause i");
-    btnIcon.classList.remove("bi-pause-fill");
-    btnIcon.classList.add("bi-play-fill"); // Show play symbol
+    // Reset button to play
+    setButtonToPlay();
 
     updateTimelineDisplay();
 }
@@ -388,7 +480,6 @@ function autoPlay() {
     if (!isValidMusicInput(left, right)) return;
 
     stopAll(); // End previous run
-    enableWakeLock(); // Keep screen open
     
     if (audioContext.state === "suspended") audioContext.resume();
     activeNotes = [];
@@ -401,15 +492,15 @@ function autoPlay() {
     // Set up timeline
     totalDuration = calculateTotalDuration();
     updateTimelineDisplay();
+
+    enableWakeLock(); // Keep screen open
     
     // Show timeline
     const timelineContainer = document.querySelector(".timeline-container");
     if (timelineContainer) timelineContainer.style.display = "block";
 
-    // Change pause button symbol
-    const btnIcon = document.querySelector("#pause i");
-    btnIcon.classList.remove("bi-play-fill");
-    btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
+    // Change to pause button symbol since music is now playing
+    setButtonToPause();
 }
 
 // Tempo slider
@@ -699,10 +790,8 @@ function checkIfFinished() {
     if (allDone && !isPaused) {
         const hero = document.querySelector(".hero");
         hero.classList.remove("hidden");
-        // Change pause button symbol
-        const btnIcon = document.querySelector("#pause i");
-        btnIcon.classList.remove("bi-pause-fill");
-        btnIcon.classList.add("bi-play-fill"); // Show play symbol
+        // Change button to restart symbol since music has finished
+        setButtonToRestart();
         disableWakeLock(); // No longer need to keep screen open
     }
 }
@@ -781,6 +870,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isScrubbingTimeline) {
                 const newTime = (e.target.value / 100) * totalDuration;
                 globalTime = newTime;
+
+                // If scrubbed back from end, restore play/pause button state
+                if (globalTime < totalDuration) {
+                    if (isPaused) {
+                        setButtonToPlay();
+                    } else {
+                        setButtonToPause();
+                    }
+                }
                 
                 // Reset audio triggers and clean up notes
                 activeNotes.forEach(n => {
@@ -836,12 +934,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (globalTime >= totalDuration) {
                     isPaused = true;
-                    // Change pause button symbol
-                    const btnIcon = document.querySelector("#pause i");
-                    if (btnIcon) {
-                        btnIcon.classList.remove("bi-pause-fill");
-                        btnIcon.classList.add("bi-play-fill"); // Show play symbol
-                    }
+                    disableWakeLock();
+                    // Change button to restart symbol
+                    setButtonToRestart();
                 }
             }
         });
@@ -849,6 +944,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Computer mouse
         timeline.addEventListener("mouseup", () => {
             isScrubbingTimeline = false;
+            if (globalTime >= totalDuration) {
+                isPaused = true;
+                disableWakeLock();
+                setButtonToRestart();
+                return;
+            }
             // Ensure animation loop is running
             if (!lastFrameTime) {
                 lastFrameTime = null;
@@ -868,6 +969,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Touch screen
         timeline.addEventListener("touchend", () => {
             isScrubbingTimeline = false;
+            if (globalTime >= totalDuration) {
+                isPaused = true;
+                disableWakeLock();
+                setButtonToRestart();
+                return;
+            }
             // Ensure animation loop is running
             if (!lastFrameTime) {
                 lastFrameTime = null;
@@ -920,49 +1027,6 @@ function updateNoteTargets() {
     });
 }
 
-// --- Keep device screen from entering sleep mode while piano is running ---
-async function enableWakeLock() {
-    try {
-        wakeLock = await navigator.wakeLock.request("screen");
-    } catch (err) {
-        console.error("Wake Lock error:", err);
-    }
-}
-function disableWakeLock() {
-    if (wakeLock) {
-        wakeLock.release();
-        wakeLock = null;
-    }
-}
-// Enable wake lock when user has returned to the app
-document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-        // If music finished, disable wake lock
-        if (globalTime >= totalDuration && totalDuration > 0) {
-            disableWakeLock();
-            return;
-        } else if (!isPaused) {
-            // Resumed, so re-enable wake lock
-            enableWakeLock();
-        }
-        if (isPaused) {
-            // Start 4 minute timer to release wake lock when paused
-            pauseWakeLockTimer = setTimeout(() => {
-                disableWakeLock();
-            }, 4 * 60 * 1000);
-        }
-    }
-});
-
-// --- AudioContext resume on first click ---
-document.body.addEventListener("click", () => {
-    if (audioContext.state === "suspended") {
-        audioContext.resume().then(() => {
-        console.log("AudioContext resumed");
-        });
-    }
-}, { once: true });
-
 // --- Timeline bar feature ---
 // Calculate total duration
 function calculateTotalDuration() {
@@ -991,10 +1055,15 @@ function updateTimelineDisplay() {
     if (globalTime >= totalDuration && totalDuration > 0) {
         isPaused = true;
         disableWakeLock();
-        const btnIcon = document.querySelector("#pause i");
-        if (btnIcon) {
-            btnIcon.classList.remove("bi-pause-fill");
-            btnIcon.classList.add("bi-play-fill");
-        }
+        setButtonToRestart();
     }
 }
+
+// --- AudioContext resume on first click ---
+document.body.addEventListener("click", () => {
+    if (audioContext.state === "suspended") {
+        audioContext.resume().then(() => {
+        console.log("AudioContext resumed");
+        });
+    }
+}, { once: true });

@@ -58,6 +58,12 @@ A toggle/option that only enters midi input within current piano size? If piano 
 --- Wakelock Inconsistency ---
 The wakelock is still not always working as intended and keeping the screen awake when it should be closed. I'll need to retest it thouroughly and only allow it to keep the screen awake when it is playing audio, and ideally for only a minute or two if paused part way through, otherwise it should never keep the screen awake.
 
+Added detailed tests to find issues with wake lock. 
+
+Issues fixed so far:
+After the 2 minute pause timer fires and releases the wake lock, returning to the app no longer incorrectly restarts the timer.
+Is playing was false when starting autoplay as enable wakelock was being called too early, now works correctly.
+
 ## Minor issues
 --- Dark mode ---
 The colours and layout on dark mode specifically on the web on some mobile browsers does not look right compared to the intended look.

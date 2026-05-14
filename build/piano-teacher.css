@@ -408,6 +408,15 @@ footer {
     margin-top: 430px;
 }
 
+/* Restart button */
+#pause .bi-arrow-counterclockwise {
+    font-size: 1.6rem;
+    font-weight: 900;
+    -webkit-text-stroke: 0.5px currentColor;
+    position: relative;
+    top: 1.7px;
+}
+
 
 /* Change spacing depending on screen */
 @media (max-width: 800px) {
