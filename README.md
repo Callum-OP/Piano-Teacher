@@ -37,10 +37,12 @@ https://www.midiworld.com/
 https://bitmidi.com/
 https://musescore.com/
 
-## Features to consider
---- Toggle Input Data ---
-A toggle/option that only enters midi input within current piano size? If piano is smaller and there are notes not within that size then could discard them from the input.
+## Top features to consider
+--- Playback Improvements ---
+Change play button functionality (including the icon) to a restart button when the music ends.
+Also move stop button further away so you can't hit it by accident while trying to use controls.
 
+## Features to consider
 --- Better Rests ---
 When playing several notes at once in autoplay the underscores are not considered seperate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another.
 
@@ -49,13 +51,13 @@ Show clearly the notes about to be played by placing the actual notes in letter 
 Give the autoplay editor a faded look if no music has been started?
 Customisation? Such as dark mode, text size and colour theme selection.
 
---- Save custom music selections ---
-Saving entered music notes into music.json and saving it to device? Could be limited to native apps only.
+--- Toggle Input Data ---
+A toggle/option that only enters midi input within current piano size? If piano is smaller and there are notes not within that size then could discard them from the input.
 
-## Top Issues
+## Top issues
 No urgent issues
 
-## Minor Issues
+## Minor issues
 --- Dark mode ---
 The colours and layout on dark mode specifically on the web on some mobile browsers does not look right compared to the intended look.
 
@@ -71,6 +73,6 @@ Look for any chance to optimise, focusing on tick() animation loop in JS, creati
 --- Sort Notes Feature ---
 Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function.
 
-## Old/Resolved Issues
+## Recent resolved issues
 --- Falling Notes Misplacement ---
 When not extended, and after loading a saved music piece, falling notes land one key to the right of the key that lights up, this continues to happen if you change music piece but only for the first few notes in that music piece/saved music, the rest of it would be fine? It is the falling notes that are incorrect. Only seems to happen on mobile currently. Changed how noteDiv.style.left is set in create note div by copying how it is set in the update code (which works) which has seemingly now resolved this issue.
