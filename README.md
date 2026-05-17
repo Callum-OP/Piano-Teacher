@@ -42,6 +42,9 @@ https://musescore.com/
 Change play button functionality (including the icon) to a restart button when the music ends.
 Also move stop button further away so you can't hit it by accident while trying to use controls.
 
+--- Decrease size of app ---
+The desktop version of the app on Microsoft Store is 300mb, maybe try to find ways to decrease that since the mobile version is only 30mb in comparison. Tauri 2.0 uses the OS WebView like Capacitor does, it may be worth changing to it instead of Electron in the future (Tauri could also be used for mobile as well as meaning I only need one wrapper), although it means retesting and possibly rewriting code to get it to work Alternatively just find other ways to better compress the size of the exe on desktop.
+
 ## Features to consider
 --- Better Rests ---
 When playing several notes at once in autoplay the underscores are not considered seperate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another.
