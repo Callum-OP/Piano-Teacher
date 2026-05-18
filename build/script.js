@@ -375,7 +375,9 @@ function tick(ts) {
     checkIfFinished();
 }
 
-// --- Button state helpers ---
+// --- Button controls ---
+
+// Play button state helpers
 function setButtonToRestart() {
     const btn = document.querySelector("#pause");
     const btnIcon = document.querySelector("#pause i");
@@ -384,7 +386,6 @@ function setButtonToRestart() {
     btnIcon.classList.add("bi-arrow-counterclockwise"); // Show restart symbol
     btn.setAttribute("onclick", "restartPlay()");
 }
-
 function setButtonToPlay() {
     const btn = document.querySelector("#pause");
     const btnIcon = document.querySelector("#pause i");
@@ -393,7 +394,6 @@ function setButtonToPlay() {
     btnIcon.classList.add("bi-play-fill"); // Show play symbol
     btn.setAttribute("onclick", "togglePause()");
 }
-
 function setButtonToPause() {
     const btn = document.querySelector("#pause");
     const btnIcon = document.querySelector("#pause i");
@@ -402,13 +402,37 @@ function setButtonToPause() {
     btnIcon.classList.add("bi-pause-fill"); // Show pause symbol
     btn.setAttribute("onclick", "togglePause()");
 }
-
 // Restart autoplay from beginning
 function restartPlay() {
     autoPlay();
 }
 
-// --- Button controls ---
+// Mute
+let isMuted = false;
+let volumeBeforeMute = 1;
+function toggleMute() {
+    const muteIcon = document.querySelector("#mute i");
+    const volumeSlider = document.getElementById("volume");
+    if (!isMuted) {
+        // Mute
+        volumeBeforeMute = masterGain.gain.value;
+        masterGain.gain.value = 0;
+        volumeSlider.value = 0;
+        updateRangeFill(volumeSlider);
+        muteIcon.classList.remove("bi-volume-up");
+        muteIcon.classList.add("bi-volume-mute");
+        isMuted = true;
+    } else {
+        // Unmute
+        masterGain.gain.value = volumeBeforeMute;
+        volumeSlider.value = volumeBeforeMute;
+        updateRangeFill(volumeSlider);
+        muteIcon.classList.remove("bi-volume-mute");
+        muteIcon.classList.add("bi-volume-up");
+        isMuted = false;
+    }
+}
+
 // Pause falling notes as well as countdown
 function togglePause() {
     // If nothing is playing, start autoplay
@@ -565,10 +589,19 @@ if (tempo && tempoVal) {
 // Volume slider
 if (volume) {
     volume.addEventListener("input", (e) => {
+        masterGain.gain.value = e.target.value;
         updateRangeFill(volume);
+        // If user moves slider while muted, unmute
+        if (isMuted && e.target.value > 0) {
+            isMuted = false;
+            const muteIcon = document.querySelector("#mute i");
+            muteIcon.classList.remove("bi-volume-mute");
+            muteIcon.classList.add("bi-volume-up");
+        }
     });
     updateRangeFill(volume); // Initial fill on page load
 }
+
 // Rewind or fast Forward
 function rewind() {
     globalTime = Math.max(0, globalTime - 2000); // Jump back 2s

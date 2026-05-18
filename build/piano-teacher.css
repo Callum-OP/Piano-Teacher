@@ -411,6 +411,36 @@ footer {
     margin-top: 430px;
 }
 
+/* Playback buttons pulse effect */
+#pause:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+#rewind:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+#forward:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+#stop:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+#decreaseOctave:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+#increaseOctave:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+#mute:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
 /* Restart button */
 #pause .bi-arrow-counterclockwise {
     font-size: 1.6rem;
@@ -433,11 +463,6 @@ footer {
   width: 0%; /* Initial state */
   /* Remove Bootstrap's default transition */
   transition: none !important; 
-}
-/* Pulse effect */
-#stop:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
 }
 
 /* Change spacing depending on screen */
