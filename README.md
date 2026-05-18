@@ -21,6 +21,8 @@ Alternatively to build locally as a desktop app use: npm run build
 Or:
 npx electron-builder --win appx 
 npx electron-builder --win --x64
+For store app bundle:
+npm run build-store
 
 If you want to build for android you'll need something like Android Studio and can sync changes with: npx cap sync android
 

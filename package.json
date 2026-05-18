@@ -7,7 +7,11 @@
   "scripts": {
     "build": "npx electron-builder --win appx --x64 --arm64",
     "test": "jest",
-    "desktop": "electron ."
+    "desktop": "electron .",
+    "delete-dist": "rmdir /s /q \"dist\"",
+    "isolate-appx": "powershell -Command \"New-Item -ItemType Directory -Force 'dist/piano-teacher-bundle'; Move-Item 'dist/*.appx' 'dist/piano-teacher-bundle/' -ErrorAction SilentlyContinue\"",
+    "bundle": "powershell -Command \"& 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/arm64/MakeAppx.exe' bundle /v /d 'dist/piano-teacher-bundle' /p \\\"dist/piano-teacher.$env:npm_package_version.appxbundle\\\"\"",
+    "build-store": "npm run delete-dist && npm run build && npm run isolate-appx && npm run bundle"
   },
   "jest": {
     "testEnvironment": "jsdom"
@@ -31,7 +35,8 @@
       "publisherDisplayName": "Callum-OP",
       "displayName": "Piano Teacher by Callum-OP",
       "applicationId": "PianoTeacherbyCallumOP",
-      "backgroundColor": "#F0E4D0"
+      "backgroundColor": "#F0E4D0",
+      "minVersion": "10.0.19041.0"
     },
     "files": [
       "build/**/*",
