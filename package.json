@@ -5,10 +5,9 @@
   "author": "Callum O'Prey callumoprey@gmail.com",
   "main": "main.js",
   "scripts": {
-    "build": "electron-builder --win appx",
+    "build": "npx electron-builder --win appx --x64 --arm64",
     "test": "jest",
-    "desktop": "electron .",
-    "build-store": "npx electron-builder --win appx --x64 --arm64"
+    "desktop": "electron ."
   },
   "jest": {
     "testEnvironment": "jsdom"
