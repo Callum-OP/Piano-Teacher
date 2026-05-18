@@ -90,7 +90,6 @@ html, body {
 }
 #controls { padding: 10px; background: #222; display: flex; gap: 10px; align-items: center; }
 #controls button { padding: 6px 10px; }
-#tempo { width: 160px; }
 
 /* Form elements (autoplay) */
 .form-label {
@@ -184,6 +183,10 @@ html, body {
     color: var(--accent-3) !important;
 }
 .volume-control i {
+    font-size: 1.5rem;
+    padding: 0;
+}
+.tempo-left i {
     font-size: 1.5rem;
     padding: 0;
 }
@@ -419,6 +422,11 @@ footer {
 
 
 /* Change spacing depending on screen */
+@media (min-width: 800px) {
+    #tempo, #volume {
+        width: 150px;
+    }
+}
 @media (max-width: 800px) {
     html, body { 
         background-size: 155%;
