@@ -45,10 +45,14 @@ https://musescore.com/
 --- Playback Improvements ---
 Move stop button further away so you can't hit it by accident while trying to use controls.
 
---- Decrease size of app ---
+--- Decrease Size Of App ---
 The desktop version of the app on Microsoft Store is 300mb, maybe try to find ways to decrease that since the mobile version is only 30mb in comparison. Tauri 2.0 uses the OS WebView like Capacitor does, it may be worth changing to it instead of Electron in the future (Tauri could also be used for mobile as well as meaning I only need one wrapper), although it means retesting and possibly rewriting code to get it to work.
-One possible issue for the store is that cause there are two builds it may be combining them for install making the app bigger than it needs to be.
-One fix is just to upload the x64 package on its own for now and see if the MS Store is doubling size because it has both versions available on it, or combine them into an appx bundle but that requires getting them to match exactly.
+
+One possible issue for the store is that the two builds are combined making the app bigger than it needs to be.
+Will try using appx bundle, it should reduce only select the one version that is correct for that computer and therefore half the size of the Microsoft Store app.
+
+--- Toggle All MIDI Tracks ---
+Add a toggle that allows all MIDI tracks to be included in the input when uploading, currently only the first two tracks are considered and the rest are discarded, potentially losing important notes in pieces where the main notes are on a later track.
 
 ## Features to consider
 --- Better Rests ---
