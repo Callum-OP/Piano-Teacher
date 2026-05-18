@@ -17,8 +17,11 @@ To set up dependencies, assuming you have node installed, use: npm install
 
 To run locally on localhost:3000 you can use a command like: python -m http.server 3000 or npx http-server . 
 
-Alternatively to build locally as a desktop app use: npx electron-builder --win appx 
-Or: npx electron-builder --win --x64
+Alternatively to build locally as a desktop app use: npm run build-store
+Or:
+npx electron-builder --win appx --arch x64,arm64
+npx electron-builder --win appx 
+npx electron-builder --win --x64
 
 If you want to build for android you'll need something like Android Studio and can sync changes with: npx cap sync android
 

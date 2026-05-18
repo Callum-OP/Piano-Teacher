@@ -1,6 +1,6 @@
 {
   "name": "piano-teacher",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "An interactive way to learn piano using a visual piano interface.",
   "author": "Callum O'Prey callumoprey@gmail.com",
   "main": "main.js",
@@ -8,7 +8,7 @@
     "build": "electron-builder --win appx",
     "test": "jest",
     "desktop": "electron .",
-    "build:samsung": "powershell -Command 'Remove-Item -Recurse -Force build -ErrorAction SilentlyContinue; New-Item -ItemType Directory -Force build; Copy-Item index.html build/; Copy-Item styles.css build/; Copy-Item -Recurse sounds build/; Copy-Item -Recurse build_icons build/; npx cap sync'"
+    "build-store": "npx electron-builder --win appx --x64 --arm64"
   },
   "jest": {
     "testEnvironment": "jsdom"
