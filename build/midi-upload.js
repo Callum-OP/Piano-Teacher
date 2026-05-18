@@ -89,9 +89,13 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
 
     const allNotes = [];
 
-    // Only use first two tracks assuming 0 = right, 1 = left
-    midi.tracks.slice(0, 2).forEach((track, tIndex) => {
-        const hand = (tIndex === 0) ? "right" : "left";
+    // If limit toggle checked then only use first two tracks assuming 0 = right, 1 = left
+    const tracksToUse = document.getElementById("limit-midi").checked 
+        ? midi.tracks.slice(0, 2) 
+        : midi.tracks;
+
+    tracksToUse.forEach((track, tIndex) => {
+        const hand = tIndex === 0 ? "right" : "left";
         const active = {};
         track.events.forEach(ev => {
             if (ev.type === "on") {

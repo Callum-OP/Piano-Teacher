@@ -51,9 +51,6 @@ The desktop version of the app on Microsoft Store is 300mb, maybe try to find wa
 One possible issue for the store is that the two builds are combined making the app bigger than it needs to be.
 Will try using appx bundle, it should reduce only select the one version that is correct for that computer and therefore half the size of the Microsoft Store app.
 
---- Toggle All MIDI Tracks ---
-Add a toggle that allows all MIDI tracks to be included in the input when uploading, currently only the first two tracks are considered and the rest are discarded, potentially losing important notes in pieces where the main notes are on a later track.
-
 ## Features to consider
 --- Better Rests ---
 When playing several notes at once in autoplay the underscores are not considered seperate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another.
@@ -65,6 +62,9 @@ Customisation? Such as dark mode, text size and colour theme selection.
 
 --- Toggle Input Data ---
 A toggle/option that only enters midi input within current piano size? If piano is smaller and there are notes not within that size then could discard them from the input.
+
+--- See All MIDI Tracks ---
+Allow users to see the tracks within a MIDI file they upload and choose which tracks will and won't play.
 
 ## Top issues
 --- Wakelock Inconsistency ---
