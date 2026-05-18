@@ -259,7 +259,22 @@
                     <!-- Play / pause toggle -->
                     <button class="btn btn-outline-light mx-2" id="pause" onclick="togglePause();"><i class="bi bi-play-fill"></i></button>
                     <!-- Stop -->
-                    <button class="btn btn-outline-light mx-2" id="stop" onclick="stopAll();"><i class="bi bi-stop-fill"></i></button>
+                    <button class="btn btn-outline-light mx-2 position-relative overflow-hidden" 
+                        id="stop"
+                        onmousedown="startHold()" 
+                        onmouseup="cancelHold()" 
+                        onmouseleave="cancelHold()"
+                        ontouchstart="startHold()" 
+                        ontouchend="cancelHold()">
+                    
+                    <span class="position-relative z-1 text-danger">
+                        <i class="bi bi-stop-fill"></i>
+                    </span>
+
+                    <div class="progress position-absolute top-0 start-0 w-100 h-100 bg-transparent opacity-25 rounded-0">
+                        <div id="stop-progress" class="progress-bar bg-danger w-0" role="progressbar"></div>
+                    </div>
+                </button>
                     <!-- Fast forward -->
                     <button class="btn btn-outline-light mx-2" id="forward" onclick="fastForward();"><i class="bi bi-skip-forward-fill"></i></button>
                 </div>

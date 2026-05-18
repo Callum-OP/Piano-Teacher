@@ -441,6 +441,58 @@ function togglePause() {
 // Change tempo, making autoplay quicker or slower
 function setTempo(scale) { tempoScale = Number(scale); }
 
+// Stop button functionality
+let holdTimer = null;
+let holdDuration = 1000; // Time required to hold in milliseconds (1 second)
+let startTime = null;
+function startHold() {
+    // Prevent duplicate triggers
+    if (holdTimer) return; 
+    
+    startTime = performance.now();
+    
+    function animateHold(currentTime) {
+        if (!startTime) return;
+        
+        const elapsedTime = currentTime - startTime;
+        const progressPercent = Math.min((elapsedTime / holdDuration) * 100, 100);
+        
+        // Update the progress bar width
+        const progressBar = document.getElementById('stop-progress');
+        if (progressBar) {
+        progressBar.style.width = `${progressPercent}%`;
+        }
+        
+        if (elapsedTime >= holdDuration) {
+            executeStop();
+            cancelHold();
+        } else {
+            holdTimer = requestAnimationFrame(animateHold);
+        }
+    }
+  
+    holdTimer = requestAnimationFrame(animateHold);
+}
+function cancelHold() {
+    // Cancel the animation frame loop
+    if (holdTimer) {
+        cancelAnimationFrame(holdTimer);
+        holdTimer = null;
+    }
+    startTime = null;
+    
+    // Reset the progress bar back to 0 immediately
+    const progressBar = document.getElementById('stop-progress');
+    if (progressBar) {
+        progressBar.style.width = '0%';
+    }
+}
+function executeStop() {
+    cancelHold(); // Reset visual bar
+    stopAll(); // Execute your original stop logic
+    console.log("Playback completely stopped via long-press.");
+}
+
 // Stop audio and any falling notes as well as countdown and reset hero
 function stopAll() {
     disableWakeLock(); // No longer need to keep screen open
