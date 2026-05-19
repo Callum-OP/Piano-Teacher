@@ -5,6 +5,7 @@ function saveCustomMusic() {
         alert("Please enter a title before saving.");
         return;
     }
+    const composer = document.getElementById("customMusicComposer").value.trim() || "My Music";
     const left = document.getElementById("noteInputLeft").value.trim();
     const right = document.getElementById("noteInputRight").value.trim();
     if (!left && !right) {
@@ -12,22 +13,34 @@ function saveCustomMusic() {
         return;
     }
 
-    const saved = JSON.parse(localStorage.getItem("customMusic") || "[]");
+    let saved = JSON.parse(localStorage.getItem("customMusic") || "[]");
     
     // Check for duplicate title
     if (saved.find(m => m.title === title)) {
         if (!confirm(`"${title}" already exists. Overwrite it?`)) return;
-        const index = saved.findIndex(m => m.title === title);
-        saved[index] = { title, left, right };
-    } else {
-        saved.push({ title, left, right });
     }
 
-    // Sort alphabetically
-    saved.sort((a, b) => a.title.localeCompare(b.title));
+    saved = addOrUpdateMusic(saved, title, left, right, composer);
     localStorage.setItem("customMusic", JSON.stringify(saved));
     populateCustomMusicSelect();
     document.getElementById("customMusicTitle").value = "";
+    document.getElementById("customMusicComposer").value = "";
+}
+
+// Function to sort and update saved music list
+function addOrUpdateMusic(saved, title, left, right, composer = "My Music") {
+    const index = saved.findIndex(m => m.title === title);
+    if (index >= 0) {
+        saved[index] = { title, left, right, composer };
+    } else {
+        saved.push({ title, left, right, composer });
+    }
+    return saved.sort((a, b) => {
+        // Sort by composer first, then title
+        if (a.composer < b.composer) return -1;
+        if (a.composer > b.composer) return 1;
+        return a.title.localeCompare(b.title);
+    });
 }
 
 // Load selected music into inputs
@@ -63,11 +76,25 @@ function populateCustomMusicSelect() {
     const select = document.getElementById("customMusicSelect");
     const saved = JSON.parse(localStorage.getItem("customMusic") || "[]");
     select.innerHTML = '<option value="">-- Saved Music --</option>';
+
+    // Group by composer
+    const grouped = {};
     saved.forEach(m => {
-        const option = document.createElement("option");
-        option.value = m.title;
-        option.textContent = m.title;
-        select.appendChild(option);
+        const composer = m.composer || "My Music";
+        if (!grouped[composer]) grouped[composer] = [];
+        grouped[composer].push(m);
+    });
+
+    Object.entries(grouped).forEach(([composer, pieces]) => {
+        const group = document.createElement("optgroup");
+        group.label = composer;
+        pieces.forEach(m => {
+            const option = document.createElement("option");
+            option.value = m.title;
+            option.textContent = m.title;
+            group.appendChild(option);
+        });
+        select.appendChild(group);
     });
 }
 
