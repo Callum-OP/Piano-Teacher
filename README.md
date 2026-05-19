@@ -73,7 +73,7 @@ None so far
 
 ## Minor issues
 --- Dark mode ---
-The colours and layout on dark mode specifically on the web on some mobile browsers does not look right compared to the intended look.
+The colours and layout on dark mode specifically on the web on some mobile browsers does not look right compared to the intended look. For samsung internet I noticed the app was inconsistently darker, some falling notes and shadows were bright and others were not, this may be due to a filter that the browser creates that I can't fix. Either way users on mobile would ideally be using the app version on Google Play Store which displays fine.
 
 --- Audio ---
 If the user switches windows or tabs the audio and animation will stop playing. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab).
@@ -81,7 +81,6 @@ If the user switches windows or tabs the audio and animation will stop playing. 
 --- Performance ---
 Older devices (10 years or more, will struggle to run the app as intended).
 Add an option to run the app in a simplified performance enhancing mode (Removing the fancy visuals and focusing on running the app at the bare minimum requirements)?
-Look for any chance to optimise, focusing on tick() animation loop in JS, creating/removing note divs and Audio processing.
 
 --- Sort Notes Feature ---
 Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function. This is fundamentally a hard problem, the current sort function works well so far but to properly improve it so that it is perfect may require a complete rewrite of the sort logic.
