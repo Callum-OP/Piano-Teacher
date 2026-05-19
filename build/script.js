@@ -150,11 +150,22 @@ fetch('./music.json')
     .catch(err => console.error("Error loading music:", err));
 // Populate inputs if default music selected
 function populateMusicSelect(list) {
+    // Group by composer
+    const grouped = {};
     list.forEach((music, index) => {
-        const option = document.createElement("option");
-        option.value = index;
-        option.textContent = `${music.title} – by ${music.composer}`;
-        musicSelect.appendChild(option);
+        if (!grouped[music.composer]) grouped[music.composer] = [];
+        grouped[music.composer].push({ music, index });
+    });
+    Object.entries(grouped).forEach(([composer, pieces]) => {
+        const group = document.createElement("optgroup");
+        group.label = composer;
+        pieces.forEach(({ music, index }) => {
+            const option = document.createElement("option");
+            option.value = index;
+            option.textContent = music.title;
+            group.appendChild(option);
+        });
+        musicSelect.appendChild(group);
     });
     musicSelect.addEventListener("change", (e) => {
         const selected = list[e.target.value];
