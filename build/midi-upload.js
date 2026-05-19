@@ -99,15 +99,14 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
         const active = {};
         track.events.forEach(ev => {
             if (ev.type === "on") {
-                if (active[ev.pitch] == null) {
-                    active[ev.pitch] = ev.time;
-                }
-            } else if (ev.type === "off" && active[ev.pitch] != null) {
-                const dur = ev.time - active[ev.pitch];
+                if (!active[ev.pitch]) active[ev.pitch] = [];
+                active[ev.pitch].push(ev.time); // Stack multiple starts
+            } else if (ev.type === "off" && active[ev.pitch] && active[ev.pitch].length > 0) {
+                const startTime = active[ev.pitch].shift(); // Take earliest start
+                const dur = ev.time - startTime;
                 if (dur > 0) {
-                    allNotes.push({ start: active[ev.pitch], dur, pitch: ev.pitch, hand });
+                    allNotes.push({ start: startTime, dur, pitch: ev.pitch, hand });
                 }
-                delete active[ev.pitch];
             }
         });
     });
