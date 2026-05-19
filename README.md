@@ -50,7 +50,7 @@ Will try using appx bundle, it should reduce only select the one version that is
 
 ## Features to consider
 --- Better Rests ---
-When playing several notes at once in autoplay the underscores are not considered separate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another.
+When playing several notes at once in autoplay the underscores are not considered separate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another. This isn't a quick and easy fix, as it is a fundamental limitation of the note format the app uses.
 
 --- Graphics ---
 Give the autoplay editor a faded look if no music has been started?
@@ -84,7 +84,7 @@ Add an option to run the app in a simplified performance enhancing mode (Removin
 Look for any chance to optimise, focusing on tick() animation loop in JS, creating/removing note divs and Audio processing.
 
 --- Sort Notes Feature ---
-Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function.
+Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function. This is fundamentally a hard problem, the current sort function works well so far but to properly improve it so that it is perfect may require a complete rewrite of the sort logic.
 
 ## Recent resolved issues
 --- Wakelock Inconsistency ---

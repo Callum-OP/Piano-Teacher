@@ -333,20 +333,29 @@
         <section class="controls-card card shadow-sm mb-4">
         <div class="card-body">
             <div class="row g-3 align-items-center">
-                <!-- Checkbox for piano note labels -->
+                <!-- Settings Panel -->
                 <div class="col-12 col-md-4">
-                    <div class="col form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="toggle-labels" checked>
-                        <label class="form-check-label" for="toggle-labels">Show note labels</label>
+                    <div id="settings-panel" class="settings-panel" style="display:none;">
+                        <div class="settings-grid">
+                            <div class="form-check form-switch d-flex align-items-center gap-2 mb-0">
+                                <input class="form-check-input" type="checkbox" id="toggle-labels" checked>
+                                <label class="form-check-label" for="toggle-labels">Show note labels</label>
+                            </div>
+                            <div class="form-check form-switch d-flex align-items-center gap-2 mb-0">
+                                <input class="form-check-input" type="checkbox" id="auto-sort" checked>
+                                <label class="form-check-label" for="auto-sort">Auto sort MIDI notes</label>
+                            </div>
+                            <div class="form-check form-switch d-flex align-items-center gap-2 mb-0">
+                                <input class="form-check-input" type="checkbox" id="limit-midi">
+                                <label class="form-check-label" for="limitMidi">Limit MIDI to first two tracks</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="auto-sort" checked>
-                        <label class="form-check-label" for="auto-sort">Auto sort MIDI notes</label>
-                    </div>
-                    <div class="col form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="limit-midi" >
-                        <label class="form-check-label" for="auto-sort">Limit MIDI to first two tracks</label>
-                    </div>
+
+                    <!-- Settings button -->
+                    <button class="btn transport" id="settings-btn" onclick="toggleSettings()" aria-label="Settings">
+                        <i class="bi bi-gear text-light"></i>
+                    </button>
                 </div>
                 <!-- Additional info -->
                 <div class="col-12 col-md-8 text-md-end">
@@ -425,6 +434,7 @@
 
     <!-- Javascript files -->
     <script src="utils.js"></script>
+    <script src="settings.js"></script>
     <script src="./midi-upload.js"></script>
     <script src="./script.js"></script>
     <script src="./sort-notes.js"></script>

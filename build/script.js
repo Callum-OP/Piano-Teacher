@@ -45,9 +45,6 @@ let scheduledNotes = []; // Full schedule for lookahead spawning
 const LOOKAHEAD = 3000; // Window to spawn upcoming notes
 const previewLayer = document.getElementById("note-overlay");
 
-// Toggle inputs
-const toggleLabels = document.getElementById("toggle-labels");
-
 // Countdown
 let countdownSeconds = 0;
 let countdownInterval = null;
@@ -242,6 +239,7 @@ function createNoteDiv(noteName, delay, hand) {
     const rects = getRects(noteName);
     if (!rects) return null;
     const { keyRect, previewRect } = rects;
+    const isPerformanceMode = document.body.classList.contains("performance-mode");
 
     const noteDiv = document.createElement("div");
     noteDiv.className = "falling-note"; // This is for css to detect the class
@@ -781,18 +779,6 @@ if (piano) {
         key.addEventListener("touchstart", start, { passive: false });
         key.addEventListener("touchend", stop);
     });
-}
-
-// --- Toggle labels on/off ---
-// Toggle button for labels on the piano
-if (toggleLabels) {
-  toggleLabels.addEventListener("change", function () {
-    if (this.checked) {
-      piano.classList.remove("hide-labels");
-    } else {
-      piano.classList.add("hide-labels");
-    }
-  });
 }
 
 // --- Clear/reset autoplay ---

@@ -412,31 +412,7 @@ footer {
 }
 
 /* Playback buttons pulse effect */
-#pause:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
-}
-#rewind:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
-}
-#forward:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
-}
-#stop:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
-}
-#decreaseOctave:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
-}
-#increaseOctave:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
-}
-#mute:active {
+.btn:active {
   transform: scale(0.98);
   transition: transform 0.1s ease;
 }
@@ -463,6 +439,26 @@ footer {
   width: 0%; /* Initial state */
   /* Remove Bootstrap's default transition */
   transition: none !important; 
+}
+
+/* Settings button */
+.settings-panel {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    width: 100%;
+}
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+@media (max-width: 600px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Change spacing depending on screen */
