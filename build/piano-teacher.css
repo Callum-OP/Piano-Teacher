@@ -594,7 +594,10 @@ svg#piano .c-label {
 #stop .progress { z-index: 1; pointer-events: none; }
 #stop-progress { width: 0%; transition: none !important; }
 
-/* Settings Modal Elements */
+
+/* ==========================================
+   SETTINGS
+   ========================================== */
 .settings-panel {
     background: var(--card);
     border: 1px solid rgba(255,255,255,0.06);
@@ -617,6 +620,32 @@ footer {
 }
 
 .d-none { display: none !important; }
+
+/* Srip any glow when 'no-glow' class is active */
+body.no-glow {
+    --accent-glow: rgba(0, 0, 0, 0);
+    --danger-glow: rgba(0, 0, 0, 0);
+}
+body.no-glow .btn-primary,
+body.no-glow .btn-danger {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+body.no-glow .btn-primary:hover,
+body.no-glow .btn-danger:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+body.no-glow .transport button:hover i,
+body.no-glow .transport button:focus i,
+body.no-glow .transport button:active i,
+body.no-glow .transport button:focus-visible i {
+    text-shadow: none !important;
+}
+body.no-glow .active.right-hand {
+    filter: brightness(1.05) saturate(1.05);
+}
+body.no-glow .active.left-hand {
+    filter: brightness(1.05) saturate(1.05);
+}
 
 /* ==========================================
    RESPONSIVE MEDIA BREAKPOINTS

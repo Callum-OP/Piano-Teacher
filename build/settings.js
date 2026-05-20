@@ -5,6 +5,7 @@ const defaultSettings = {
     showLabels: true,
     autoSort: true,
     limitMidi: false,
+    enableGlow: true,
 };
 
 // Get and set settings
@@ -30,6 +31,12 @@ function applySettings(settings) {
     // Limit MIDI
     const limitMidi = document.getElementById("limit-midi");
     if (limitMidi) limitMidi.checked = settings.limitMidi;
+
+    // Apply Glow effect globally to document body
+    const toggleGlow = document.getElementById("toggle-glow");
+    if (toggleGlow) toggleGlow.checked = settings.enableGlow;
+    // Add the 'no-glow' class if enableGlow is false
+    document.body.classList.toggle("no-glow", !settings.enableGlow);
 }
 
 // Change setting to the default that was set when the app first started
@@ -51,11 +58,11 @@ function initSettings() {
     const settings = loadSettings();
     applySettings(settings);
 
-    // Listen for changes on each toggle
     const toggleMap = {
         "toggle-labels": "showLabels",
         "auto-sort": "autoSort",
         "limit-midi": "limitMidi",
+        "toggle-glow": "enableGlow",
     };
 
     Object.entries(toggleMap).forEach(([id, key]) => {
@@ -70,6 +77,11 @@ function initSettings() {
             if (key === "showLabels") {
                 const piano = document.getElementById("piano");
                 if (piano) piano.classList.toggle("hide-labels", !el.checked);
+            }
+            
+            // Update glow state immediately on switch change
+            if (key === "enableGlow") {
+                document.body.classList.toggle("no-glow", !el.checked);
             }
         });
     });
