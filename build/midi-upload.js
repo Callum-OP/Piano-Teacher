@@ -176,4 +176,7 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
     if (musicSelect) {
         musicSelect.selectedIndex = 0;
     }
+
+    // Reset file input so the same file can be reselected
+    e.target.value = "";
 });

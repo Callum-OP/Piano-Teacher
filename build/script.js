@@ -64,6 +64,9 @@ const OFFSETC2 = 210;
 let activePiano = document.getElementById("piano-standard");
 let octaveControls = document.getElementById("octave-controls");
 
+// Toggle inputs
+const toggleLabels = document.getElementById("toggle-labels");
+
 // Wakelock
 let wakeLock = null;
 let pauseWakeLockTimer = null;
