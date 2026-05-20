@@ -4,14 +4,14 @@ const SETTINGS_KEY = "pianoTeacherSettings";
 const defaultSettings = {
     showLabels: true,
     autoSort: true,
-    limitMidi: true,
+    limitMidi: false,
 };
 
+// Get and set settings
 function loadSettings() {
     const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
     return { ...defaultSettings, ...saved };
 }
-
 function saveSettings(settings) {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 }
@@ -28,10 +28,18 @@ function applySettings(settings) {
     if (autoSort) autoSort.checked = settings.autoSort;
 
     // Limit MIDI
-    const limitMidi = document.getElementById("limitMidi");
+    const limitMidi = document.getElementById("limit-midi");
     if (limitMidi) limitMidi.checked = settings.limitMidi;
 }
 
+// Change setting to the default that was set when the app first started
+function resetSettings() {
+    if (!confirm("Reset all settings to defaults?")) return;
+    saveSettings(defaultSettings);
+    applySettings(defaultSettings);
+}
+
+// Show settings panel or not
 function toggleSettings() {
     const panel = document.getElementById("settings-panel");
     if (!panel) return;
@@ -47,7 +55,7 @@ function initSettings() {
     const toggleMap = {
         "toggle-labels": "showLabels",
         "auto-sort": "autoSort",
-        "limitMidi": "limitMidi",
+        "limit-midi": "limitMidi",
     };
 
     Object.entries(toggleMap).forEach(([id, key]) => {

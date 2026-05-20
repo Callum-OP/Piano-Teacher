@@ -239,7 +239,6 @@ function createNoteDiv(noteName, delay, hand) {
     const rects = getRects(noteName);
     if (!rects) return null;
     const { keyRect, previewRect } = rects;
-    const isPerformanceMode = document.body.classList.contains("performance-mode");
 
     const noteDiv = document.createElement("div");
     noteDiv.className = "falling-note"; // This is for css to detect the class
