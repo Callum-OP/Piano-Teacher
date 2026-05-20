@@ -282,7 +282,7 @@
                 <!-- Right (volume) -->
                 <div class="volume-control d-flex align-items-center justify-content-end gap-3">
                     <button class="btn p-0 transport" id="mute" onclick="toggleMute()" aria-label="Mute">
-                        <i class="bi bi-volume-up text-light"></i>
+                        <i class="bi bi-volume-up"></i>
                     </button>
                     <input class="range" type="range" id="volume" min="0" max="1" step="0.01" value="1">
                 </div>
@@ -294,14 +294,10 @@
                     <!-- Octave controls -->
                     <div id="octave-controls" class="transport d-flex align-items-center gap-2">
                         <i class="bi bi-music-note-beamed text-light"></i>
-                        <button class="btn btn-outline-light" id="decreaseOctave" onclick="decreaseOctave()">
-                            <i class="bi bi-dash"></i>
-                        </button>
-                        C<span class="text-light" id="changeOctave">4</span>
-                        <button class="btn btn-outline-light" id="increaseOctave" onclick="increaseOctave()">
-                            <i class="bi bi-plus"></i>
-                        </button>
-                    </div>
+                            <button class="btn" id="decreaseOctave" onclick="decreaseOctave()"><i class="bi bi-dash"></i></button>
+                            <span class="small tracking-wider">Octave <strong id="changeOctave" class="text-accent">4</strong></span>
+                            <button class="btn" id="increaseOctave" onclick="increaseOctave()"><i class="bi bi-plus"></i></button>
+                        </div>
                 </div>
 
                 <!-- Center (timeline) -->
@@ -320,7 +316,7 @@
                     <!-- Extended toggle -->
                     <div class="form-check form-switch d-flex align-items-center gap-2 mb-0">
                         <input class="form-check-input" type="checkbox" id="toggleExtended">
-                        <label class="form-check-label mb-0" for="toggleExtended">Extend</label>
+                        <label class="form-check-label mb-0" for="toggleExtended">88-Key Extended</label>
                     </div>
                 </div>
             </div>
@@ -357,14 +353,14 @@
 
                     <!-- Settings button -->
                     <button class="btn transport" id="settings-btn" onclick="toggleSettings()" aria-label="Settings">
-                        <i class="bi bi-gear text-light"></i>
+                        <i class="bi bi-gear"></i>
                     </button>
                 </div>
                 <!-- Additional info -->
                 <div class="col-12 col-md-8 text-md-end">
-                    <span class="form-check-label">Autoplay mode:</span>
-                    <span class="badge bg-light text-dark">Use + for chords</span>
-                    <span class="badge bg-light text-dark">Use _ to add waits</span>
+                    <span class="form-check-label">Autoplay hints:</span>
+                    <span class="badge bg-light text-dark">+ Chords</span>
+                    <span class="badge bg-light text-dark">_ Waits</span>
                 </div>
             </div>
 

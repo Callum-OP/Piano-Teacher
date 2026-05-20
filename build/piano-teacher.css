@@ -1,80 +1,113 @@
 :root {
-    /* Colours */
+    /* Colors */
     --background: #08070d;
     --text: #eef2f6;
-    --accent: linear-gradient( #ffb515, #ff7134);
-    --accent-2: linear-gradient( #fcb51c, #fd753b);
+    --accent: linear-gradient(#ffb515, #ff7134);
+    --accent-2: linear-gradient(#fcb51c, #fd753b);
     --accent-3: #fc9f1c;
-    --highlight: linear-gradient( #ffb515, #ff7134);
+    --highlight: linear-gradient(#ffb515, #ff7134);
     --highlight-2: #ff9d15;
-    --highlightAlt:linear-gradient( #6dc5d2, #3d75b6);
+    --highlightAlt: linear-gradient(#6dc5d2, #3d75b6);
     --highlightAlt-2: #54afd6;
-    --card: linear-gradient( rgb(9, 9, 28) 60%, rgb(8, 14, 27) 100% );
-    --card-2: linear-gradient( rgb(5, 5, 17) 60%, rgb(5, 9, 20) 100% );
-    /* Piano */
+    --card: linear-gradient(rgb(9, 9, 28) 60%, rgb(8, 14, 27) 100%);
+    --card-2: linear-gradient(rgb(5, 5, 17) 60%, rgb(5, 9, 20) 100%);
+
+    /* Piano Keys Structure */
     --white: #fff;
     --stroke: #d6dde7;
     --black: #1a1a1a;
+    --white-key-color: #ffffff;
+    --white-key-stroke: #cbd5e1;
+    --black-key-color: #0f1523;
+    --black-key-stroke: #303947;
 }
 
+/* ==========================================
+   GLOBAL STYLES & INTERACTIVE BASICS
+   ========================================== */
 html, body {
     color-scheme: light dark;
     min-height: 100%;
     background-color: var(--background);
     background-image: url('background.jpg');
-    background-size: 140%;
     background-repeat: no-repeat; 
     background-position: top center;
     background-blend-mode: screen;
     color: var(--text) !important;
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    /* Modern dynamic background scaling based on viewport scale */
+    background-size: clamp(140%, 40vw, 350%);
 }
 
-/* Hero */
+/* Ensure all interactive triggers instantly show pointer click feedback */
+button, 
+.btn, 
+.form-check-input, 
+.range, 
+#timeline,
+.white-key, 
+.black-key {
+    cursor: pointer;
+}
+
+/* Main Layout Wrapper */
+.main {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* ==========================================
+   HERO BANNER
+   ========================================== */
 .hero {
     z-index: 1;
     position: relative;
     padding: 96px 0 72px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
     text-align: center;
     align-items: center;
     justify-content: center;
 }
+
 .hero-overlay {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    text-align: center;
 }
+
 .hero-title {
-    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     font-weight: 600;
     font-size: clamp(2rem, 5vw, 4rem);
     letter-spacing: 0.5px;
     color: var(--text) !important;
     text-shadow: 0 8px 30px rgba(0,0,0,0.35);
-    text-align: center;
 }
+
 .hero-subtitle {
     margin-top: 12px;
     color: #bcc9da;
     font-size: clamp(1rem, 2.5vw, 1.25rem);
-    text-align: center;
 }
+
 .hero-button .btn-primary {
     margin-top: 20px;
     padding: 10px 18px;
     border-radius: 10px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    text-align: center;
 }
+
 .hero.hidden {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
 }
 
-/* Cards */
+/* ==========================================
+   INTERFACE CARDS & CONTROL BAR
+   ========================================== */
 .controls-card.card,
 .piano-card.card {
     background: var(--card);
@@ -88,14 +121,27 @@ html, body {
     display: flex;
     justify-content: center;
 }
-#controls { padding: 10px; background: #222; display: flex; gap: 10px; align-items: center; }
-#controls button { padding: 6px 10px; }
 
-/* Form elements (autoplay) */
+#controls { 
+    padding: 10px; 
+    background: #222; 
+    display: flex; 
+    gap: 10px; 
+    align-items: center; 
+}
+
+#controls button { 
+    padding: 6px 10px; 
+}
+
+/* ==========================================
+   FORM CONTROLS (AUTOPLAY CONFIGS)
+   ========================================== */
 .form-label {
     color: var(--text) !important;
     font-weight: 600;
 }
+
 .form-control {
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.12);
@@ -104,9 +150,11 @@ html, body {
     padding: 0.7rem 0.9rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 .form-control::placeholder {
     color: #cbd5e1;
 }
+
 .form-control:focus {
     color: black !important;
     border-color: var(--accent-3);
@@ -117,11 +165,14 @@ html, body {
     background-color: var(--accent-3);
     border-color: var(--accent-3);
 }
+
 .form-check-label {
     color: var(--text) !important;
 }
 
-/* Buttons */
+/* ==========================================
+   BUTTON ARCHITECTURE & BUTTON EFFECTS
+   ========================================== */
 .btn-primary {
     background: var(--accent);
     border-color: var(--accent);
@@ -129,24 +180,49 @@ html, body {
     font-weight: 700;
     border-radius: 10px;
 }
+
 .btn-primary:hover {
     background: var(--accent-2);
     border-color: var(--accent-2);
 }
+
 .btn-outline-primary {
     border-color: var(--accent-3);
     color: var(--stroke);
     border-radius: 10px;
 }
+
 .btn-outline-primary:hover {
     background: var(--accent);
     border-color: var(--accent);
     color: #1b1b1b;
 }
+
 .btn-outline-danger {
     border-radius: 10px;
 }
-#stop i { color: #dc3545; }
+
+/* Enlarge all primary action buttons */
+.btn-primary, 
+.btn-outline-primary, 
+.btn-outline-danger,
+.btn-box {
+    padding: 9px 21px;
+    font-size: 1.05rem;
+    border-radius: 12px;
+}
+
+/* Micro-interaction bounce on click for all structural buttons */
+.btn:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+#stop i { 
+    color: #dc3545; 
+}
+
+/* Transport Deck Control Styles */
 .transport button {
     border: none !important;
     background: transparent !important;
@@ -156,144 +232,246 @@ html, body {
     border-radius: 50%;
     padding: 0;
 }
+
 .transport i {
     font-size: 2rem;
     line-height: 1;
 }
+
 .transport button:hover,
 .transport button:focus,
 .transport button:active,
-.transport button:focus-visible {
+.transport button:focus-visible,
+.transport button:hover i,
+.transport button:focus i,
+.transport button:active i,
+.transport button:focus-visible i,
+.transport .btn:hover,
+.transport .btn:active,
+.transport .btn:focus {
     outline: none;
     box-shadow: none !important;
     background: transparent !important;
     color: var(--accent-3) !important;
-}
-.transport button:hover i,
-.transport button:focus i,
-.transport button:active i,
-.transport button:focus-visible i {
-    color: var(--accent-3) !important;
-}
-.transport .btn:hover,
-.transport .btn:active,
-.transport .btn:focus {
-    background-color: transparent !important;
     border-color: transparent !important;
-    color: var(--accent-3) !important;
 }
-.volume-control i {
-    font-size: 1.5rem;
-    padding: 0;
-}
+
+/* Additional Control Icons */
+.volume-control i, 
 .tempo-left i {
     font-size: 1.5rem;
     padding: 0;
 }
-.extend-ocatve {
-    padding: 0;
-    margin: 0;
-    gap: 0.15rem !important;  /* Reduce gap between elements */
-}
+
+/* ==========================================
+   OCTAVE INCREMENT / DECREMENT CONTROLS
+   ========================================== */
+.extend-ocatve, 
 #octave-controls {
+    display: flex;
+    align-items: center;
     padding: 0;
     margin: 0;
-}
-#octave-controls i {
-    font-size: 1.5rem;
-    padding: 0;
-    margin: 0;
-}
-.bi-music-note-beamed  {
-    font-size: 1rem;
-}
-#octave-controls {
-    gap: 0.15rem !important;  /* Reduce gap between elements */
-}
-#octave-controls .btn {
-    padding: 0.25rem 0.5rem;
-    min-width: 12px;
-}
-.range {
-    -webkit-appearance: none;
-    appearance: none;
-    height: 6px;
-    border-radius: 3px;
-    background: var(--accent-3); /* Will be overridden by JS */
-    outline: none;
-}
-/* Thumb */
-.range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-2);
-    cursor: pointer;
-    margin-top: -1px;
-}
-.range::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-2);
-    cursor: pointer;
-}
-#timeline {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding: 0px;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 6px;
-    width: 90vw;
-    max-width: 500px;
-    border-radius: 3px;
-    background: var(--accent-3); /* Will be overridden by JS */
-    outline: none;
-    touch-action: none
-}
-/* Thumb */
-#timeline::-webkit-slider-thumb {
-    margin-bottom: 0px;
-    padding: 0px;
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-2);
-    cursor: pointer;
-    margin-top: -1px;
-}
-#timeline::-moz-range-thumb {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding: 0px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-2);
-    cursor: pointer;
-}
-.timeline-container {
-    margin-top: -1px;
-    margin-bottom: 0px;
-    padding: 0px;
-    margin: 1rem 0;
-    width: 100%;
-    display: none; /* Hidden by default */
-}
-#currentTime {
-    margin-bottom: 0px;
-    padding: 0px;
+    gap: 0.15rem !important;
 }
 
-/* Countdown (autoplay) */
+#octave-controls i {
+    font-size: 1.25rem;
+    padding: 0;
+    margin: 0;
+}
+
+/* Upgraded to make Octave toggles appear distinctly like buttons */
+#octave-controls .btn {
+    padding: 0.35rem 0.65rem;
+    min-width: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+#octave-controls .btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-3);
+    color: var(--accent-3);
+}
+
+.bi-music-note-beamed {
+    font-size: 1rem;
+}
+
+/* Target the settings button specifically */
+#settings-btn {
+    color: white;
+    transition: all 0.25s ease-in-out;
+}
+
+/* Apply the color shift on hover and focus states */
+#settings-btn:hover, 
+#settings-btn:focus {
+    color: var(--accent-3) !important;
+    transform: rotate(45deg); /* Rotates the gear on hover */
+}
+
+#mute {
+    color: white;
+    transition: all 0.25s ease-in-out;
+}
+
+#mute:hover, 
+#mute:focus {
+    color: var(--accent-3) !important;
+}
+
+/* ==========================================
+   RANGE / INPUT TIMELINE SLIDERS
+   ========================================== */
+.range, #timeline {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--accent-3);
+    outline: none;
+}
+
+#timeline {
+    width: 90vw;
+    max-width: 500px;
+    touch-action: none;
+}
+
+/* Slider Track Thumbs (Chrome/Safari/Edge/Firefox) */
+.range::-webkit-slider-thumb, 
+#timeline::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    margin-top: -1px;
+}
+
+.range::-moz-range-thumb, 
+#timeline::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+}
+
+.timeline-container {
+    margin: 1rem 0;
+    width: 100%;
+    display: none; /* Managed by Javascript */
+}
+
+/* ==========================================
+   PIANO ENVIRONMENT & KEYS
+   ========================================== */
+#piano-section {
+    margin-top: 11rem;
+}
+
+#autoplay-section {
+    margin-top: 430px;
+}
+
+.piano-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.piano-frame {
+    border-radius: 14px;
+    background: var(--card-2);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 20px 20px 0 22px;
+    margin: 10px 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+#piano {
+    display: block;
+    z-index: 1;
+}
+
+#piano-standard, #piano-extended {
+    display: none;
+}
+
+#piano-standard.active, #piano-extended.active {
+    display: inline;
+}
+
+/* Interactive SVG Keys */
+.white-key {
+    fill: var(--white-key-color);
+    stroke: var(--white-key-stroke);
+    stroke-width: 0.5;
+    transition: fill 0.1s ease;
+}
+
+.black-key {
+    fill: var(--black-key-color);
+    stroke: var(--black-key-stroke);
+    stroke-width: 0.5;
+    transition: fill 0.1s ease;
+}
+
+.white-key:hover { fill: #f3f4f6; }
+.black-key:hover { fill: #1f2937; }
+
+.white-key.active,
+.black-key.active {
+    filter: drop-shadow(0 0 5px currentColor);
+    box-shadow: 0 0 10px currentColor;
+}
+
+svg#piano .c-label {
+    fill: #4f46e5;
+    font-size: 9px;
+}
+
+/* Staff Hand Indicators */
+.active.right-hand {
+    color: var(--highlight-2);
+    fill: var(--highlight-2);
+}
+.active.left-hand {
+    color: var(--highlightAlt-2);
+    fill: var(--highlightAlt-2);
+}
+
+.label {
+    font: 12px 'Inter', sans-serif;
+    fill: #6b7280;
+    user-select: none;
+    pointer-events: none;
+}
+
+.hide-labels .label {
+    display: none;
+}
+
+/* ==========================================
+   AUTOPLAY VFX COMPONENTS
+   ========================================== */
 .countdown-wrap {
     min-height: 36px;
 }
+
 .countdown {
     position: absolute;  
     left: 50%; 
@@ -304,87 +482,14 @@ html, body {
     z-index: 10000; 
     display: none;
 }
-.d-none { display: none !important; }
 
-/* Piano */
-.piano-wrapper {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    overflow-x: auto; /* Fallback scroll if needed */
-    text-align: center;
-    justify-content: center;
-}
-.piano-frame {
-    border-radius: 14px;
-    background: var(--card-2);
-    border: 1px solid rgba(255,255,255,0.06);
-    padding: 20px;
-    padding-bottom: 0px;
-    margin-top: 10px; 
-    margin-bottom: 10px;
-    padding-left: 22px;
-    z-index: 1;
-    height: auto;
-    transition: transform 0.3s ease;
-    width: 100%;
-    max-width: 100%;
-    display: flex;
-    justify-content: center;
-}
-#piano {
-    display: block;
-    z-index: 1;
-}
-#piano-standard,
-#piano-extended {
-    display: none;
-}
-#piano-standard.active,
-#piano-extended.active {
-    display: inline;
-}
-#piano-section {
-    margin-top: 11rem;
-}
-
-/* Keys */
-.white-key { fill: var(--white); stroke: var(--stroke);}
-.black-key { fill: var(--black); }
-.white-key.active,
-.black-key.active {
-    filter: drop-shadow(0 0 5px currentColor);
-    box-shadow: 0 0 10px currentColor;
-}
-.active.right-hand {
-    color: var(--highlight-2);
-    fill: var(--highlight-2);
-}
-.active.left-hand {
-    color: var(--highlightAlt-2);
-    fill: var(--highlightAlt-2);
-}
-
-/* Labels */
-.label {
-    font: 12px 'Inter', sans-serif;
-    fill: #6b7280;
-    user-select: none;
-    pointer-events: none;
-}
-.hide-labels .label {
-    display: none;
-}
-
-/* Note preview overlay (autoplay) */
 #note-overlay {
     position: relative;
-    top: 0; left: 0; right: 0;
+    inset: 0 0 auto 0;
     pointer-events: none;
     z-index: 9999;
 }
 
-/* Falling notes (autoplay) */
 .falling-note {
     position: absolute;
     background: var(--highlight);
@@ -393,31 +498,6 @@ html, body {
     contain: layout paint;
 }
 
-/* Footer */
-footer {
-    text-align: center; 
-    padding: 2rem;
-    color: #8b949e;
-}
-
-/* Main container */
-.main {
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto;
-}
-
-#autoplay-section {
-    margin-top: 430px;
-}
-
-/* Playback buttons pulse effect */
-.btn:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
-}
-
-/* Restart button */
 #pause .bi-arrow-counterclockwise {
     font-size: 1.6rem;
     font-weight: 900;
@@ -426,22 +506,11 @@ footer {
     top: 1.7px;
 }
 
-/* Stop button */
-#stop .z-1 {
-  z-index: 2; /* Ensure button is in front of progress bar */
-}
-#stop .progress {
-  z-index: 1;
-  pointer-events: none;
-}
-/* Custom progress bar behaviors */
-#stop-progress {
-  width: 0%; /* Initial state */
-  /* Remove Bootstrap's default transition */
-  transition: none !important; 
-}
+#stop .z-1 { z-index: 2; }
+#stop .progress { z-index: 1; pointer-events: none; }
+#stop-progress { width: 0%; transition: none !important; }
 
-/* Settings button */
+/* Settings Modal Elements */
 .settings-panel {
     background: var(--card);
     border: 1px solid rgba(255,255,255,0.06);
@@ -450,185 +519,102 @@ footer {
     margin: 0.5rem 0;
     width: 100%;
 }
+
 .settings-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
 }
-@media (max-width: 600px) {
-    .settings-grid {
-        grid-template-columns: 1fr;
-    }
+
+footer {
+    text-align: center; 
+    padding: 2rem;
+    color: #8b949e;
 }
 
-/* Change spacing depending on screen */
+.d-none { display: none !important; }
+
+/* ==========================================
+   RESPONSIVE MEDIA BREAKPOINTS
+   ========================================== */
 @media (min-width: 800px) {
     #tempo, #volume {
         width: 150px;
     }
 }
-@media (max-width: 800px) {
-    html, body { 
-        background-size: 155%;
-    }
-}
-@media (max-width: 700px) {
-    html, body { 
-        background-size: 170%;
-    }
-}
-@media (max-width: 600px) {
-    html, body { 
-        background-size: 200%;
-    }
-}
-@media (max-width: 550px) {
-    html, body { 
-        background-size: 250%;
-    }
-}
-@media (max-width: 450px) {
-    html, body { 
-        background-size: 300%;
-    }
-}
-@media (max-width: 350px) {
-    html, body { 
-        background-size: 350%;
-    }
+
+@media (max-width: 720px) {
+    .transport i { font-size: 1.5rem !important; }
+    .volume-control i, #octave-controls i { font-size: 1.2rem !important; }
+    .transport button { width: 34px; height: 34px; }
+    #tempo, #volume { width: 120px; }
+    #changeOctave, #tempoVal { font-size: 0.9rem; }
+    .countdown { font-size: 16px; }
 }
 
-/* If Screen A Bit Thin */
-@media screen and (max-width: 720px) {
-    /* Shrink font and buttons */
-    .transport i {
-        font-size: 1.5rem !important;
-    }
-
-    .volume-control i, #octave-controls i {
-        font-size: 1.2rem !important;
-    }
-
-    .transport button {
-        width: 34px;
-        height: 34px;
-    }
-
-    #tempo, #volume {
-        width: 120px;
-    }
-
-    #changeOctave, #tempoVal {
-        font-size: 0.9rem;
-    }
-
-    .countdown {
-        font-size: 16px; 
-    }
-}
-
-/* If Screen Is Too Thin */
-@media screen and (max-width: 660px) {
-    /* Stack screen vertically */
+@media (max-width: 660px) {
     .d-grid {
         grid-template-columns: 1fr !important;
         gap: 15px;
         text-align: center;
     }
-
     .tempo-left, .volume-control, .extend-ocatve {
         justify-content: center !important;
         width: 100%;
     }
-
     .piano-wrapper {
-        overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         padding-bottom: 20px;
     }
-
     #piano {
         width: 100%;
         height: auto;
-        display: block;
         max-width: 100%;
     }
-
     .piano-frame {
-        padding-left: 1;
-        padding-right: 1;
-        display: flex;
-        justify-content: center;
+        padding-left: 4px;
+        padding-right: 4px;
     }
-
-    .hero {
-        padding: 60px 0 20px;
-    }
+    .hero { padding: 60px 0 20px; }
 }
 
-/* Portrait */
+@media (max-width: 600px) {
+    .settings-grid { grid-template-columns: 1fr; }
+}
+
+/* Viewport Orientations */
 @media (orientation: portrait) {
-    body {
-        flex-direction: column;
-    }
-    .controls-card,
-    .piano-card,
-    .piano-frame {
-        margin: 0 auto;
-    }
+    body { flex-direction: column; }
+    .controls-card, .piano-card, .piano-frame { margin: 0 auto; }
     .layout, #controls {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
     }
-    #timeline {
-        margin-top: 0px;
-        margin-bottom: 0px;
-        -webkit-appearance: none;
-        appearance: none;
-        height: 6px;
-        width: 90vw;
-        max-width: 200px;
-        border-radius: 3px;
-        background: var(--accent-3); /* Will be overridden by JS */
-        outline: none;
-        touch-action: none
-    }
+    #timeline { max-width: 200px; }
 }
 
-/* Landscape */
 @media (orientation: landscape) {
     body {
         flex-direction: row;
         padding-left: env(safe-area-inset-left);
         padding-right: env(safe-area-inset-right);
     }
-    .main {
-        margin-top: 200px;
-    }
+    .main { margin-top: 200px; }
 }
 
-/* Dark mode */
+/* System Dark Mode Configurations */
 @media (prefers-color-scheme: dark) {
     :root {
-        /* Colours */
-        --background: #08070d;
-        --text: #eef2f6;
-        --accent: linear-gradient( #d39714, #cb5b2a);
-        --accent-2: linear-gradient( #cc9319, #d46637);
+        --accent: linear-gradient(#d39714, #cb5b2a);
+        --accent-2: linear-gradient(#cc9319, #d46637);
         --accent-3: #be7817;
-        --highlight: linear-gradient( #c68e13, #cd5e2e);
+        --highlight: linear-gradient(#c68e13, #cd5e2e);
         --highlight-2: #b67212;
-        --highlightAlt:linear-gradient( #52949e, #2c5482);
+        --highlightAlt: linear-gradient(#52949e, #2c5482);
         --highlightAlt-2: #3d7d98;
-        --card: linear-gradient( rgb(7, 7, 21) 60%, rgb(7, 12, 23) 100% );
-        --card-2: linear-gradient( rgb(5, 5, 17) 60%, rgb(4, 7, 15) 100% );
-        /* Piano */
-        --white: #ebebeb;
-        --stroke: #cfd6df;
-        --black: #121212;
+        --card: linear-gradient(rgb(7, 7, 21) 60%, rgb(7, 12, 23) 100%);
+        --card-2: linear-gradient(rgb(5, 5, 17) 60%, rgb(4, 7, 15) 100%);
     }
 }
-
-
