@@ -280,8 +280,8 @@
                 </div>
 
                 <!-- Right (volume) -->
-                <div class="volume-control d-flex align-items-center justify-content-end gap-3">
-                    <button class="btn p-0 transport" id="mute" onclick="toggleMute()" aria-label="Mute">
+                <div class="volume-control d-flex align-items-center justify-content-end gap-3 transport">
+                    <button class="btn p-0" id="mute" onclick="toggleMute()" aria-label="Mute">
                         <i class="bi bi-volume-up"></i>
                     </button>
                     <input class="range" type="range" id="volume" min="0" max="1" step="0.01" value="1">
@@ -293,7 +293,7 @@
                 <div class="tempo-left extend-ocatve d-flex align-items-center  gap-3">
                     <!-- Octave controls -->
                     <div id="octave-controls" class="transport d-flex align-items-center gap-2">
-                        <i class="bi bi-music-note-beamed text-light"></i>
+                        <i class="bi bi-music-note-beamed text-light transport"></i>
                             <button class="btn" id="decreaseOctave" onclick="decreaseOctave()"><i class="bi bi-dash"></i></button>
                             <span class="small tracking-wider">Octave <strong id="changeOctave" class="text-accent">4</strong></span>
                             <button class="btn" id="increaseOctave" onclick="increaseOctave()"><i class="bi bi-plus"></i></button>
@@ -330,8 +330,8 @@
         <div class="card-body">
             <div class="row g-3 align-items-center">
                 <!-- Settings button -->
-                <div class="col-12 col-md-4">
-                    <button class="btn transport" id="settings-btn" onclick="toggleSettings()" aria-label="Settings">
+                <div class="col-12 col-md-4 transport">
+                    <button class="btn" id="settings-btn" onclick="toggleSettings()" aria-label="Settings">
                         <i class="bi bi-gear"></i>
                     </button>
                 </div>

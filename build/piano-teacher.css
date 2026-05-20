@@ -2,13 +2,21 @@
     /* Colors */
     --background: #08070d;
     --text: #eef2f6;
+
     --accent: linear-gradient(#ffb515, #ff7134);
     --accent-2: linear-gradient(#fcb51c, #fd753b);
     --accent-3: #fc9f1c;
+    --accent-glow: rgba(235, 147, 24, 0.3);
+
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+    --danger-glow: rgba(226, 65, 65, 0.3);
+
     --highlight: linear-gradient(#ffb515, #ff7134);
     --highlight-2: #ff9d15;
     --highlightAlt: linear-gradient(#6dc5d2, #3d75b6);
     --highlightAlt-2: #54afd6;
+
     --card: linear-gradient(rgb(9, 9, 28) 60%, rgb(8, 14, 27) 100%);
     --card-2: linear-gradient(rgb(5, 5, 17) 60%, rgb(5, 9, 20) 100%);
 
@@ -120,6 +128,10 @@ button,
     overflow: hidden;
     display: flex;
     justify-content: center;
+
+    /* Glassmorphism effect */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
 #controls { 
@@ -179,27 +191,77 @@ button,
     color: #1b1b1b;
     font-weight: 700;
     border-radius: 10px;
+    box-shadow: 0 4px 14px var(--accent-glow);
+    transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
     background: var(--accent-2);
     border-color: var(--accent-2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--accent-glow);
 }
 
 .btn-outline-primary {
     border-color: var(--accent-3);
     color: var(--stroke);
     border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(252, 159, 28, 0.15);
+    transition: all 0.2s ease;
 }
 
 .btn-outline-primary:hover {
     background: var(--accent);
     border-color: var(--accent);
     color: #1b1b1b;
+    box-shadow: 0 4px 14px var(--accent-glow);
+    transform: translateY(-2px);
+}
+
+/* Transport icon glow on hover */
+.transport button:hover i,
+.transport button:focus i,
+.transport button:active i,
+.transport button:focus-visible i {
+    color: var(--accent-3) !important;
+    text-shadow: 
+        0 0 4px var(--accent-3),
+        0 0 12px var(--accent-3),
+        0 0 24px rgba(252, 159, 28, 0.5);
+}
+
+.btn-danger {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px var(--danger-glow);
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background: var(--danger-hover);
+    border-color: var(--danger-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--danger-glow);
 }
 
 .btn-outline-danger {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: transparent;
     border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+    transition: all 0.2s ease;
+}
+
+.btn-outline-danger:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #ffffff;
+    box-shadow: 0 4px 14px var(--danger-glow);
+    transform: translateY(-2px);
 }
 
 /* Enlarge all primary action buttons */
@@ -219,7 +281,16 @@ button,
 }
 
 #stop i { 
-    color: #dc3545; 
+    color: var(--danger); 
+}
+
+/* Makes the stop button bleed red when hovered */
+#stop:hover i {
+    color: var(--danger) !important;
+    text-shadow: 
+        0 0 4px var(--danger),
+        0 0 12px var(--danger),
+        0 0 24px rgba(239, 68, 68, 0.6);
 }
 
 /* Transport Deck Control Styles */
@@ -451,14 +522,20 @@ svg#piano .c-label {
     font-size: 9px;
 }
 
-/* Staff Hand Indicators */
+/* Hand Glow Indicator */
 .active.right-hand {
-    color: var(--highlight-2);
-    fill: var(--highlight-2);
+    color: var(--highlight-2) !important;
+    fill: var(--highlight-2) !important;
+    filter: brightness(1.05) saturate(1.05) drop-shadow(0 0 18px var(--highlight-2));
+        
+    will-change: filter; /* Force browser to render this element on its own layer */
 }
 .active.left-hand {
-    color: var(--highlightAlt-2);
-    fill: var(--highlightAlt-2);
+    color: var(--highlightAlt-2) !important;
+    fill: var(--highlightAlt-2) !important;
+    filter: brightness(1.05) saturate(1.05) drop-shadow(0 0 18px var(--highlightAlt-2));
+        
+    will-change: filter;
 }
 
 .label {
