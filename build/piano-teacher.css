@@ -646,6 +646,10 @@ body.no-glow .active.right-hand {
 body.no-glow .active.left-hand {
     filter: brightness(1.05) saturate(1.05);
 }
+body.no-glow #stop:hover i {
+    color: #f87171 !important;
+    text-shadow: none !important;
+}
 
 /* ==========================================
    RESPONSIVE MEDIA BREAKPOINTS
