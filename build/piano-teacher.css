@@ -6,11 +6,11 @@
     --accent: linear-gradient(#ffb515, #ff7134);
     --accent-2: linear-gradient(#fcb51c, #fd753b);
     --accent-3: #fc9f1c;
-    --accent-glow: rgba(235, 147, 24, 0.3);
+    --accent-glow: rgba(235, 147, 24, 0.2);
 
     --danger: #ef4444;
     --danger-hover: #dc2626;
-    --danger-glow: rgba(226, 65, 65, 0.3);
+    --danger-glow: rgba(226, 65, 65, 0.2);
 
     --highlight: linear-gradient(#ffb515, #ff7134);
     --highlight-2: #ff9d15;
@@ -191,7 +191,7 @@ button,
     color: #1b1b1b;
     font-weight: 700;
     border-radius: 10px;
-    box-shadow: 0 4px 14px var(--accent-glow);
+    box-shadow: 0 4px 7px var(--accent-glow);
     transition: all 0.2s ease;
 }
 
@@ -199,14 +199,14 @@ button,
     background: var(--accent-2);
     border-color: var(--accent-2);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--accent-glow);
+    box-shadow: 0 6px 10px var(--accent-glow);
 }
 
 .btn-outline-primary {
     border-color: var(--accent-3);
     color: var(--stroke);
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(252, 159, 28, 0.15);
+    box-shadow: 0 2px 4px var(--accent-glow);
     transition: all 0.2s ease;
 }
 
@@ -214,7 +214,7 @@ button,
     background: var(--accent);
     border-color: var(--accent);
     color: #1b1b1b;
-    box-shadow: 0 4px 14px var(--accent-glow);
+    box-shadow: 0 4px 7px var(--accent-glow);
     transform: translateY(-2px);
 }
 
@@ -225,9 +225,9 @@ button,
 .transport button:focus-visible i {
     color: var(--accent-3) !important;
     text-shadow: 
-        0 0 4px var(--accent-3),
-        0 0 12px var(--accent-3),
-        0 0 24px rgba(252, 159, 28, 0.5);
+        0 0 2px var(--accent-3),
+        0 0 6px var(--accent-3),
+        0 0 12px var(--accent-glow)
 }
 
 .btn-danger {
@@ -236,7 +236,7 @@ button,
     color: #ffffff;
     font-weight: 700;
     border-radius: 10px;
-    box-shadow: 0 4px 14px var(--danger-glow);
+    box-shadow: 0 4px 7px var(--danger-glow);
     transition: all 0.2s ease;
 }
 
@@ -244,7 +244,7 @@ button,
     background: var(--danger-hover);
     border-color: var(--danger-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--danger-glow);
+    box-shadow: 0 6px 10px var(--danger-glow);
 }
 
 .btn-outline-danger {
@@ -252,7 +252,7 @@ button,
     color: var(--danger);
     background: transparent;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+    box-shadow: 0 2px 4px var(--danger-glow);
     transition: all 0.2s ease;
 }
 
@@ -260,7 +260,7 @@ button,
     background: var(--danger);
     border-color: var(--danger);
     color: #ffffff;
-    box-shadow: 0 4px 14px var(--danger-glow);
+    box-shadow: 0 4px 7px var(--danger-glow);
     transform: translateY(-2px);
 }
 
