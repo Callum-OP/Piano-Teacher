@@ -309,6 +309,8 @@ button,
 #settings-btn {
     color: white;
     transition: all 0.25s ease-in-out;
+    outline: none !important;
+    border: none !important;
 }
 
 /* Apply the color shift on hover and focus states */
@@ -316,6 +318,11 @@ button,
 #settings-btn:focus {
     color: var(--accent-3) !important;
     transform: rotate(45deg); /* Rotates the gear on hover */
+}
+
+#settings-btn:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
 }
 
 #mute {

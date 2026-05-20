@@ -210,19 +210,28 @@ function stopNote(noteName) {
         delete activeAudio[noteName];
     }
 }
+
+// Store active highlight timeouts per key
+const highlightTimeouts = {};
+
 // Highlight keys on the html keyboard piano
 function highlightKey(noteName, duration, hand) {
     const key = getKeyElement(noteName);
     if (!key) return;
-    key.classList.add("active"); // Change the class to match expected class in css
-    
-    // Add a modifier for which hand
+
+    // Clear any existing timeout for this key so it doesn't remove the new highlight
+    if (highlightTimeouts[noteName]) {
+        clearTimeout(highlightTimeouts[noteName]);
+        delete highlightTimeouts[noteName];
+    }
+
+    key.classList.add("active");
     const handClass = hand === "Right" ? "right-hand" : "left-hand";
     key.classList.add(handClass);
 
-    // Remove after a delay
-    setTimeout(() => {
+    highlightTimeouts[noteName] = setTimeout(() => {
         key.classList.remove("active", handClass);
+        delete highlightTimeouts[noteName];
     }, duration);
 }
 
