@@ -844,6 +844,14 @@ body.high-contrast .black-key.active .label {
 /* ==========================================
    RESPONSIVE MEDIA BREAKPOINTS
    ========================================== */
+@media (max-width: 1200px) {
+    #timeline { max-width: 400px; }
+}
+
+@media (max-width: 1000px) {
+    #timeline { max-width: 300px; }
+}
+
 @media (min-width: 800px) {
     #tempo, #volume {
         width: 150px;
@@ -857,6 +865,11 @@ body.high-contrast .black-key.active .label {
     #tempo, #volume { width: 120px; }
     #changeOctave, #tempoVal { font-size: 0.9rem; }
     .countdown { font-size: 16px; }
+    #timeline { max-width: 250px; }
+}
+
+@media (max-width: 680px) {
+    #timeline { max-width: 200px; }
 }
 
 @media (max-width: 660px) {
@@ -883,6 +896,7 @@ body.high-contrast .black-key.active .label {
         padding-right: 4px;
     }
     .hero { padding: 60px 0 20px; }
+    #timeline { max-width: 200px; }
 }
 
 @media (max-width: 600px) {
@@ -899,7 +913,6 @@ body.high-contrast .black-key.active .label {
         align-items: center;
         justify-content: center;
     }
-    #timeline { max-width: 200px; }
 }
 
 @media (orientation: landscape) {
