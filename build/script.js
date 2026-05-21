@@ -37,6 +37,11 @@ const timeline = document.getElementById("timeline");
 const tempo = document.getElementById("tempo");
 const tempoVal = document.getElementById("tempoVal");
 const volume = document.getElementById("volume");
+const uiScale = document.getElementById("ui-scale");
+if (uiScale) {
+    updateRangeFill(uiScale);
+    uiScale.addEventListener("input", () => updateRangeFill(uiScale));
+}
 
 // Falling notes
 let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;
@@ -909,7 +914,6 @@ tempo.addEventListener("input", (e) => {
     updateRangeFill(tempo);
 });
 updateRangeFill(tempo);
-
 
 // --- Extend piano ---
 // Change which piano is showing depending on extended toggle button

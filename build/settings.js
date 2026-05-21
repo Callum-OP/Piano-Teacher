@@ -6,6 +6,7 @@ const defaultSettings = {
     autoSort: true,
     limitMidi: false,
     enableGlow: true,
+    uiScale: 1.0
 };
 
 // Get and set settings
@@ -37,6 +38,11 @@ function applySettings(settings) {
     if (toggleGlow) toggleGlow.checked = settings.enableGlow;
     // Add the 'no-glow' class if enableGlow is false
     document.body.classList.toggle("no-glow", !settings.enableGlow);
+
+    // Handle UI Scale Application
+    const uiScaleSlider = document.getElementById("ui-scale");
+    if (uiScaleSlider) uiScaleSlider.value = settings.uiScale || 1.0;
+    document.documentElement.style.setProperty('--ui-scale-factor', settings.uiScale || 1.0);
 }
 
 // Change setting to the default that was set when the app first started
@@ -85,6 +91,19 @@ function initSettings() {
             }
         });
     });
+
+    // Add  listener loop for range slider input
+    const uiScaleSlider = document.getElementById("ui-scale");
+    if (uiScaleSlider) {
+        uiScaleSlider.addEventListener("input", () => {
+            const currentSettings = loadSettings();
+            currentSettings.uiScale = parseFloat(uiScaleSlider.value);
+            saveSettings(currentSettings);
+            
+            // Apply scale configuration update on-the-fly
+            document.documentElement.style.setProperty('--ui-scale-factor', uiScaleSlider.value);
+        });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", initSettings);

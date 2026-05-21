@@ -28,6 +28,9 @@
     --white-key-stroke: #cbd5e1;
     --black-key-color: #0f1523;
     --black-key-stroke: #303947;
+
+    /* Global scale factor multiplier */
+    --ui-scale-factor: 1.0;
 }
 
 /* ==========================================
@@ -649,6 +652,110 @@ body.no-glow .active.left-hand {
 body.no-glow #stop:hover i {
     color: #f87171 !important;
     text-shadow: none !important;
+}
+
+/* Scale text and labels */
+.form-check-label, .form-label, .settings-panel, footer {
+    font-size: calc(1rem * var(--ui-scale-factor)) !important;
+}
+.label {
+    font-size: calc(12px * var(--ui-scale-factor));
+}
+svg#piano .c-label {
+    font-size: calc(9px * var(--ui-scale-factor));
+}
+.hero-title {
+    font-size: calc(clamp(2rem, 5vw, 4rem) * var(--ui-scale-factor)) !important;
+}
+.hero-subtitle, p {
+    font-size: calc(1rem * var(--ui-scale-factor));
+}
+.btn, .transport button, #octave-controls .btn {
+    font-size: calc(1.05rem * var(--ui-scale-factor)) !important;
+}
+span, .form-check-label, .form-label {
+    font-size: calc(1rem * var(--ui-scale-factor)) !important;
+}
+.transport i {
+    font-size: calc(2rem * var(--ui-scale-factor)) !important;
+    transition: font-size 0.1s ease;
+}
+.volume-control i, .tempo-left i, #octave-controls i {
+    font-size: calc(1.5rem * var(--ui-scale-factor)) !important;
+}
+.form-control::placeholder {
+    font-size: calc(1rem * var(--ui-scale-factor)) !important;
+}
+input[type="file"]::-webkit-file-upload-button {
+    font-size: calc(0.9rem * var(--ui-scale-factor)) !important;
+    padding: calc(6px * var(--ui-scale-factor)) calc(12px * var(--ui-scale-factor));
+    transition: all 0.1s ease;
+}
+input[type="file"]::file-selector-button {
+    font-size: calc(0.9rem * var(--ui-scale-factor)) !important;
+    padding: calc(6px * var(--ui-scale-factor)) calc(12px * var(--ui-scale-factor));
+    transition: all 0.1s ease;
+}
+input[type="file"] {
+    font-size: calc(1rem * var(--ui-scale-factor)) !important;
+}
+#stop {
+    width: calc(40px * var(--ui-scale-factor)) !important;
+    height: calc(40px * var(--ui-scale-factor)) !important;
+    transition: width 0.1s ease, height 0.1s ease;
+}
+#stop .z-1 i {
+    font-size: calc(2rem * var(--ui-scale-factor)) !important;
+}
+#stop-progress {
+    height: 100% !important;
+}
+.transport button, 
+.transport .btn {
+    width: calc(40px * var(--ui-scale-factor)) !important;
+    height: calc(40px * var(--ui-scale-factor)) !important;
+    
+    /* Guarantee icons stay inside their boxes */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    /* Remove default button vertical misalignments */
+    vertical-align: middle !important; 
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+.transport button i,
+.transport .btn i {
+    font-size: calc(2rem * var(--ui-scale-factor)) !important;
+}
+
+/* Add style to scale slider */
+#ui-scale {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+    width: 100%;
+}
+#ui-scale::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+    margin-top: -1px;
+}
+#ui-scale::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+    border: none;
 }
 
 /* ==========================================
