@@ -866,6 +866,10 @@ body.high-contrast .black-key.active .label {
     #changeOctave, #tempoVal { font-size: 0.9rem; }
     .countdown { font-size: 16px; }
     #timeline { max-width: 250px; }
+    html, body {
+        background-image: url('background.jpg');
+        background-size: clamp(200%, 40vw, 380%);
+    }
 }
 
 @media (max-width: 680px) {
@@ -901,6 +905,14 @@ body.high-contrast .black-key.active .label {
 
 @media (max-width: 600px) {
     .settings-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 500px) {
+    .settings-grid { grid-template-columns: 1fr; }
+    html, body {
+        background-image: url('background-portrait.jpg');
+        background-size: clamp(100%, 40vw, 300%);
+    }
 }
 
 /* Viewport Orientations */
