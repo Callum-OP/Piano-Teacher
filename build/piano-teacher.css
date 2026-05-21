@@ -12,19 +12,19 @@
     --danger-hover: #dc2626;
     --danger-glow: rgba(226, 65, 65, 0.2);
 
-    --highlight: linear-gradient(#d49b1a, #db6c3a);
-    --highlight-2: #c77f18;
-    --highlightAlt: linear-gradient(#5ea3ad, #376599);
-    --highlightAlt-2: #468baa;
+    --highlight: linear-gradient(#d19a1a, #db6c3a);
+    --highlight-2: #c57d18;
+    --highlightAlt: linear-gradient(#5c9fa9, #376599);
+    --highlightAlt-2: #468aa9;
 
-    --card: linear-gradient(rgb(9, 9, 28) 60%, rgb(8, 14, 27) 100%);
-    --card-2: linear-gradient(rgb(5, 5, 17) 60%, rgb(5, 9, 20) 100%);
+    --card: linear-gradient(rgb(7, 8, 21) 60%, rgb(7, 12, 23) 100%);
+    --card-2: linear-gradient(rgb(5, 5, 17) 60%, rgb(4, 7, 15) 100%);
 
     /* Piano Keys Structure */
-    --white: #fff;
+    --white: #f7f7fd;
     --stroke: #d6dde7;
     --black: #1a1a1a;
-    --white-key-color: #ffffff;
+    --white-key-color: #f5f5f5;
     --white-key-stroke: #cbd5e1;
     --black-key-color: #0f1523;
     --black-key-stroke: #303947;
