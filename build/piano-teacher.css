@@ -3,19 +3,19 @@
     --background: #08070d;
     --text: #eef2f6;
 
-    --accent: linear-gradient(#ffb515, #ff7134);
-    --accent-2: linear-gradient(#fcb51c, #fd753b);
-    --accent-3: #fc9f1c;
+    --accent: linear-gradient(#e0a31b, #d96834);
+    --accent-2: linear-gradient(#dba224, #e07445);
+    --accent-3: #cc841f;
     --accent-glow: rgba(235, 147, 24, 0.2);
 
     --danger: #ef4444;
     --danger-hover: #dc2626;
     --danger-glow: rgba(226, 65, 65, 0.2);
 
-    --highlight: linear-gradient(#ffb515, #ff7134);
-    --highlight-2: #ff9d15;
-    --highlightAlt: linear-gradient(#6dc5d2, #3d75b6);
-    --highlightAlt-2: #54afd6;
+    --highlight: linear-gradient(#d49b1a, #db6c3a);
+    --highlight-2: #c77f18;
+    --highlightAlt: linear-gradient(#5ea3ad, #376599);
+    --highlightAlt-2: #468baa;
 
     --card: linear-gradient(rgb(9, 9, 28) 60%, rgb(8, 14, 27) 100%);
     --card-2: linear-gradient(rgb(5, 5, 17) 60%, rgb(5, 9, 20) 100%);
@@ -881,19 +881,4 @@ body.high-contrast .black-key.active .label {
         padding-right: env(safe-area-inset-right);
     }
     .main { margin-top: 200px; }
-}
-
-/* System Dark Mode Configurations */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --accent: linear-gradient(#d39714, #cb5b2a);
-        --accent-2: linear-gradient(#cc9319, #d46637);
-        --accent-3: #be7817;
-        --highlight: linear-gradient(#c68e13, #cd5e2e);
-        --highlight-2: #b67212;
-        --highlightAlt: linear-gradient(#52949e, #2c5482);
-        --highlightAlt-2: #3d7d98;
-        --card: linear-gradient(rgb(7, 7, 21) 60%, rgb(7, 12, 23) 100%);
-        --card-2: linear-gradient(rgb(5, 5, 17) 60%, rgb(4, 7, 15) 100%);
-    }
 }
