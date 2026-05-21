@@ -7,7 +7,8 @@ const defaultSettings = {
     limitMidi: false,
     enableGlow: true,
     uiScale: 1.0,
-    highContrast: false
+    highContrast: false,
+    performanceMode: true
 };
 
 // Get and set settings
@@ -37,18 +38,25 @@ function applySettings(settings) {
     // Apply Glow effect globally to document body
     const toggleGlow = document.getElementById("toggle-glow");
     if (toggleGlow) toggleGlow.checked = settings.enableGlow;
-    // Add the 'no-glow' class if enableGlow is false
     document.body.classList.toggle("no-glow", !settings.enableGlow);
 
     // Handle UI Scale Application
     const uiScaleSlider = document.getElementById("ui-scale");
-    if (uiScaleSlider) uiScaleSlider.value = settings.uiScale || 1.0;
-    document.documentElement.style.setProperty('--ui-scale-factor', settings.uiScale || 1.0);
+    if (uiScaleSlider) {
+        uiScaleSlider.value = settings.uiScale || 1.0;
+        document.documentElement.style.setProperty('--ui-scale-factor', uiScaleSlider.value);
+        updateRangeFill(uiScaleSlider); 
+    }
 
     // Toggle high contrast mode
     const toggleHC = document.getElementById("toggle-high-contrast");
     if (toggleHC) toggleHC.checked = settings.highContrast;
     document.body.classList.toggle("high-contrast", settings.highContrast);
+
+    // Toggle performance mode
+    const togglePerf = document.getElementById("toggle-performance");
+    if (togglePerf) togglePerf.checked = settings.performanceMode;
+    document.body.classList.toggle("performance-mode", settings.performanceMode);
 }
 
 // Change setting to the default that was set when the app first started
@@ -75,36 +83,46 @@ function initSettings() {
         "auto-sort": "autoSort",
         "limit-midi": "limitMidi",
         "toggle-glow": "enableGlow",
-        "toggle-high-contrast": "highContrast"
+        "toggle-high-contrast": "highContrast",
+        "toggle-performance": "performanceMode"
     };
 
     Object.entries(toggleMap).forEach(([id, key]) => {
         const el = document.getElementById(id);
         if (!el) return;
         el.addEventListener("change", () => {
-            const settings = loadSettings();
-            settings[key] = el.checked;
-            saveSettings(settings);
+            const currentSettings = loadSettings();
+            currentSettings[key] = el.checked;
 
-            // Apply immediately
             if (key === "showLabels") {
                 const piano = document.getElementById("piano");
                 if (piano) piano.classList.toggle("hide-labels", !el.checked);
             }
             
-            // Update glow state immediately on switch change
             if (key === "enableGlow") {
                 document.body.classList.toggle("no-glow", !el.checked);
             }
 
-            // Transition for high contrast mode
             if (key === "highContrast") {
                 document.body.classList.toggle("high-contrast", el.checked);
             }
+
+            // If performance mode is on, automatically switch glows off
+            if (key === "performanceMode") {
+                if (el.checked) {
+                    currentSettings.enableGlow = false;
+                    const glowEl = document.getElementById("toggle-glow");
+                    if (glowEl) glowEl.checked = false;
+                    document.body.classList.add("no-glow");
+                }
+                document.body.classList.toggle("performance-mode", el.checked);
+            }
+
+            saveSettings(currentSettings);
         });
     });
 
-    // Add  listener loop for range slider input
+    // Add listener loop for range slider input
     const uiScaleSlider = document.getElementById("ui-scale");
     if (uiScaleSlider) {
         uiScaleSlider.addEventListener("input", () => {
@@ -112,7 +130,6 @@ function initSettings() {
             currentSettings.uiScale = parseFloat(uiScaleSlider.value);
             saveSettings(currentSettings);
             
-            // Apply scale configuration update on-the-fly
             document.documentElement.style.setProperty('--ui-scale-factor', uiScaleSlider.value);
         });
     }

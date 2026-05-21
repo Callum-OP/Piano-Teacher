@@ -814,6 +814,34 @@ body.high-contrast .black-key.active .label {
 }
 
 /* ==========================================
+   PERFORMANCE MODE
+   ========================================== */
+body.performance-mode {
+    --accent: #ff9d15;
+    --accent-2: #cc841f;
+    --highlight: #f89a15;
+    --highlightAlt: #4ca1c6;
+    
+    --card: #09091c;
+    --card-2: #050511;
+
+    --accent-glow: transparent !important;
+    --danger-glow: transparent !important;
+}
+body.performance-mode *,
+body.performance-mode .controls-card,
+body.performance-mode .piano-card,
+body.performance-mode .settings-panel {
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+body.performance-mode .falling-note {
+    box-shadow: none !important;
+    will-change: top; /* Hints the browser to optimize this layer on the GPU */
+}
+
+/* ==========================================
    RESPONSIVE MEDIA BREAKPOINTS
    ========================================== */
 @media (min-width: 800px) {
