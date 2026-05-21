@@ -43,10 +43,10 @@ https://musescore.com/
 
 ## Top features to consider
 --- Decrease Size Of App ---
-The desktop version of the app on Microsoft Store is 300mb, maybe try to find ways to decrease that since the mobile version is only 30mb in comparison. Tauri 2.0 uses the OS WebView like Capacitor does, it may be worth changing to it instead of Electron in the future (Tauri could also be used for mobile as well as meaning I only need one wrapper), although it means retesting and possibly rewriting code to get it to work.
+The desktop version of the app on Microsoft Store is 300mb, maybe try to find ways to decrease that since the mobile version is only 30mb in comparison. 
+Electron requires a lot of space to work, Tauri 2.0 uses the OS WebView like Capacitor does, it may be worth changing to it instead of Electron in the future (Tauri could also be used for mobile as well as meaning I only need one wrapper), although it means retesting and possibly rewriting code to get it to work.
 
-One possible issue for the store is that the two builds are combined making the app bigger than it needs to be.
-Will try using appx bundle, it should reduce only select the one version that is correct for that computer and therefore half the size of the Microsoft Store app.
+Tried using appx bundle which helps slightly, version is 300mb each before I've even published to the Microsoft Store but with appx bundle it is 277mb.
 
 ## Features to consider
 --- Better Rests ---
