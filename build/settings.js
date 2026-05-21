@@ -8,7 +8,7 @@ const defaultSettings = {
     enableGlow: true,
     uiScale: 1.0,
     highContrast: false,
-    performanceMode: true
+    performanceMode: false
 };
 
 // Get and set settings
@@ -35,11 +35,6 @@ function applySettings(settings) {
     const limitMidi = document.getElementById("limit-midi");
     if (limitMidi) limitMidi.checked = settings.limitMidi;
 
-    // Apply Glow effect globally to document body
-    const toggleGlow = document.getElementById("toggle-glow");
-    if (toggleGlow) toggleGlow.checked = settings.enableGlow;
-    document.body.classList.toggle("no-glow", !settings.enableGlow);
-
     // Handle UI Scale Application
     const uiScaleSlider = document.getElementById("ui-scale");
     if (uiScaleSlider) {
@@ -57,6 +52,23 @@ function applySettings(settings) {
     const togglePerf = document.getElementById("toggle-performance");
     if (togglePerf) togglePerf.checked = settings.performanceMode;
     document.body.classList.toggle("performance-mode", settings.performanceMode);
+
+    // Glow Overrides
+    const toggleGlow = document.getElementById("toggle-glow");
+    // Find the wrapper element or parent container of the glow switch to hide it nicely
+    const glowContainer = toggleGlow ? toggleGlow.closest('.form-check') || toggleGlow.parentElement : null;
+
+    if (settings.performanceMode || settings.highContrast) {
+        // Force glow off internally and hide the option
+        document.body.classList.add("no-glow");
+        if (toggleGlow) toggleGlow.checked = false;
+        if (glowContainer) glowContainer.style.display = "none";
+    } else {
+        // Behave normally if neither mode is dominant
+        if (toggleGlow) toggleGlow.checked = settings.enableGlow;
+        document.body.classList.toggle("no-glow", !settings.enableGlow);
+        if (glowContainer) glowContainer.style.display = "block";
+    }
 }
 
 // Change setting to the default that was set when the app first started
@@ -94,6 +106,13 @@ function initSettings() {
             const currentSettings = loadSettings();
             currentSettings[key] = el.checked;
 
+            // For both performance and contrast mode disable glow
+            if (key === "performanceMode" || key === "highContrast") {
+                if (el.checked) {
+                    currentSettings.enableGlow = false;
+                }
+            }
+
             if (key === "showLabels") {
                 const piano = document.getElementById("piano");
                 if (piano) piano.classList.toggle("hide-labels", !el.checked);
@@ -119,6 +138,7 @@ function initSettings() {
             }
 
             saveSettings(currentSettings);
+            applySettings(currentSettings);
         });
     });
 
