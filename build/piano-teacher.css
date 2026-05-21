@@ -654,7 +654,37 @@ body.no-glow #stop:hover i {
     text-shadow: none !important;
 }
 
-/* Scale text and labels */
+/* Add style to scale slider */
+#ui-scale {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+    width: 100%;
+}
+#ui-scale::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+    margin-top: -1px;
+}
+#ui-scale::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    cursor: pointer;
+    border: none;
+}
+
+/* ==========================================
+   SCALE TEXT & LABELS
+   ========================================== */
 .form-check-label, .form-label, .settings-panel, footer {
     font-size: calc(1rem * var(--ui-scale-factor)) !important;
 }
@@ -730,32 +760,57 @@ input[type="file"] {
     font-size: calc(2rem * var(--ui-scale-factor)) !important;
 }
 
-/* Add style to scale slider */
-#ui-scale {
-    -webkit-appearance: none;
-    appearance: none;
-    height: 6px;
-    border-radius: 3px;
-    outline: none;
-    width: 100%;
+/* ==========================================
+   HIGH CONTRAST
+   ========================================== */
+body.high-contrast {
+    --accent: #ffb800;
+    --accent-2: #ff9100;
+    --accent-3: #ff9100;
+    --accent-glow: rgba(255, 145, 0, 0.4);
+    --danger: #ff3333;
+    --danger-hover: #ff0000;
+    --danger-glow: rgba(255, 51, 51, 0.4);
+
+    --highlight: #ffb800;
+    --highlight-2: #ffb800;
+    
+    --highlightAlt: #00f0ff;
+    --highlightAlt-2: #00f0ff;
+
+    background-image: none !important;
 }
-#ui-scale::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-2);
-    cursor: pointer;
-    margin-top: -1px;
+body.high-contrast .controls-card,
+body.high-contrast .piano-card,
+body.high-contrast .form-control,
+body.high-contrast .settings-panel {
+    border: 2px solid #ffffff !important;
+    backdrop-filter: none !important;
 }
-#ui-scale::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-2);
-    cursor: pointer;
-    border: none;
+body.high-contrast .white-key.active,
+body.high-contrast .black-key.active {
+    outline-offset: -4px;
+    filter: brightness(1.3) !important;
+    box-shadow: inset 0 0 0 4px #000000 !important;
+    border: 1px solid #000000 !important;
+    outline: none !important;
+}
+body.high-contrast .label {
+    fill: #000000 !important;
+    font-weight: 800 !important;
+}
+body.high-contrast .white-key.active.right-hand {
+    background-color: #e5a100 !important;
+    background-image: none !important;
+}
+body.high-contrast .white-key.active.left-hand {
+    background-color: #00b5c4 !important;
+    background-image: none !important;
+}
+body.high-contrast .white-key.active .label,
+body.high-contrast .black-key.active .label {
+    fill: #000000 !important;
+    font-weight: 900 !important;
 }
 
 /* ==========================================

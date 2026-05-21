@@ -37,11 +37,15 @@ const timeline = document.getElementById("timeline");
 const tempo = document.getElementById("tempo");
 const tempoVal = document.getElementById("tempoVal");
 const volume = document.getElementById("volume");
-const uiScale = document.getElementById("ui-scale");
-if (uiScale) {
-    updateRangeFill(uiScale);
-    uiScale.addEventListener("input", () => updateRangeFill(uiScale));
-}
+document.addEventListener("DOMContentLoaded", () => {
+    const uiScale = document.getElementById("ui-scale");
+    if (uiScale) {
+        const settings = loadSettings();
+        uiScale.value = settings.uiScale || 1;
+        updateRangeFill(uiScale);
+        uiScale.addEventListener("input", () => updateRangeFill(uiScale));
+    }
+});
 
 // Falling notes
 let isPaused = false, tempoScale = 1, lastFrameTime = null, globalTime = 0;

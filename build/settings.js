@@ -6,7 +6,8 @@ const defaultSettings = {
     autoSort: true,
     limitMidi: false,
     enableGlow: true,
-    uiScale: 1.0
+    uiScale: 1.0,
+    highContrast: false
 };
 
 // Get and set settings
@@ -43,6 +44,11 @@ function applySettings(settings) {
     const uiScaleSlider = document.getElementById("ui-scale");
     if (uiScaleSlider) uiScaleSlider.value = settings.uiScale || 1.0;
     document.documentElement.style.setProperty('--ui-scale-factor', settings.uiScale || 1.0);
+
+    // Toggle high contrast mode
+    const toggleHC = document.getElementById("toggle-high-contrast");
+    if (toggleHC) toggleHC.checked = settings.highContrast;
+    document.body.classList.toggle("high-contrast", settings.highContrast);
 }
 
 // Change setting to the default that was set when the app first started
@@ -69,6 +75,7 @@ function initSettings() {
         "auto-sort": "autoSort",
         "limit-midi": "limitMidi",
         "toggle-glow": "enableGlow",
+        "toggle-high-contrast": "highContrast"
     };
 
     Object.entries(toggleMap).forEach(([id, key]) => {
@@ -88,6 +95,11 @@ function initSettings() {
             // Update glow state immediately on switch change
             if (key === "enableGlow") {
                 document.body.classList.toggle("no-glow", !el.checked);
+            }
+
+            // Transition for high contrast mode
+            if (key === "highContrast") {
+                document.body.classList.toggle("high-contrast", el.checked);
             }
         });
     });
