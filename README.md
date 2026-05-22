@@ -48,14 +48,14 @@ If you exit the app and had a music piece open/paused, it would be good to save 
 --- Remember Glow Setting ---
 Get glow toggle to remember the previous state it was in so that when a mode that disabled it is turned off the user does not have to reenable glow.
 
+--- Disable Hand ---
+While a user can clear the input of a hand to disable it, it might be more convenient to have button with the purpose of disabling that hand from playing so the user can focus on one hand, and reenable it when they are ready.
+
 --- UI Improvements ---
 Get play buttons to shrink if the screen width gets too cramped so that they stay on the same level, or reduce padding or margin.
 Make piano bigger? Piano scale bar setting? or just have the piano be max possible size, no blank space.
 Give the autoplay editor and buttons a faded look if no music has been started?
 Reduce distance between piano and playback controls, so there is more space on screen if you want to have both on screen during autoplay.
-
---- Bigger Preset List ---
-Add more classical music pieces to the preset list.
 
 --- Decrease App Size ---
 The desktop version of the app on Microsoft Store is around 300mb with the appxbundle being 277mb, maybe try to find ways to decrease that since the mobile version is around 30mb or less in comparison. 
@@ -64,6 +64,9 @@ Electron requires a lot of space to work, Tauri 2.0 uses the OS WebView like Cap
 ## Features to consider
 --- Import/Export Saved Music List ---
 Option to export the saved music list and import it to the app on another device, so that lists of music can be shared either across devices or to other people.
+
+--- Bigger Preset List ---
+Add more classical music pieces to the preset list.
 
 --- Improved Performance Mode ---
 Added performance mode, could enhance it further by getting it to change how the app plays animations. The app will likely still struggle if every key was being pressed at once repeatedly.
