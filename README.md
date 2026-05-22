@@ -52,6 +52,7 @@ Get glow toggle to remember the previous state it was in so that when a mode tha
 Get play buttons to shrink if the screen width gets too cramped so that they stay on the same level, or reduce padding or margin.
 Make piano bigger? Piano scale bar setting? or just have the piano be max possible size, no blank space.
 Give the autoplay editor and buttons a faded look if no music has been started?
+Reduce distance between piano and playback controls, so there is more space on screen if you want to have both on screen during autoplay.
 
 --- Bigger Preset List ---
 Add more classical music pieces to the preset list.
