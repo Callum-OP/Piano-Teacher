@@ -42,48 +42,57 @@ https://bitmidi.com/
 https://musescore.com/
 
 ## Top features to consider
---- Decrease Size Of App ---
-The desktop version of the app on Microsoft Store is 300mb, maybe try to find ways to decrease that since the mobile version is only 30mb in comparison. 
+--- Save Current Music & Progress ---
+If you exit the app and had a music piece open/paused, it would be good to save what music was last open as well as exactly where the user was in the timeline bar, so then the user can start exactly where they were when they left.
+
+--- Remember Glow Setting ---
+Get glow toggle to remember the previous state it was in so that when a mode that disabled it is turned off the user does not have to reenable glow.
+
+--- UI Improvements ---
+Get play buttons to shrink if the screen width gets too cramped so that they stay on the same level, or reduce padding or margin.
+Make piano bigger? Piano scale bar setting? or just have the piano be max possible size, no blank space.
+Give the autoplay editor and buttons a faded look if no music has been started?
+
+--- Bigger Preset List ---
+Add more classical music pieces to the preset list.
+
+--- Decrease App Size ---
+The desktop version of the app on Microsoft Store is around 300mb with the appxbundle being 277mb, maybe try to find ways to decrease that since the mobile version is around 30mb or less in comparison. 
 Electron requires a lot of space to work, Tauri 2.0 uses the OS WebView like Capacitor does, it may be worth changing to it instead of Electron in the future (Tauri could also be used for mobile as well as meaning I only need one wrapper), although it means retesting and possibly rewriting code to get it to work.
 
-Tried using appx bundle which helps slightly, version is 300mb each before I've even published to the Microsoft Store but with appx bundle it is 277mb.
-
 ## Features to consider
---- Better Rests ---
-When playing several notes at once in autoplay the underscores are not considered separate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another. This isn't a quick and easy fix, as it is a fundamental limitation of the note format the app uses.
+--- Improved Performance Mode ---
+Added performance mode, could enhance it further by getting it to change how the app plays animations. The app will likely still struggle if every key was being pressed at once repeatedly.
 
---- Graphics ---
-Give the autoplay editor a faded look if no music has been started?
-Customisation? Such as dark mode, text size and colour theme selection.
+--- Customisation ---
+Such as light/dark mode, colour theme selection?
+
+--- Save Tempo ---
+When saving a music piece, save the last tempo setting used for it and restore it on load. Could achieve this by adding preferred tempo option when saving.
 
 --- Toggle Input Data? ---
 A toggle/option that only enters midi input within current piano size? If piano is smaller and there are notes not within that size then could discard them from the input.
 
 --- Select Specific MIDI Tracks? ---
-Allow users to see the tracks within a MIDI file they upload and choose which tracks will and won't play.
+Allow users to see all the tracks within a MIDI file they upload and choose which tracks will and won't play. As some will have unneccessary background noise and instruments. Would likely need to a new section that gives the user complete freedom and control over the MIDI file they uploaded.
 
 --- Preset Music Search Bar ---
 As the preset library grows, being able to type search for a specific music piece or composer and filter is more useful than searching manually. Something to consider if the library ever gets too big.
 
---- Save Tempo ---
-When saving a music piece, save the last tempo setting used for it and restore it on load.
+--- Better Rests ---
+When playing several notes at once in autoplay the underscores are not considered separate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another. This isn't a quick and easy fix, as it is a fundamental limitation of the note format the app uses.
 
 ## Top issues
 None so far
 
 ## Minor issues
---- Dark mode ---
-The colours and layout on dark mode specifically on the web on some mobile browsers does not look right compared to the intended look. For samsung internet I noticed the app was inconsistently darker, some falling notes and shadows were bright and others were not, this may be due to a filter that the browser creates that I can't fix. Either way users on mobile would ideally be using the app version on Google Play Store which displays fine.
-
 --- Audio ---
-If the user switches windows or tabs the audio and animation will stop playing. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab).
-
---- Performance ---
-Older devices (10 years or more, will struggle to run the app as intended).
-Add an option to run the app in a simplified performance enhancing mode (Removing the fancy visuals and focusing on running the app at the bare minimum requirements)?
+If the user switches windows or tabs the audio and animation will stop playing, when the user returns it will be as if it had continued playing but obviously the user will have missed it. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab).
 
 --- Sort Notes Feature ---
-Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function. This is fundamentally a hard problem, the current sort function works well so far but to properly improve it so that it is perfect may require a complete rewrite of the sort logic.
+Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function. This is fundamentally a hard problem, the current sort function works well so far but to properly improve it so that it is perfect may require a complete rewrite of the sort logic with the risk of only just making it worse.
+
+Another limitation as to why this feature is not always perfect is when music pieces have more notes and are wider than possible to be played, it may worth having it be able to sort a third hand of background notes so that it can still accurately show how to play the rest.
 
 ## Recent resolved issues
 --- Wakelock Inconsistency ---
