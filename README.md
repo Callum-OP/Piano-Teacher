@@ -62,6 +62,9 @@ The desktop version of the app on Microsoft Store is around 300mb with the appxb
 Electron requires a lot of space to work, Tauri 2.0 uses the OS WebView like Capacitor does, it may be worth changing to it instead of Electron in the future (Tauri could also be used for mobile as well as meaning I only need one wrapper), although it means retesting and possibly rewriting code to get it to work.
 
 ## Features to consider
+--- Import/Export Saved Music List ---
+Option to export the saved music list and import it to the app on another device, so that lists of music can be shared either across devices or to other people.
+
 --- Improved Performance Mode ---
 Added performance mode, could enhance it further by getting it to change how the app plays animations. The app will likely still struggle if every key was being pressed at once repeatedly.
 
