@@ -89,6 +89,9 @@ As the preset library grows, being able to type search for a specific music piec
 --- Better Rests ---
 When playing several notes at once in autoplay the underscores are not considered separate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another. This isn't a quick and easy fix, as it is a fundamental limitation of the note format the app uses.
 
+--- Piano Audio Options ---
+There are several different types of pianos and each sound slightly different, maybe giving different options to choose from in the settings will allow users to choose one they will be familiar with. Will require collecting the necessary audio files.
+
 ## Top issues
 --- Saving Several Music Pieces ---
 Originally you could not save two music pieces with the same name, however now that each music piece can have a composer, I should change this to allow for ones with same name so long as the composer is different.
