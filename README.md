@@ -56,6 +56,8 @@ Get play buttons to shrink if the screen width gets too cramped so that they sta
 Make piano bigger? Piano scale bar setting? or just have the piano be max possible size, no blank space.
 Give the autoplay editor and buttons a faded look if no music has been started?
 Reduce distance between piano and playback controls, so there is more space on screen if you want to have both on screen during autoplay.
+Make it easier to reset tempo to 1. Maybe make it so tapping near 1 automatically assumes 1, and you gotta drag to reach the rest?
+Should be a no music loaded message if you try to start autoplay without loading anything first.
 
 --- Decrease App Size ---
 The desktop version of the app on Microsoft Store is around 300mb with the appxbundle being 277mb, maybe try to find ways to decrease that since the mobile version is around 30mb or less in comparison. 

@@ -343,12 +343,44 @@ button,
     font-weight: 900;
     -webkit-text-stroke: 0.5px currentColor;
     position: relative;
-    top: 1.4px;
+    top: 1px;
 }
 
 #stop .z-1 { z-index: 2; }
 #stop .progress { z-index: 1; pointer-events: none; }
 #stop-progress { width: 0%; transition: none !important; }
+
+/* Target the settings button specifically */
+#settings-btn {
+    color: white;
+    transition: all 0.25s ease-in-out;
+    outline: none !important;
+    border: none !important;
+}
+
+/* Apply the color shift on hover and focus */
+#settings-btn:hover, 
+#settings-btn:focus {
+    color: var(--accent-3) !important;
+    transform: rotate(45deg); /* Rotates the gear on hover */
+}
+
+#settings-btn:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+/* Volume button */
+#mute {
+    color: white;
+    transition: all 0.25s ease-in-out;
+}
+
+#mute:hover, 
+#mute:focus {
+    color: var(--accent-3) !important;
+}
+
 
 /* ==========================================
    OCTAVE INCREMENT / DECREMENT CONTROLS
@@ -368,7 +400,6 @@ button,
     margin: 0;
 }
 
-/* Upgraded to make Octave toggles appear distinctly like buttons */
 #octave-controls .btn {
     padding: 0.35rem 0.65rem;
     min-width: 32px;
@@ -392,36 +423,6 @@ button,
     font-size: 1rem;
 }
 
-/* Target the settings button specifically */
-#settings-btn {
-    color: white;
-    transition: all 0.25s ease-in-out;
-    outline: none !important;
-    border: none !important;
-}
-
-/* Apply the color shift on hover and focus states */
-#settings-btn:hover, 
-#settings-btn:focus {
-    color: var(--accent-3) !important;
-    transform: rotate(45deg); /* Rotates the gear on hover */
-}
-
-#settings-btn:active {
-    transform: scale(0.98);
-    transition: transform 0.1s ease;
-}
-
-#mute {
-    color: white;
-    transition: all 0.25s ease-in-out;
-}
-
-#mute:hover, 
-#mute:focus {
-    color: var(--accent-3) !important;
-}
-
 /* ==========================================
    RANGE / INPUT TIMELINE SLIDERS
    ========================================== */
@@ -440,7 +441,7 @@ button,
     touch-action: none;
 }
 
-/* Slider Track Thumbs (Chrome/Safari/Edge/Firefox) */
+/* Slider Track Thumbs */
 .range::-webkit-slider-thumb, 
 #timeline::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -729,6 +730,9 @@ input[type="file"]::file-selector-button {
 }
 input[type="file"] {
     font-size: calc(1rem * var(--ui-scale-factor)) !important;
+}
+#pause .bi-arrow-counterclockwise {
+    font-size: calc(1.5rem * var(--ui-scale-factor)) !important;
 }
 #stop {
     width: calc(40px * var(--ui-scale-factor)) !important;
