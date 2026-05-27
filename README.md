@@ -45,9 +45,6 @@ https://musescore.com/
 --- Save Current Music & Progress ---
 If you exit the app and had a music piece open/paused, it would be good to save what music was last open as well as exactly where the user was in the timeline bar, so then the user can start exactly where they were when they left.
 
---- Remember Glow Setting ---
-Get glow toggle to remember the previous state it was in so that when a mode that disabled it is turned off the user does not have to reenable glow.
-
 --- Disable Hand ---
 While a user can clear the input of a hand to disable it, it might be more convenient to have button with the purpose of disabling that hand from playing so the user can focus on one hand, and reenable it when they are ready.
 

@@ -55,16 +55,15 @@ function applySettings(settings) {
 
     // Glow Overrides
     const toggleGlow = document.getElementById("toggle-glow");
-    // Find the wrapper element or parent container of the glow switch to hide it nicely
     const glowContainer = toggleGlow ? toggleGlow.closest('.form-check') || toggleGlow.parentElement : null;
 
     if (settings.performanceMode || settings.highContrast) {
-        // Force glow off internally and hide the option
+        // Force glow off visually
         document.body.classList.add("no-glow");
         if (toggleGlow) toggleGlow.checked = false;
         if (glowContainer) glowContainer.style.display = "none";
     } else {
-        // Behave normally if neither mode is dominant
+        // Restore saved glow preference
         if (toggleGlow) toggleGlow.checked = settings.enableGlow;
         document.body.classList.toggle("no-glow", !settings.enableGlow);
         if (glowContainer) glowContainer.style.display = "block";
@@ -106,18 +105,11 @@ function initSettings() {
             const currentSettings = loadSettings();
             currentSettings[key] = el.checked;
 
-            // For both performance and contrast mode disable glow
-            if (key === "performanceMode" || key === "highContrast") {
-                if (el.checked) {
-                    currentSettings.enableGlow = false;
-                }
-            }
-
             if (key === "showLabels") {
                 const piano = document.getElementById("piano");
                 if (piano) piano.classList.toggle("hide-labels", !el.checked);
             }
-            
+
             if (key === "enableGlow") {
                 document.body.classList.toggle("no-glow", !el.checked);
             }
@@ -126,17 +118,11 @@ function initSettings() {
                 document.body.classList.toggle("high-contrast", el.checked);
             }
 
-            // If performance mode is on, automatically switch glows off
             if (key === "performanceMode") {
-                if (el.checked) {
-                    currentSettings.enableGlow = false;
-                    const glowEl = document.getElementById("toggle-glow");
-                    if (glowEl) glowEl.checked = false;
-                    document.body.classList.add("no-glow");
-                }
                 document.body.classList.toggle("performance-mode", el.checked);
             }
 
+            // After updating settings, re-apply them
             saveSettings(currentSettings);
             applySettings(currentSettings);
         });
