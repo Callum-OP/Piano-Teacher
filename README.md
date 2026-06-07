@@ -42,6 +42,14 @@ https://bitmidi.com/
 https://musescore.com/
 
 ## Top features to consider
+--- Custom Music Editor ---
+Be able to easily add notes by pressing where on the screen to add them. Double click to increase the length? or maybe add/drag another note on top to extend it?
+Drag existing notes to a different time or note entirely.
+Change the hand of existing notes by clicking them.
+Have different modes available: add mode, change hand mode, delete mode, etc
+Then be able to export saved music back out as MIDI?
+Will be useful for imported music with extra unwanted notes or incorrect hand placement, or even just being able to easily create your own music pieces from scratch using a more visual interface.
+
 --- Save Current Music & Progress ---
 If you exit the app and had a music piece open/paused, it would be good to save what music was last open as well as exactly where the user was in the timeline bar, so then the user can start exactly where they were when they left.
 
