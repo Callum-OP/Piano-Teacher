@@ -4,6 +4,7 @@ https://github.com/user-attachments/assets/e3545791-7b0c-4742-944d-777b0df4bf59
 
 
 # Versions
+The Google Play Store mobile app version: https://play.google.com/store/apps/details?id=io.github.callumop.pianoteacher
 The Microsoft Store desktop app version: https://apps.microsoft.com/detail/9ngq60108m5s?hl=en-GB&gl=GB
 The Itch.io web app version: https://callum-op.itch.io/piano-teacher
 The development web app version: https://callum-op.github.io/Piano-Teacher/ 
@@ -41,6 +42,9 @@ https://www.midiworld.com/
 https://bitmidi.com/
 https://musescore.com/
 
+# Future Development
+Below are the future features and current issues relating to the app in order of priority (highest in list being highest priority)
+
 ## Top features to consider
 --- Custom Music Editor ---
 Be able to easily add notes by pressing where on the screen to add them. Double click to increase the length? or maybe add/drag another note on top to extend it?
@@ -49,9 +53,6 @@ Change the hand of existing notes by clicking them.
 Have different modes available: add mode, change hand mode, delete mode, etc
 Then be able to export saved music back out as MIDI?
 Will be useful for imported music with extra unwanted notes or incorrect hand placement, or even just being able to easily create your own music pieces from scratch using a more visual interface.
-
---- Save Current Music & Progress ---
-If you exit the app and had a music piece open/paused, it would be good to save what music was last open as well as exactly where the user was in the timeline bar, so then the user can start exactly where they were when they left.
 
 --- Disable Hand ---
 While a user can clear the input of a hand to disable it, it might be more convenient to have button with the purpose of disabling that hand from playing so the user can focus on one hand, and reenable it when they are ready.
@@ -63,6 +64,9 @@ Give the autoplay editor and buttons a faded look if no music has been started?
 Reduce distance between piano and playback controls, so there is more space on screen if you want to have both on screen during autoplay.
 Make it easier to reset tempo to 1. Maybe make it so tapping near 1 automatically assumes 1, and you gotta drag to reach the rest?
 Should be a no music loaded message if you try to start autoplay without loading anything first.
+
+--- Save Current Music & Progress ---
+If you exit the app and had a music piece open/paused, it would be good to save what music was last open as well as exactly where the user was in the timeline bar, so then the user can start exactly where they were when they left.
 
 --- Decrease App Size ---
 The desktop version of the app on Microsoft Store is around 300mb with the appxbundle being 277mb, maybe try to find ways to decrease that since the mobile version is around 30mb or less in comparison. 
@@ -104,21 +108,6 @@ There are several different types of pianos and each sound slightly different, m
 Originally you could not save two music pieces with the same name, however now that each music piece can have a composer, I should change this to allow for ones with same name so long as the composer is different.
 
 ## Minor issues
---- Audio ---
-If the user switches windows or tabs the audio and animation will stop playing, when the user returns it will be as if it had continued playing but obviously the user will have missed it. (Maybe it should automatically pause and resume instead? Alternatively see if it is possible for at least the audio to play when away from tab).
-
 --- Sort Notes Feature ---
 Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function. This is fundamentally a hard problem, the current sort function works well so far but to properly improve it so that it is perfect may require a complete rewrite of the sort logic with the risk of only just making it worse.
-
 Another limitation as to why this feature is not always perfect is when music pieces have more notes and are wider than possible to be played, it may worth having it be able to sort a third hand of background notes so that it can still accurately show how to play the rest.
-
-## Recent resolved issues
---- Wakelock Inconsistency ---
-The wakelock was still not always working as intended and keeping the screen awake when it should be closed. I'll need to retest it thouroughly and only allow it to keep the screen awake when it is playing audio, and ideally for only a minute or two if paused part way through, otherwise it should never keep the screen awake.
-
-Added detailed tests to find issues with wake lock. 
-After the 2 minute pause timer fires and releases the wake lock, returning to the app no longer incorrectly restarts the timer.
-Is playing was false when starting autoplay as enable wakelock was being called too early, now works correctly.
-
---- Falling Notes Misplacement ---
-When not extended, and after loading a saved music piece, falling notes land one key to the right of the key that lights up, this continues to happen if you change music piece but only for the first few notes in that music piece/saved music, the rest of it would be fine? It is the falling notes that are incorrect. Only seems to happen on mobile currently. Changed how noteDiv.style.left is set in create note div by copying how it is set in the update code (which works) which has seemingly now resolved this issue.
