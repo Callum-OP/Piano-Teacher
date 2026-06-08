@@ -104,8 +104,8 @@ When playing several notes at once in autoplay the underscores are not considere
 There are several different types of pianos and each sound slightly different, maybe giving different options to choose from in the settings will allow users to choose one they will be familiar with. Will require collecting the necessary audio files.
 
 ## Top issues
---- Saving Several Music Pieces ---
-Originally you could not save two music pieces with the same name, however now that each music piece can have a composer, I should change this to allow for ones with same name so long as the composer is different.
+--- Audio being overloaded ---
+On music pieces with 10s of notes being played over and over consistently, eventually the audio will become overloaded and begin crackling/cutting out. Seems to especially happen when the same key is hit over and over several times in less than a second. This happens even in performance mode.
 
 ## Minor issues
 --- Sort Notes Feature ---

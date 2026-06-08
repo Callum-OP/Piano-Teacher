@@ -15,9 +15,9 @@ function saveCustomMusic() {
 
     let saved = JSON.parse(localStorage.getItem("customMusic") || "[]");
     
-    // Check for duplicate title
-    if (saved.find(m => m.title === title)) {
-        if (!confirm(`"${title}" already exists. Overwrite it?`)) return;
+    // Check for duplicate title AND composer combination
+    if (saved.find(m => m.title === title && (m.composer || "My Music") === composer)) {
+        if (!confirm(`"${title}" by ${composer} already exists. Overwrite it?`)) return;
     }
 
     saved = addOrUpdateMusic(saved, title, left, right, composer);
@@ -29,7 +29,8 @@ function saveCustomMusic() {
 
 // Function to sort and update saved music list
 function addOrUpdateMusic(saved, title, left, right, composer = "My Music") {
-    const index = saved.findIndex(m => m.title === title);
+    // Look for existing item with matching title AND composer
+    const index = saved.findIndex(m => m.title === title && (m.composer || "My Music") === composer);
     if (index >= 0) {
         saved[index] = { title, left, right, composer };
     } else {
@@ -37,8 +38,10 @@ function addOrUpdateMusic(saved, title, left, right, composer = "My Music") {
     }
     return saved.sort((a, b) => {
         // Sort by composer first, then title
-        if (a.composer < b.composer) return -1;
-        if (a.composer > b.composer) return 1;
+        const compA = a.composer || "My Music";
+        const compB = b.composer || "My Music";
+        if (compA < compB) return -1;
+        if (compA > compB) return 1;
         return a.title.localeCompare(b.title);
     });
 }
@@ -46,10 +49,16 @@ function addOrUpdateMusic(saved, title, left, right, composer = "My Music") {
 // Load selected music into inputs
 function loadSelectedCustomMusic() {
     const select = document.getElementById("customMusicSelect");
+    if (!select.value) return;
+
+    // Split the compound value back into composer and title
+    const [composer, title] = select.value.split("|");
     const saved = JSON.parse(localStorage.getItem("customMusic") || "[]");
-    const selected = saved.find(m => m.title === select.value);
+    
+    const selected = saved.find(m => m.title === title && (m.composer || "My Music") === composer);
     if (!selected) return;
-    // Populate input field
+
+    // Populate input fields
     document.getElementById("noteInputLeft").value = selected.left;
     document.getElementById("noteInputRight").value = selected.right;
     
@@ -63,10 +72,14 @@ function deleteSelectedCustomMusic() {
     const select = document.getElementById("customMusicSelect");
     // Only delete if confirmed and there is music chosen in selection
     if (!select.value) return;
-    if (!confirm(`Delete "${select.value}"?`)) return;
+    
+    const [composer, title] = select.value.split("|");
+    if (!confirm(`Delete "${title}" by ${composer}?`)) return;
     
     let saved = JSON.parse(localStorage.getItem("customMusic") || "[]");
-    saved = saved.filter(m => m.title !== select.value);
+    // Filter out ONLY the specific track matching both title and composer
+    saved = saved.filter(m => !(m.title === title && (m.composer || "My Music") === composer));
+    
     localStorage.setItem("customMusic", JSON.stringify(saved));
     populateCustomMusicSelect();
 }
@@ -90,7 +103,7 @@ function populateCustomMusicSelect() {
         group.label = composer;
         pieces.forEach(m => {
             const option = document.createElement("option");
-            option.value = m.title;
+            option.value = `${composer}|${m.title}`;
             option.textContent = m.title;
             group.appendChild(option);
         });
