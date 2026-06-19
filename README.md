@@ -33,6 +33,7 @@ If you have a touchscreen on a large screened device you can play the piano on s
 There is an autoplay feature that will visually show how to play sheet music.
 Select from a list of preset music or upload a MIDI file, then click to start autoplay.
 Alternatively enter the notes directly into the input in letter format (A1, Fs3, etc), using _ for rests and + to play several notes at once.
+Use the Left/Right hand toggle buttons to silence a hand during autoplay so you can focus on one hand at a time, then re-enable it when ready.
 
 Sites I found with MIDI files include: 
 https://onlinesequencer.net/
@@ -53,9 +54,6 @@ Change the hand of existing notes by clicking them.
 Have different modes available: add mode, change hand mode, delete mode, etc
 Then be able to export saved music back out as MIDI?
 Will be useful for imported music with extra unwanted notes or incorrect hand placement, or even just being able to easily create your own music pieces from scratch using a more visual interface.
-
---- Disable Hand ---
-While a user can clear the input of a hand to disable it, it might be more convenient to have button with the purpose of disabling that hand from playing so the user can focus on one hand, and reenable it when they are ready.
 
 --- UI Improvements ---
 Get play buttons to shrink if the screen width gets too cramped so that they stay on the same level, or reduce padding or margin.

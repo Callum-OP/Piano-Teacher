@@ -418,5 +418,18 @@ function resortNotes() {
 
 // Export code for tests
 if (typeof module !== 'undefined') {
-    module.exports = { calculateSpan, isWhiteKey, balanceClusters };
+    module.exports = {
+        parseNote,
+        separateNotesAndDelays,
+        order,
+        alignSegments,
+        isWhiteKey,
+        whiteKeyDistance,
+        calculateSpan,
+        balanceClusters,
+        shouldSplitNotes,
+        findBestSplitPoint,
+        splitNotes,
+        getAveragePitch
+    };
 }

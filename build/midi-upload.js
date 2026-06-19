@@ -80,7 +80,8 @@ function parseMIDI(arrayBuffer) {
 }
 
 // Get user input, read it and get the note strings
-document.getElementById("midiFile").addEventListener("change", async (e) => {
+const midiFileInput = document.getElementById("midiFile");
+if (midiFileInput) midiFileInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     // Read file into ArrayBuffer
@@ -180,3 +181,8 @@ document.getElementById("midiFile").addEventListener("change", async (e) => {
     // Reset file input so the same file can be reselected
     e.target.value = "";
 });
+
+// Export code for tests
+if (typeof module !== "undefined") {
+    module.exports = { parseMIDI };
+}

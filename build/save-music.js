@@ -115,3 +115,8 @@ function populateCustomMusicSelect() {
 document.addEventListener("DOMContentLoaded", () => {
     populateCustomMusicSelect();
 });
+
+// Export code for tests
+if (typeof module !== "undefined") {
+    module.exports = { addOrUpdateMusic };
+}

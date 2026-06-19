@@ -54,6 +54,9 @@ let scheduledNotes = []; // Full schedule for lookahead spawning
 const LOOKAHEAD = 3000; // Window to spawn upcoming notes
 const previewLayer = document.getElementById("note-overlay");
 
+// Which hands are enabled (lets the user focus on one hand at a time)
+const handState = createHandState();
+
 // Countdown
 let countdownSeconds = 0;
 let countdownInterval = null;
@@ -349,7 +352,8 @@ function tick(ts) {
     // Lookahead and create DOM elements only for upcoming notes
     for (let i = 0; i < scheduledNotes.length; i++) {
         const sn = scheduledNotes[i];
-        if (!sn.spawned && sn.scheduledStart <= globalTime + LOOKAHEAD) {
+        // Skip notes whose hand is currently disabled (stays unspawned so it can return if re-enabled)
+        if (!sn.spawned && isHandEnabled(handState, sn.hand) && sn.scheduledStart <= globalTime + LOOKAHEAD) {
             const el = createNoteDiv(sn.noteName, sn.delay, sn.hand);
             if (!el) continue;
             const targetTop = calcTargetTop(sn.noteName);
@@ -460,6 +464,42 @@ function toggleMute() {
         muteIcon.classList.add("bi-volume-up");
         isMuted = false;
     }
+}
+
+// --- Disable / enable a hand during autoplay ---
+// Toggle a hand on or off. Works live: turning a hand off silences it and clears
+// its falling notes immediately; turning it back on lets upcoming notes return.
+function toggleHand(hand) {
+    if (hand !== "Left" && hand !== "Right") return;
+    toggleHandState(handState, hand);
+
+    // If the hand was just disabled, clear its currently falling/sounding notes
+    if (!isHandEnabled(handState, hand)) {
+        for (let i = activeNotes.length - 1; i >= 0; i--) {
+            const n = activeNotes[i];
+            if (n.hand === hand) {
+                if (n.el) n.el.remove();
+                // Reset so the note can re-spawn if the hand is turned back on while it's still upcoming
+                n.spawned = false;
+                n.el = null;
+                n.audioTriggered = false;
+                stopNote(n.noteName);
+                activeNotes.splice(i, 1);
+            }
+        }
+    }
+    updateHandButtonUI(hand);
+}
+
+// Keep a hand toggle button's label and styling in sync with the state
+function updateHandButtonUI(hand) {
+    const btn = document.getElementById(hand === "Left" ? "toggle-left-hand" : "toggle-right-hand");
+    if (!btn) return;
+    const enabled = isHandEnabled(handState, hand);
+    btn.classList.toggle("active", enabled);
+    btn.setAttribute("aria-pressed", enabled ? "true" : "false");
+    const text = btn.querySelector(".hand-toggle-text");
+    if (text) text.textContent = `${hand} hand ${enabled ? "on" : "off"}`;
 }
 
 // Pause falling notes as well as countdown

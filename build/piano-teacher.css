@@ -599,6 +599,31 @@ svg#piano .c-label {
     contain: layout paint;
 }
 
+/* ==========================================
+   HAND FOCUS TOGGLES
+   ========================================== */
+.hand-toggle {
+    border: 2px solid #c9c9c9;
+    color: #888;
+    background: transparent;
+    opacity: 0.6;
+    transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+/* Enabled (active) state per hand, colour matched to the falling notes */
+.hand-toggle-left.active {
+    border-color: var(--highlightAlt-2);
+    color: var(--highlightAlt-2);
+    opacity: 1;
+}
+.hand-toggle-right.active {
+    border-color: var(--highlight-2);
+    color: var(--highlight-2);
+    opacity: 1;
+}
+.hand-toggle:not(.active) {
+    text-decoration: line-through;
+}
+
 
 /* ==========================================
    SETTINGS

@@ -405,6 +405,19 @@
                     <option value="">-- Select music --</option>
                 </select>
             </div>
+            <!-- Disable / enable a hand so the user can focus on one hand at a time -->
+            <div class="hand-focus d-flex align-items-center flex-wrap gap-2 mb-2">
+                <span class="form-label mb-0 me-1">Hands:</span>
+                <button type="button" class="btn btn-sm hand-toggle hand-toggle-left active" id="toggle-left-hand"
+                    onclick="toggleHand('Left')" aria-pressed="true">
+                    <i class="bi bi-arrow-left-circle-fill"></i> <span class="hand-toggle-text">Left hand on</span>
+                </button>
+                <button type="button" class="btn btn-sm hand-toggle hand-toggle-right active" id="toggle-right-hand"
+                    onclick="toggleHand('Right')" aria-pressed="true">
+                    <span class="hand-toggle-text">Right hand on</span> <i class="bi bi-arrow-right-circle-fill"></i>
+                </button>
+            </div>
+
             <div class="row g-3">
                 <div class="col-12 col-lg-6">
                     <label for="noteInputLeft" class="form-label">Left hand notes</label>
@@ -465,6 +478,7 @@
 
     <!-- Javascript files -->
     <script src="utils.js"></script>
+    <script src="hands.js"></script>
     <script src="settings.js"></script>
     <script src="./midi-upload.js"></script>
     <script src="./script.js"></script>

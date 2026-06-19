@@ -14,7 +14,15 @@
     "build-store": "npm run delete-dist && npm run build && npm run isolate-appx && npm run bundle"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "roots": [
+      "<rootDir>/build"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/android/",
+      "/dist/"
+    ]
   },
   "dependencies": {
     "@capacitor/android": "^8.0.2",
