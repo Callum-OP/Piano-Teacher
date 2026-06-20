@@ -37,6 +37,31 @@ function isValidMusicInput(left, right) {
     return hasValidNote;
 }
 
+// --- Keyboard shortcuts ---
+// True if the element is something the user is typing into or operating, so global
+// shortcuts (e.g. spacebar to play/pause) should not hijack the key press.
+function isInteractiveElement(el) {
+    if (!el) return false;
+    if (el.isContentEditable) return true;
+    return ["INPUT", "TEXTAREA", "SELECT", "BUTTON", "A"].includes(el.tagName);
+}
+
+// --- Tempo control ---
+// Snap a tempo value to the target (1x) when it's within threshold, so the
+// slider "sticks" to 1x near the middle and you must drag further to leave it.
+function snapTempo(value, target = 1, threshold = 0.15) {
+    const v = Number(value);
+    if (Number.isNaN(v)) return target;
+    return Math.abs(v - target) <= threshold ? target : v;
+}
+
+// True if the pointer moved far enough to count as a drag rather than a tap/click.
+// Used so the tempo slider only snaps to 1x on a tap, never on a drag-release.
+function isPointerDrag(startX, currentX, threshold = 4) {
+    if (startX == null || currentX == null) return false;
+    return Math.abs(currentX - startX) > threshold;
+}
+
 // --- Timeline bar feature ---
 // Format time
 function formatTime(ms) {
@@ -67,5 +92,5 @@ function midiToNoteName(midi) {
 
 // Export code for tests
 if (typeof module !== 'undefined') {
-    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput };
+    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag };
 }

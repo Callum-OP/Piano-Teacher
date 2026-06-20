@@ -34,6 +34,7 @@ There is an autoplay feature that will visually show how to play sheet music.
 Select from a list of preset music or upload a MIDI file, then click to start autoplay.
 Alternatively enter the notes directly into the input in letter format (A1, Fs3, etc), using _ for rests and + to play several notes at once.
 Use the Left/Right hand toggle buttons to silence a hand during autoplay so you can focus on one hand at a time, then re-enable it when ready.
+Press the spacebar to play/pause autoplay (it won't trigger while you're typing in a field). Click the tempo value (e.g. "1x") to reset the tempo. Dragging the tempo slider lands exactly where you release it; only a click/tap near the middle snaps to 1x.
 
 Sites I found with MIDI files include: 
 https://onlinesequencer.net/
@@ -60,8 +61,6 @@ Get play buttons to shrink if the screen width gets too cramped so that they sta
 Make piano bigger? Piano scale bar setting? or just have the piano be max possible size, no blank space.
 Give the autoplay editor and buttons a faded look if no music has been started?
 Reduce distance between piano and playback controls, so there is more space on screen if you want to have both on screen during autoplay.
-Make it easier to reset tempo to 1. Maybe make it so tapping near 1 automatically assumes 1, and you gotta drag to reach the rest?
-Should be a no music loaded message if you try to start autoplay without loading anything first.
 
 --- Save Current Music & Progress ---
 If you exit the app and had a music piece open/paused, it would be good to save what music was last open as well as exactly where the user was in the timeline bar, so then the user can start exactly where they were when they left.

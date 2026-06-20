@@ -466,6 +466,30 @@ function toggleMute() {
     }
 }
 
+// --- "No music loaded" message ---
+let noMusicMsgTimer = null;
+// Briefly show a toast telling the user to load some music first
+function showNoMusicMessage() {
+    const msg = document.getElementById("no-music-msg");
+    if (!msg) return;
+    msg.classList.add("show");
+    clearTimeout(noMusicMsgTimer);
+    noMusicMsgTimer = setTimeout(() => msg.classList.remove("show"), 3000);
+}
+
+// Entry point for the "Start autoplay" button: validate first, warn if empty,
+// and only jump to the autoplay view when there is actually music to play.
+function startAutoplay() {
+    const left = document.getElementById("noteInputLeft").value.trim();
+    const right = document.getElementById("noteInputRight").value.trim();
+    if (!isValidMusicInput(left, right)) {
+        showNoMusicMessage();
+        return;
+    }
+    autoPlay();
+    location.href = '#autoplay-section';
+}
+
 // --- Disable / enable a hand during autoplay ---
 // Toggle a hand on or off. Works live: turning a hand off silences it and clears
 // its falling notes immediately; turning it back on lets upcoming notes return.
@@ -508,7 +532,7 @@ function togglePause() {
     if (scheduledNotes.length === 0) {
         const left = document.getElementById("noteInputLeft").value.trim();
         const right = document.getElementById("noteInputRight").value.trim();
-        if (!left && !right) return; // Do nothing if no music selected
+        if (!isValidMusicInput(left, right)) { showNoMusicMessage(); return; } // Warn if no music loaded
         autoPlay();
         return;
     }
@@ -648,12 +672,44 @@ function autoPlay() {
     setButtonToPause();
 }
 
-// Tempo slider
+// Apply the tempo slider value. Only snaps to 1x when `snap` is true (on release),
+// so dragging stays free and the value just sticks to 1x once you let go near the middle.
+function applyTempoFromSlider(snap = false) {
+    let value = Number(tempo.value);
+    if (snap) {
+        value = snapTempo(value);
+        // Reflect the snap back onto the slider so it visibly settles on 1x
+        if (Number(tempo.value) !== value) tempo.value = value;
+    }
+    setTempo(value);
+    tempoVal.textContent = `${value}x`;
+    updateRangeFill(tempo);
+}
+
+// Reset tempo to 1x (used by clicking the tempo value label)
+function resetTempo() {
+    tempo.value = 1;
+    applyTempoFromSlider(true);
+}
+
+// Tempo slider: dragging always lands exactly where you release it. Only a
+// click/tap near 1x snaps to 1x ("tap near 1 assumes 1, drag to reach the rest").
+let tempoPointerStartX = null;
+let tempoWasTap = false;
 if (tempo && tempoVal) {
-  tempo.oninput = () => {
-    setTempo(tempo.value);
-    tempoVal.textContent = `${tempo.value}x`;
-  };
+  tempo.addEventListener("pointerdown", (e) => {
+      tempoPointerStartX = e.clientX;
+      tempoWasTap = true; // assume a tap until the pointer actually moves
+  });
+  tempo.addEventListener("pointermove", (e) => {
+      if (isPointerDrag(tempoPointerStartX, e.clientX)) tempoWasTap = false;
+  });
+  tempo.addEventListener("input", () => applyTempoFromSlider(false));
+  tempo.addEventListener("change", () => {
+      applyTempoFromSlider(tempoWasTap); // snap only on a tap/click, never on a drag
+      tempoWasTap = false;
+      tempoPointerStartX = null;
+  });
 }
 // Volume slider
 if (volume) {
@@ -952,11 +1008,6 @@ function updateRangeFill(range) {
         #fff ${percent}%,
         #fff 100%)`;
 }
-tempo.addEventListener("input", (e) => {
-    setTempo(tempo.value);
-    tempoVal.textContent = `${tempo.value}x`;
-    updateRangeFill(tempo);
-});
 updateRangeFill(tempo);
 
 // --- Extend piano ---
@@ -1199,6 +1250,15 @@ function updateTimelineDisplay() {
         setButtonToRestart();
     }
 }
+
+// --- Keyboard shortcuts ---
+// Spacebar plays/pauses (or starts) autoplay, unless the user is typing in a field
+document.addEventListener("keydown", (e) => {
+    if (e.code === "Space" && !isInteractiveElement(document.activeElement)) {
+        e.preventDefault(); // Stop the page from scrolling
+        togglePause();
+    }
+});
 
 // --- AudioContext resume on first click ---
 document.body.addEventListener("click", () => {

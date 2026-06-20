@@ -1,4 +1,4 @@
-const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput } = require('./utils.js');
+const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag } = require('./utils.js');
 const { calculateSpan, isWhiteKey, balanceClusters } = require('./sort-notes.js');
 
 //------------------------
@@ -103,6 +103,73 @@ test('isValidMusicInput should accept valid note inputs', () => {
 test('isValidMusicInput should accept if only one hand has notes', () => {
     expect(isValidMusicInput("C4_E4_G4", "")).toBe(true);
     expect(isValidMusicInput("", "A3_C4")).toBe(true);
+});
+
+// snapTempo()
+test('snapTempo snaps values near 1 to exactly 1', () => {
+    expect(snapTempo(1)).toBe(1);
+    expect(snapTempo(0.9)).toBe(1);
+    expect(snapTempo(1.1)).toBe(1);
+    expect(snapTempo("1.05")).toBe(1); // string input from the slider
+});
+
+test('snapTempo leaves values outside the threshold unchanged', () => {
+    expect(snapTempo(0.8)).toBe(0.8);
+    expect(snapTempo(1.2)).toBe(1.2);
+    expect(snapTempo(0)).toBe(0);
+    expect(snapTempo(2)).toBe(2);
+});
+
+test('snapTempo respects a custom target and threshold', () => {
+    expect(snapTempo(1.45, 1.5, 0.1)).toBe(1.5);
+    expect(snapTempo(1.3, 1.5, 0.1)).toBe(1.3);
+});
+
+test('snapTempo falls back to the target for non-numeric input', () => {
+    expect(snapTempo("abc")).toBe(1);
+    expect(snapTempo(NaN)).toBe(1);
+});
+
+// isInteractiveElement()
+test('isInteractiveElement detects form controls and links', () => {
+    expect(isInteractiveElement(document.createElement('input'))).toBe(true);
+    expect(isInteractiveElement(document.createElement('textarea'))).toBe(true);
+    expect(isInteractiveElement(document.createElement('select'))).toBe(true);
+    expect(isInteractiveElement(document.createElement('button'))).toBe(true);
+    expect(isInteractiveElement(document.createElement('a'))).toBe(true);
+});
+
+test('isInteractiveElement returns false for non-interactive elements and null', () => {
+    expect(isInteractiveElement(document.createElement('div'))).toBe(false);
+    expect(isInteractiveElement(document.createElement('span'))).toBe(false);
+    expect(isInteractiveElement(null)).toBe(false);
+});
+
+test('isInteractiveElement detects contentEditable elements', () => {
+    const div = document.createElement('div');
+    div.isContentEditable = true;
+    expect(isInteractiveElement(div)).toBe(true);
+});
+
+// isPointerDrag()
+test('isPointerDrag is false for a tap (little/no movement)', () => {
+    expect(isPointerDrag(100, 100)).toBe(false);
+    expect(isPointerDrag(100, 103)).toBe(false); // within the 4px threshold
+});
+
+test('isPointerDrag is true once movement passes the threshold', () => {
+    expect(isPointerDrag(100, 105)).toBe(true);
+    expect(isPointerDrag(100, 80)).toBe(true);
+});
+
+test('isPointerDrag respects a custom threshold', () => {
+    expect(isPointerDrag(100, 108, 10)).toBe(false);
+    expect(isPointerDrag(100, 112, 10)).toBe(true);
+});
+
+test('isPointerDrag is false when a start position was never recorded', () => {
+    expect(isPointerDrag(null, 120)).toBe(false);
+    expect(isPointerDrag(100, null)).toBe(false);
 });
 
 //------------------------

@@ -36,6 +36,11 @@
     <!-- Count down from 5 once autoplay starts -->
     <div class="countdown" id="countdown" aria-live="polite">Staring in 5...</div>
 
+    <!-- Transient toast shown when autoplay is attempted with no music loaded -->
+    <div id="no-music-msg" class="no-music-toast" role="alert" aria-live="assertive">
+        No music loaded — pick a preset, upload a MIDI file, or type some notes first.
+    </div>
+
     <!-- Main content -->
     <main class="main container py-5">
         <div id="piano-section"></div>
@@ -249,18 +254,19 @@
                 <div class="tempo-left text-start d-flex align-items-center gap-3">
                     <label class="form-label text-light mb-0">Tempo</label>
                     <input class="range" id="tempo" type="range" min="0" max="2" step="0.1" value="1">
-                    <span class="text-light" id="tempoVal">1x</span>
+                    <span class="text-light tempo-reset" id="tempoVal" onclick="resetTempo()" title="Reset tempo to 1x">1x</span>
                 </div>
 
                 <!-- Center (play) -->
                 <div class="transport text-center">
                     <!-- Rewind -->
-                    <button class="btn btn-outline-light mx-2" id="rewind" onclick="rewind();"><i class="bi bi-skip-backward-fill"></i></button>
+                    <button class="btn btn-outline-light mx-2" id="rewind" onclick="rewind();" aria-label="Rewind"><i class="bi bi-skip-backward-fill"></i></button>
                     <!-- Play / pause toggle -->
-                    <button class="btn btn-outline-light mx-2" id="pause" onclick="togglePause();"><i class="bi bi-play-fill"></i></button>
+                    <button class="btn btn-outline-light mx-2" id="pause" onclick="togglePause();" aria-label="Play or pause"><i class="bi bi-play-fill"></i></button>
                     <!-- Stop -->
-                    <button class="btn btn-outline-light mx-2 position-relative overflow-hidden" 
+                    <button class="btn btn-outline-light mx-2 position-relative overflow-hidden"
                         id="stop"
+                        aria-label="Stop (hold to confirm)"
                         onmousedown="startHold()" 
                         onmouseup="cancelHold()" 
                         onmouseleave="cancelHold()"
@@ -276,7 +282,7 @@
                         </div>
                     </button>
                     <!-- Fast forward -->
-                    <button class="btn btn-outline-light mx-2" id="forward" onclick="fastForward();"><i class="bi bi-skip-forward-fill"></i></button>
+                    <button class="btn btn-outline-light mx-2" id="forward" onclick="fastForward();" aria-label="Fast forward"><i class="bi bi-skip-forward-fill"></i></button>
                 </div>
 
                 <!-- Right (volume) -->
@@ -438,7 +444,7 @@
                     <input class="text-light" type="file" id="midiFile" accept=".mid,.midi">
                 </div>
                 <div class="col-12 col-lg-6 mt-3 d-flex gap-2 justify-content-end"> <!-- Set to right -->
-                    <button class="btn btn-primary" id="play" onclick="autoPlay(); location.href='#autoplay-section';">Start autoplay</button>
+                    <button class="btn btn-primary" id="play" onclick="startAutoplay();">Start autoplay</button>
                     <button class="btn btn-outline-primary" id="clear" onclick="clearAutoPlay();">Clear</button>
                 </div>
             </div>
