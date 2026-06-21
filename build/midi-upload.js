@@ -171,7 +171,12 @@ if (midiFileInput) midiFileInput.addEventListener("change", async (e) => {
             resortNotes();
         }
     }
-    
+
+    // Drop notes outside the current piano range if that setting is on
+    if (typeof maybeLimitToPianoSize === 'function') {
+        maybeLimitToPianoSize();
+    }
+
     // Reset music select dropdown box
     const musicSelect = document.getElementById("musicSelect");
     if (musicSelect) {

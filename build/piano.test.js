@@ -1,4 +1,4 @@
-const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic } = require('./utils.js');
+const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic, noteToPitch, limitNotesToRange } = require('./utils.js');
 const { calculateSpan, isWhiteKey, balanceClusters } = require('./sort-notes.js');
 
 //------------------------
@@ -212,6 +212,65 @@ test('filterMusic returns only matching pieces', () => {
 test('filterMusic returns everything for an empty query and copes with no list', () => {
     expect(filterMusic(SAMPLE_LIBRARY, '').length).toBe(4);
     expect(filterMusic(undefined, 'x')).toEqual([]);
+});
+
+// noteToPitch()
+test('noteToPitch converts note names to pitches (C4 = 48)', () => {
+    expect(noteToPitch('C4')).toBe(48);
+    expect(noteToPitch('C2')).toBe(24);
+    expect(noteToPitch('B5')).toBe(71);
+    expect(noteToPitch('Cs4')).toBe(49);
+    expect(noteToPitch('C#4')).toBe(49); // sharp either spelling
+});
+
+test('noteToPitch returns null for invalid names', () => {
+    expect(noteToPitch('H4')).toBeNull();
+    expect(noteToPitch('C')).toBeNull();
+    expect(noteToPitch('')).toBeNull();
+    expect(noteToPitch(null)).toBeNull();
+});
+
+// limitNotesToRange() — using the standard piano range C2(24)..B5(71)
+const LO = 24, HI = 71;
+
+test('limitNotesToRange keeps notes inside the range', () => {
+    expect(limitNotesToRange('C4', LO, HI)).toBe('C4');
+    expect(limitNotesToRange('C2,B5', LO, HI)).toBe('C2,B5'); // edges inclusive
+});
+
+test('limitNotesToRange drops notes below or above the range', () => {
+    expect(limitNotesToRange('C1', LO, HI)).toBe('');  // C1 = 12, too low
+    expect(limitNotesToRange('C7', LO, HI)).toBe('');  // C7 = 84, too high
+});
+
+test('limitNotesToRange filters individual notes inside a chord', () => {
+    expect(limitNotesToRange('C1+C4', LO, HI)).toBe('C4');
+    expect(limitNotesToRange('C4+C7', LO, HI)).toBe('C4');
+    expect(limitNotesToRange('C2+C4+C5', LO, HI)).toBe('C2+C4+C5');
+});
+
+test('limitNotesToRange preserves duration when a whole chord is dropped', () => {
+    expect(limitNotesToRange('C1__', LO, HI)).toBe('__');           // becomes a rest
+    expect(limitNotesToRange('C4__,C7__', LO, HI)).toBe('C4__,__');
+});
+
+test('limitNotesToRange preserves rests and note durations', () => {
+    expect(limitNotesToRange('C4,__,E4', LO, HI)).toBe('C4,__,E4');
+    expect(limitNotesToRange('C4__', LO, HI)).toBe('C4__');
+});
+
+test('limitNotesToRange handles sharps at the range edges', () => {
+    expect(limitNotesToRange('As5', LO, HI)).toBe('As5'); // 70, in range
+    expect(limitNotesToRange('Cs6', LO, HI)).toBe('');    // 73, out of range
+});
+
+test('limitNotesToRange widens with an extended range C1(12)..B7(95)', () => {
+    expect(limitNotesToRange('C1+C7', 12, 95)).toBe('C1+C7');
+});
+
+test('limitNotesToRange returns empty string for empty input', () => {
+    expect(limitNotesToRange('', LO, HI)).toBe('');
+    expect(limitNotesToRange(null, LO, HI)).toBe('');
 });
 
 //------------------------

@@ -5,6 +5,7 @@ const defaultSettings = {
     showLabels: true,
     autoSort: true,
     limitMidi: false,
+    limitToPianoSize: false,
     enableGlow: true,
     uiScale: 1.0,
     highContrast: false,
@@ -34,6 +35,10 @@ function applySettings(settings) {
     // Limit MIDI
     const limitMidi = document.getElementById("limit-midi");
     if (limitMidi) limitMidi.checked = settings.limitMidi;
+
+    // Limit notes to piano size
+    const limitPiano = document.getElementById("limit-piano");
+    if (limitPiano) limitPiano.checked = settings.limitToPianoSize;
 
     // Handle UI Scale Application
     const uiScaleSlider = document.getElementById("ui-scale");
@@ -93,6 +98,7 @@ function initSettings() {
         "toggle-labels": "showLabels",
         "auto-sort": "autoSort",
         "limit-midi": "limitMidi",
+        "limit-piano": "limitToPianoSize",
         "toggle-glow": "enableGlow",
         "toggle-high-contrast": "highContrast",
         "toggle-performance": "performanceMode"

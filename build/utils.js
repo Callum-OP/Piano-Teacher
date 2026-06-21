@@ -54,6 +54,49 @@ function filterMusic(list, query) {
     return (list || []).filter(m => musicMatchesQuery(m, query));
 }
 
+// --- Limit notes to piano size ---
+// Convert an absolute note name (e.g. "C4", "Cs4", "C#4") to a pitch number
+// using octave*12 + semitone offset (matches sort-notes' parseNote: C4 = 48).
+function noteToPitch(name) {
+    if (name == null) return null;
+    const m = String(name).trim().match(/^([A-G])(s|#)?(\d+)$/i);
+    if (!m) return null;
+    const offsets = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+    let semitone = offsets[m[1].toUpperCase()];
+    if (m[2]) semitone += 1; // sharp
+    return parseInt(m[3], 10) * 12 + semitone;
+}
+
+// Remove notes that fall outside [minPitch, maxPitch] from a note-input string,
+// keeping timing/rests. Notes in a chord are filtered individually; if a whole
+// chord is dropped but it had a duration, it becomes a rest of the same length.
+function limitNotesToRange(input, minPitch, maxPitch) {
+    if (!input) return "";
+    const entries = normalise(input).split(",").map(e => e.trim()).filter(Boolean);
+    const out = [];
+    for (const entry of entries) {
+        const tail = "_".repeat((entry.match(/_/g) || []).length); // duration
+        if (/^_+$/.test(entry)) { out.push(entry); continue; }     // pure rest
+
+        const kept = entry.split("+")
+            .map(tok => tok.replace(/_/g, ""))
+            .filter(Boolean)
+            .filter(tok => {
+                const p = noteToPitch(translateNote(tok));
+                return p != null && p >= minPitch && p <= maxPitch;
+            })
+            .map(tok => transformNote(tok)); // canonical form (e.g. AS5 -> As5)
+
+        if (kept.length > 0) {
+            out.push(kept.join("+") + tail);
+        } else if (tail) {
+            out.push(tail); // all notes dropped, but preserve the beat as a rest
+        }
+        // all dropped with no duration -> remove the entry entirely
+    }
+    return out.join(",");
+}
+
 // --- Keyboard shortcuts ---
 // True if the element is something the user is typing into or operating, so global
 // shortcuts (e.g. spacebar to play/pause) should not hijack the key press.
@@ -109,5 +152,5 @@ function midiToNoteName(midi) {
 
 // Export code for tests
 if (typeof module !== 'undefined') {
-    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic };
+    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic, noteToPitch, limitNotesToRange };
 }

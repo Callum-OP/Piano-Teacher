@@ -61,7 +61,10 @@ function loadSelectedCustomMusic() {
     // Populate input fields
     document.getElementById("noteInputLeft").value = selected.left;
     document.getElementById("noteInputRight").value = selected.right;
-    
+
+    // Drop notes outside the current piano range if that setting is on
+    if (typeof maybeLimitToPianoSize === "function") maybeLimitToPianoSize();
+
     // Reset music select dropdown
     const musicSelect = document.getElementById("musicSelect");
     if (musicSelect) musicSelect.selectedIndex = 0;
@@ -142,6 +145,7 @@ function renderSavedResults(query) {
         item.addEventListener("click", () => {
             document.getElementById("noteInputLeft").value = m.left || "";
             document.getElementById("noteInputRight").value = m.right || "";
+            if (typeof maybeLimitToPianoSize === "function") maybeLimitToPianoSize();
             const select = document.getElementById("customMusicSelect");
             if (select) select.value = `${composer}|${m.title}`;
             const musicSelect = document.getElementById("musicSelect");

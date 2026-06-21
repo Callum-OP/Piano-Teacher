@@ -196,6 +196,35 @@ function initMusicSelect() {
 function loadPresetIntoInputs(piece) {
     document.getElementById("noteInputLeft").value = piece.left || "";
     document.getElementById("noteInputRight").value = piece.right || "";
+    maybeLimitToPianoSize();
+}
+
+// --- Limit notes to piano size ---
+// Pitch range of the piano that is currently shown (accounts for extended mode
+// and octave shifts, since both are reflected in each key's data-note).
+function getPianoPitchRange() {
+    if (!activePiano) return null;
+    const pitches = [...activePiano.querySelectorAll('[data-note]')]
+        .map(k => noteToPitch(k.dataset.note))
+        .filter(p => p != null);
+    if (!pitches.length) return null;
+    return { min: Math.min(...pitches), max: Math.max(...pitches) };
+}
+
+// Trim both hands' inputs to the current piano range
+function applyPianoLimit() {
+    const range = getPianoPitchRange();
+    if (!range) return;
+    const leftEl = document.getElementById("noteInputLeft");
+    const rightEl = document.getElementById("noteInputRight");
+    if (leftEl) leftEl.value = limitNotesToRange(leftEl.value, range.min, range.max);
+    if (rightEl) rightEl.value = limitNotesToRange(rightEl.value, range.min, range.max);
+}
+
+// Apply the limit only when the setting is enabled (called after music is loaded)
+function maybeLimitToPianoSize() {
+    const toggle = document.getElementById("limit-piano");
+    if (toggle && toggle.checked) applyPianoLimit();
 }
 
 // Render the live search results for the preset list
