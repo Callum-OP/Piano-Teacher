@@ -584,6 +584,38 @@ svg#piano .c-label {
     display: none;
 }
 
+/* Live search results list under the music search boxes */
+.search-results {
+    margin: 0 0 0.5rem;
+    padding: 4px;
+    border: 1px solid var(--accent-3);
+    border-radius: 8px;
+    background: var(--card, #1d1f24);
+    max-height: 220px;
+    overflow-y: auto;
+}
+.search-results[hidden] {
+    display: none;
+}
+.search-result {
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.search-result:hover,
+.search-result.active {
+    background: var(--accent-2);
+    color: #fff;
+}
+.search-result .composer {
+    opacity: 0.7;
+    font-size: 0.85em;
+}
+.search-results .no-results {
+    padding: 8px 10px;
+    opacity: 0.7;
+}
+
 /* Tempo value doubles as a "reset to 1x" button */
 .tempo-reset {
     cursor: pointer;

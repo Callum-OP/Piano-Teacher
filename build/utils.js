@@ -37,6 +37,23 @@ function isValidMusicInput(left, right) {
     return hasValidNote;
 }
 
+// --- Music search / filtering ---
+// True if a music piece matches a search query (by title or composer).
+// An empty query matches everything.
+function musicMatchesQuery(music, query) {
+    const q = (query || "").trim().toLowerCase();
+    if (!q) return true;
+    if (!music) return false;
+    const title = (music.title || "").toLowerCase();
+    const composer = (music.composer || "").toLowerCase();
+    return title.includes(q) || composer.includes(q);
+}
+
+// Filter a list of music pieces by a search query.
+function filterMusic(list, query) {
+    return (list || []).filter(m => musicMatchesQuery(m, query));
+}
+
 // --- Keyboard shortcuts ---
 // True if the element is something the user is typing into or operating, so global
 // shortcuts (e.g. spacebar to play/pause) should not hijack the key press.
@@ -92,5 +109,5 @@ function midiToNoteName(midi) {
 
 // Export code for tests
 if (typeof module !== 'undefined') {
-    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag };
+    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic };
 }

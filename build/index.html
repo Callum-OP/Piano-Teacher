@@ -407,6 +407,8 @@
             <!-- Form input -->
             <div class="mb-3">
                 <label for="musicSelect" class="form-label">Choose from preset list of music</label>
+                <input type="search" id="presetSearch" class="form-control mb-2" placeholder="Search by title or composer..." aria-label="Search preset music" autocomplete="off">
+                <div id="presetResults" class="search-results" role="listbox" hidden></div>
                 <select id="musicSelect" class="form-select">
                     <option value="">-- Select music --</option>
                 </select>
@@ -464,6 +466,8 @@
                 </div>
 
                 <!-- Saved music dropdown -->
+                <input type="search" id="savedSearch" class="form-control mb-2" placeholder="Search saved music..." aria-label="Search saved music" autocomplete="off">
+                <div id="savedResults" class="search-results" role="listbox" hidden></div>
                 <div class="d-flex gap-2 align-items-center">
                     <select id="customMusicSelect" class="form-control">
                         <option value="">-- Saved Music --</option>

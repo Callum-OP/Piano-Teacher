@@ -32,6 +32,7 @@ To run tests use: npm test
 If you have a touchscreen on a large screened device you can play the piano on screen.
 There is an autoplay feature that will visually show how to play sheet music.
 Select from a list of preset music or upload a MIDI file, then click to start autoplay.
+Use the search boxes above the preset and saved music lists to filter them; matching pieces appear in a clickable list (press Enter to pick the first match).
 Alternatively enter the notes directly into the input in letter format (A1, Fs3, etc), using _ for rests and + to play several notes at once.
 Use the Left/Right hand toggle buttons to silence a hand during autoplay so you can focus on one hand at a time, then re-enable it when ready.
 Press the spacebar to play/pause autoplay (it won't trigger while you're typing in a field). Click the tempo value (e.g. "1x") to reset the tempo. Dragging the tempo slider lands exactly where you release it; only a click/tap near the middle snaps to 1x.
@@ -90,9 +91,6 @@ A toggle/option that only enters midi input within current piano size? If piano 
 
 --- Select Specific MIDI Tracks? ---
 Allow users to see all the tracks within a MIDI file they upload and choose which tracks will and won't play. As some will have unneccessary background noise and instruments. Would likely need to a new section that gives the user complete freedom and control over the MIDI file they uploaded.
-
---- Preset Music Search Bar ---
-As the preset library grows, being able to type search for a specific music piece or composer and filter is more useful than searching manually. Something to consider if the library ever gets too big.
 
 --- Better Rests ---
 When playing several notes at once in autoplay the underscores are not considered separate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another. This isn't a quick and easy fix, as it is a fundamental limitation of the note format the app uses.

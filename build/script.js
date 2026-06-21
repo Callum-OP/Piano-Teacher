@@ -158,16 +158,112 @@ document.addEventListener("visibilitychange", () => {
 // Set up default music to choose from
 fetch('./music.json')
     .then(r => r.json())
-    .then(data => { musicLibrary = data; populateMusicSelect(musicLibrary); })
+    .then(data => { musicLibrary = data; initMusicSelect(); })
     .catch(err => console.error("Error loading music:", err));
-// Populate inputs if default music selected
-function populateMusicSelect(list) {
-    // Group by composer
+
+// Set up the preset dropdown: render all options, then wire the change handler
+// and the search box (both attached once).
+function initMusicSelect() {
+    renderMusicOptions(""); // Full dropdown stays available for browsing
+
+    // Populate the note inputs when a preset is chosen from the dropdown
+    musicSelect.addEventListener("change", (e) => {
+        const selected = musicLibrary[e.target.value];
+        if (selected) loadPresetIntoInputs(selected);
+    });
+
+    // Live search: show a clickable results list as the user types
+    const search = document.getElementById("presetSearch");
+    const results = document.getElementById("presetResults");
+    if (search && results) {
+        search.addEventListener("input", () => renderPresetResults(search.value));
+        // Enter selects the first match
+        search.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const first = results.querySelector(".search-result");
+                if (first) first.click();
+            }
+        });
+        // Hide the list when clicking elsewhere
+        document.addEventListener("click", (e) => {
+            if (e.target !== search && !results.contains(e.target)) results.hidden = true;
+        });
+    }
+}
+
+// Load a preset's notes into the input fields
+function loadPresetIntoInputs(piece) {
+    document.getElementById("noteInputLeft").value = piece.left || "";
+    document.getElementById("noteInputRight").value = piece.right || "";
+}
+
+// Render the live search results for the preset list
+function renderPresetResults(query) {
+    const results = document.getElementById("presetResults");
+    if (!results) return;
+    const q = (query || "").trim();
+    results.innerHTML = "";
+
+    if (!q) { results.hidden = true; return; }
+
+    // Keep the original library index so selection loads the right piece
+    const matches = [];
+    musicLibrary.forEach((music, index) => {
+        if (musicMatchesQuery(music, q)) matches.push({ music, index });
+    });
+
+    if (matches.length === 0) {
+        const none = document.createElement("div");
+        none.className = "no-results";
+        none.textContent = "No matches";
+        results.appendChild(none);
+        results.hidden = false;
+        return;
+    }
+
+    matches.slice(0, 50).forEach(({ music, index }) => {
+        const item = makeSearchResultItem(music.title, music.composer);
+        item.addEventListener("click", () => {
+            loadPresetIntoInputs(music);
+            musicSelect.value = index;
+            results.hidden = true;
+        });
+        results.appendChild(item);
+    });
+    results.hidden = false;
+}
+
+// Build one result row (title + composer) using textContent to avoid HTML injection
+function makeSearchResultItem(title, composer) {
+    const item = document.createElement("div");
+    item.className = "search-result";
+    item.setAttribute("role", "option");
+    const titleSpan = document.createElement("span");
+    titleSpan.textContent = title || "(untitled)";
+    item.appendChild(titleSpan);
+    if (composer) {
+        const comp = document.createElement("span");
+        comp.className = "composer";
+        comp.textContent = " — " + composer;
+        item.appendChild(comp);
+    }
+    return item;
+}
+
+// Rebuild the preset options, optionally filtered by a search query.
+// Option values stay as the original musicLibrary index so the change handler keeps working.
+function renderMusicOptions(query) {
+    musicSelect.innerHTML = '<option value="">-- Select music --</option>';
+
+    // Group matching pieces by composer
     const grouped = {};
-    list.forEach((music, index) => {
+    musicLibrary.forEach((music, index) => {
+        if (!musicMatchesQuery(music, query)) return;
         if (!grouped[music.composer]) grouped[music.composer] = [];
         grouped[music.composer].push({ music, index });
     });
+
     Object.entries(grouped).forEach(([composer, pieces]) => {
         const group = document.createElement("optgroup");
         group.label = composer;
@@ -178,13 +274,6 @@ function populateMusicSelect(list) {
             group.appendChild(option);
         });
         musicSelect.appendChild(group);
-    });
-    musicSelect.addEventListener("change", (e) => {
-        const selected = list[e.target.value];
-        if (selected) {
-        document.getElementById("noteInputLeft").value = selected.left || "";
-        document.getElementById("noteInputRight").value = selected.right || "";
-        }
     });
 }
 

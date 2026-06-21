@@ -1,4 +1,4 @@
-const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag } = require('./utils.js');
+const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic } = require('./utils.js');
 const { calculateSpan, isWhiteKey, balanceClusters } = require('./sort-notes.js');
 
 //------------------------
@@ -170,6 +170,48 @@ test('isPointerDrag respects a custom threshold', () => {
 test('isPointerDrag is false when a start position was never recorded', () => {
     expect(isPointerDrag(null, 120)).toBe(false);
     expect(isPointerDrag(100, null)).toBe(false);
+});
+
+// musicMatchesQuery() / filterMusic()
+const SAMPLE_LIBRARY = [
+    { title: 'Moonlight Sonata', composer: 'Beethoven', left: 'C3', right: 'C4' },
+    { title: 'Fur Elise', composer: 'Beethoven', left: 'A3', right: 'A4' },
+    { title: 'Clair de Lune', composer: 'Debussy', left: 'D3', right: 'D4' },
+    { title: 'Gymnopedie', composer: 'Satie' }
+];
+
+test('musicMatchesQuery matches on title, case-insensitively', () => {
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[0], 'moonlight')).toBe(true);
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[0], 'SONATA')).toBe(true);
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[0], 'elise')).toBe(false);
+});
+
+test('musicMatchesQuery matches on composer', () => {
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[1], 'beethoven')).toBe(true);
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[1], 'debussy')).toBe(false);
+});
+
+test('musicMatchesQuery treats an empty or whitespace query as match-all', () => {
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[0], '')).toBe(true);
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[0], '   ')).toBe(true);
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[0], undefined)).toBe(true);
+});
+
+test('musicMatchesQuery handles missing fields without throwing', () => {
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[3], 'satie')).toBe(true);   // no left/right
+    expect(musicMatchesQuery(SAMPLE_LIBRARY[3], 'beethoven')).toBe(false);
+    expect(musicMatchesQuery(null, 'x')).toBe(false);
+    expect(musicMatchesQuery({}, 'x')).toBe(false);
+});
+
+test('filterMusic returns only matching pieces', () => {
+    const beethoven = filterMusic(SAMPLE_LIBRARY, 'beethoven');
+    expect(beethoven.map(m => m.title)).toEqual(['Moonlight Sonata', 'Fur Elise']);
+});
+
+test('filterMusic returns everything for an empty query and copes with no list', () => {
+    expect(filterMusic(SAMPLE_LIBRARY, '').length).toBe(4);
+    expect(filterMusic(undefined, 'x')).toEqual([]);
 });
 
 //------------------------

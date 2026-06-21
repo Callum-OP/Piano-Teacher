@@ -88,6 +88,7 @@ function deleteSelectedCustomMusic() {
 function populateCustomMusicSelect() {
     const select = document.getElementById("customMusicSelect");
     const saved = JSON.parse(localStorage.getItem("customMusic") || "[]");
+
     select.innerHTML = '<option value="">-- Saved Music --</option>';
 
     // Group by composer
@@ -111,9 +112,67 @@ function populateCustomMusicSelect() {
     });
 }
 
+// Render the live search results for the saved music list
+function renderSavedResults(query) {
+    const results = document.getElementById("savedResults");
+    if (!results) return;
+    const q = (query || "").trim();
+    results.innerHTML = "";
+
+    if (!q) { results.hidden = true; return; }
+
+    const all = JSON.parse(localStorage.getItem("customMusic") || "[]");
+    const matches = (typeof filterMusic === "function") ? filterMusic(all, q) : all;
+
+    if (matches.length === 0) {
+        const none = document.createElement("div");
+        none.className = "no-results";
+        none.textContent = "No matches";
+        results.appendChild(none);
+        results.hidden = false;
+        return;
+    }
+
+    matches.slice(0, 50).forEach(m => {
+        const composer = m.composer || "My Music";
+        // Reuse the result-row builder defined in script.js
+        const item = (typeof makeSearchResultItem === "function")
+            ? makeSearchResultItem(m.title, composer)
+            : Object.assign(document.createElement("div"), { className: "search-result", textContent: m.title });
+        item.addEventListener("click", () => {
+            document.getElementById("noteInputLeft").value = m.left || "";
+            document.getElementById("noteInputRight").value = m.right || "";
+            const select = document.getElementById("customMusicSelect");
+            if (select) select.value = `${composer}|${m.title}`;
+            const musicSelect = document.getElementById("musicSelect");
+            if (musicSelect) musicSelect.selectedIndex = 0;
+            results.hidden = true;
+        });
+        results.appendChild(item);
+    });
+    results.hidden = false;
+}
+
 // Load on startup
 document.addEventListener("DOMContentLoaded", () => {
     populateCustomMusicSelect();
+
+    // Live search: show a clickable results list as the user types
+    const search = document.getElementById("savedSearch");
+    const results = document.getElementById("savedResults");
+    if (search && results) {
+        search.addEventListener("input", () => renderSavedResults(search.value));
+        search.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const first = results.querySelector(".search-result");
+                if (first) first.click();
+            }
+        });
+        document.addEventListener("click", (e) => {
+            if (e.target !== search && !results.contains(e.target)) results.hidden = true;
+        });
+    }
 });
 
 // Export code for tests
