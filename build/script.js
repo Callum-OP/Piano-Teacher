@@ -4,28 +4,16 @@
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const audioBuffers = {};
 const voices = [];      // currently sounding voices: { noteName, src, gain, startedAt }
-const MAX_VOICES = 16;  // polyphony cap so dense passages don't overload the output
-const VOICE_GAIN = 0.7; // per-voice level, leaves headroom before the limiter
+const MAX_VOICES = 32;  // polyphony cap — bounds runaway/orphaned voices without cutting normal playing short
+const VOICE_GAIN = 1.0; // per-voice level (matches the original loudness)
 const masterGain = audioContext.createGain();
+// Default compressor settings act as a gentle safety limiter (same tone as before)
 const compressor = audioContext.createDynamicsCompressor();
-// Tune the compressor as a safety limiter against peaks from many simultaneous notes
-try {
-    compressor.threshold.value = -12;
-    compressor.knee.value = 18;
-    compressor.ratio.value = 12;
-    compressor.attack.value = 0.003;
-    compressor.release.value = 0.25;
-} catch (e) {}
 masterGain.connect(compressor);
 compressor.connect(audioContext.destination);
 
-// Set initial volume from slider
-masterGain.gain.value = document.getElementById("volume").value;
-
-// Listen if volume input has changed
-document.getElementById("volume").addEventListener("input", (e) => {
-    masterGain.gain.value = e.target.value;
-});
+// Set initial volume from slider (the live input listener is wired up later via the `volume` const)
+masterGain.gain.value = Number(document.getElementById("volume").value);
 
 // Preset music
 let musicLibrary = [];
@@ -84,10 +72,6 @@ const OFFSETC2 = 210;
 
 // Piano control inputs
 let activePiano = document.getElementById("piano-standard");
-let octaveControls = document.getElementById("octave-controls");
-
-// Toggle inputs
-const toggleLabels = document.getElementById("toggle-labels");
 
 // Wakelock
 let wakeLock = null;
@@ -323,22 +307,24 @@ function removeVoice(v) {
     const i = voices.indexOf(v);
     if (i >= 0) voices.splice(i, 1);
 }
-// Fade out and stop a set of voices over releaseTime seconds, freeing them
-function releaseVoices(list, releaseTime) {
+// Quickly fade out and stop a set of voices, freeing them immediately.
+// Used for retriggers, voice-stealing and full stops — keeps audio bounded.
+function cutVoices(list, fade) {
     const now = audioContext.currentTime;
+    const t = fade || 0.03;
     list.forEach(v => {
         try {
             v.gain.gain.cancelScheduledValues(now);
             v.gain.gain.setValueAtTime(v.gain.gain.value, now);
-            v.gain.gain.linearRampToValueAtTime(0, now + releaseTime);
-            v.src.stop(now + releaseTime + 0.03);
+            v.gain.gain.linearRampToValueAtTime(0, now + t);
+            v.src.stop(now + t + 0.02);
         } catch (e) {}
         removeVoice(v);
     });
 }
 // Stop every sounding voice (used on stop/clear/piano change/scrub)
 function stopAllNotes() {
-    releaseVoices(voices.slice(), 0.05);
+    cutVoices(voices.slice(), 0.05);
 }
 
 async function playNote(filePath, noteName) {
@@ -346,17 +332,22 @@ async function playNote(filePath, noteName) {
 
     // Load and cache if note not already loaded
     if (!audioBuffers[key]) {
-        const res = await fetch(filePath);
-        const buf = await res.arrayBuffer();
-        audioBuffers[key] = await audioContext.decodeAudioData(buf);
+        try {
+            const res = await fetch(filePath);
+            const buf = await res.arrayBuffer();
+            audioBuffers[key] = await audioContext.decodeAudioData(buf);
+        } catch (e) {
+            console.error("Could not load sound:", filePath, e);
+            return; // skip silently rather than throwing an unhandled rejection
+        }
     }
 
     const now = audioContext.currentTime;
 
     // Retrigger: quickly cut existing voices for the same key so rapid repeats don't stack
-    releaseVoices(voices.filter(v => v.noteName === noteName), 0.03);
+    cutVoices(voices.filter(v => v.noteName === noteName));
     // Polyphony cap: steal the oldest voices if adding this one would exceed the limit
-    releaseVoices(selectVoicesToEvict(voices, MAX_VOICES), 0.03);
+    cutVoices(selectVoicesToEvict(voices, MAX_VOICES));
 
     const src = audioContext.createBufferSource();
     const gain = audioContext.createGain();
@@ -370,9 +361,19 @@ async function playNote(filePath, noteName) {
     voices.push(voice);
     src.onended = () => removeVoice(voice);
 }
-// Note-off: let the note release naturally over a short time (no 2s lingering tail)
+// Note-off: gentle exponential release so the note rings out naturally (original feel).
+// The voice stays in the pool until it actually ends (onended) so a same-key retrigger
+// can still cut it cleanly and the polyphony cap can still steal it if things get busy.
 function stopNote(noteName) {
-    releaseVoices(voices.filter(v => v.noteName === noteName), 0.4);
+    const now = audioContext.currentTime;
+    voices.filter(v => v.noteName === noteName).forEach(v => {
+        try {
+            v.gain.gain.cancelScheduledValues(now);
+            v.gain.gain.setValueAtTime(v.gain.gain.value, now);
+            v.gain.gain.setTargetAtTime(0, now, 0.7); // slow fade
+            v.src.stop(now + 2);                       // ring for up to 2s, then free via onended
+        } catch (e) {}
+    });
 }
 
 // Store active highlight timeouts per key
@@ -523,7 +524,7 @@ function tick(ts) {
         // Skip until note's time
         if (elapsed < 0) {
             n.audioTriggered = false;
-            if (n.el.parentNode !== previewLayer) previewLayer.appendChild(n.el);
+            if (n.el && n.el.parentNode !== previewLayer) previewLayer.appendChild(n.el);
             continue;
         }
         // Play note
@@ -538,6 +539,7 @@ function tick(ts) {
         if (elapsed >= n.duration) {
             if (n.el) n.el.remove(); // Null check
             activeNotes.splice(i, 1);
+            i--; // keep index aligned so the note shifted into this slot isn't skipped
             continue;
         }
         
@@ -596,6 +598,7 @@ function restartPlay() {
 let isMuted = false;
 let volumeBeforeMute = 1;
 function toggleMute() {
+    const muteBtn = document.getElementById("mute");
     const muteIcon = document.querySelector("#mute i");
     const volumeSlider = document.getElementById("volume");
     if (!isMuted) {
@@ -606,6 +609,7 @@ function toggleMute() {
         updateRangeFill(volumeSlider);
         muteIcon.classList.remove("bi-volume-up");
         muteIcon.classList.add("bi-volume-mute");
+        if (muteBtn) muteBtn.setAttribute("aria-label", "Unmute");
         isMuted = true;
     } else {
         // Unmute
@@ -614,6 +618,7 @@ function toggleMute() {
         updateRangeFill(volumeSlider);
         muteIcon.classList.remove("bi-volume-mute");
         muteIcon.classList.add("bi-volume-up");
+        if (muteBtn) muteBtn.setAttribute("aria-label", "Mute");
         isMuted = false;
     }
 }
@@ -1230,9 +1235,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Reset audio triggers and clean up notes
+                stopAllNotes(); // mute audio once, not per note
                 activeNotes.forEach(n => {
-                    // Mute audio
-                    stopAllNotes();
                     const elapsed = globalTime - n.scheduledStart;
                     if (elapsed < 0 || elapsed >= n.duration) {
                         if (n.el) n.el.remove();

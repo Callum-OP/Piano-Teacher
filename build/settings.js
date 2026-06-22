@@ -13,13 +13,22 @@ const defaultSettings = {
     performanceMode: false
 };
 
-// Get and set settings
+// Get and set settings. localStorage can throw (private mode) and stored data can
+// be corrupt, so both are guarded and fail safe.
 function loadSettings() {
-    const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
-    return { ...defaultSettings, ...saved };
+    try {
+        const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+        return { ...defaultSettings, ...saved };
+    } catch (e) {
+        return { ...defaultSettings };
+    }
 }
 function saveSettings(settings) {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    } catch (e) {
+        // Ignore (private mode / quota exceeded)
+    }
 }
 
 function applySettings(settings) {

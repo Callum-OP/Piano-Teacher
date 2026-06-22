@@ -30,7 +30,7 @@ function parseMIDI(arrayBuffer) {
     }
 
     // Read header of midi
-    if (readStr(4)!=="MThd") throw "Not a MIDI file";
+    if (readStr(4)!=="MThd") throw new Error("Not a MIDI file");
         readInt(4);
         readInt(2);
         const trackNum = readInt(2);
@@ -39,7 +39,7 @@ function parseMIDI(arrayBuffer) {
 
         // Read each track
         for (let t=0;t<trackNum;t++) {
-        if (readStr(4)!=="MTrk") throw "Missing track";
+        if (readStr(4)!=="MTrk") throw new Error("Missing track");
         const len = readInt(4);
         const end = pos+len;
         let time=0;
@@ -84,9 +84,17 @@ const midiFileInput = document.getElementById("midiFile");
 if (midiFileInput) midiFileInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    // Read file into ArrayBuffer
-    const buf = await file.arrayBuffer();
-    const midi = parseMIDI(buf);
+    // Read and parse the file, failing gracefully on an invalid/unsupported MIDI
+    let midi;
+    try {
+        const buf = await file.arrayBuffer();
+        midi = parseMIDI(buf);
+    } catch (err) {
+        console.error("MIDI parse error:", err);
+        alert("Could not read this MIDI file. It may be invalid or an unsupported format.");
+        e.target.value = ""; // Allow re-selecting the same file
+        return;
+    }
 
     const allNotes = [];
 

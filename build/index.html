@@ -34,7 +34,7 @@
     <div id="autoplay-section"></div><br><br><br><br>
 
     <!-- Count down from 5 once autoplay starts -->
-    <div class="countdown" id="countdown" aria-live="polite">Staring in 5...</div>
+    <div class="countdown" id="countdown" aria-live="polite">Starting in 5...</div>
 
     <!-- Transient toast shown when autoplay is attempted with no music loaded -->
     <div id="no-music-msg" class="no-music-toast" role="alert" aria-live="assertive">
@@ -326,9 +326,9 @@
                     <!-- Octave controls -->
                     <div id="octave-controls" class="transport d-flex align-items-center gap-2">
                         <i class="bi bi-music-note-beamed text-light transport"></i>
-                            <button class="btn" id="decreaseOctave" onclick="decreaseOctave()"><i class="bi bi-dash"></i></button>
+                            <button class="btn" id="decreaseOctave" onclick="decreaseOctave()" aria-label="Decrease octave"><i class="bi bi-dash"></i></button>
                             <span class="small tracking-wider">Octave <strong id="changeOctave" class="text-accent">4</strong></span>
-                            <button class="btn" id="increaseOctave" onclick="increaseOctave()"><i class="bi bi-plus"></i></button>
+                            <button class="btn" id="increaseOctave" onclick="increaseOctave()" aria-label="Increase octave"><i class="bi bi-plus"></i></button>
                         </div>
                 </div>
 
