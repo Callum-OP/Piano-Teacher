@@ -2,10 +2,20 @@
 
 // Audio setup
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const activeAudio = {};
 const audioBuffers = {};
+const voices = [];      // currently sounding voices: { noteName, src, gain, startedAt }
+const MAX_VOICES = 16;  // polyphony cap so dense passages don't overload the output
+const VOICE_GAIN = 0.7; // per-voice level, leaves headroom before the limiter
 const masterGain = audioContext.createGain();
 const compressor = audioContext.createDynamicsCompressor();
+// Tune the compressor as a safety limiter against peaks from many simultaneous notes
+try {
+    compressor.threshold.value = -12;
+    compressor.knee.value = 18;
+    compressor.ratio.value = 12;
+    compressor.attack.value = 0.003;
+    compressor.release.value = 0.25;
+} catch (e) {}
 masterGain.connect(compressor);
 compressor.connect(audioContext.destination);
 
@@ -308,9 +318,32 @@ function renderMusicOptions(query) {
 
 // --- Audio play/stop ---
 // Play an audio file
+// Remove a voice from the active pool
+function removeVoice(v) {
+    const i = voices.indexOf(v);
+    if (i >= 0) voices.splice(i, 1);
+}
+// Fade out and stop a set of voices over releaseTime seconds, freeing them
+function releaseVoices(list, releaseTime) {
+    const now = audioContext.currentTime;
+    list.forEach(v => {
+        try {
+            v.gain.gain.cancelScheduledValues(now);
+            v.gain.gain.setValueAtTime(v.gain.gain.value, now);
+            v.gain.gain.linearRampToValueAtTime(0, now + releaseTime);
+            v.src.stop(now + releaseTime + 0.03);
+        } catch (e) {}
+        removeVoice(v);
+    });
+}
+// Stop every sounding voice (used on stop/clear/piano change/scrub)
+function stopAllNotes() {
+    releaseVoices(voices.slice(), 0.05);
+}
+
 async function playNote(filePath, noteName) {
     const key = noteName.toLowerCase();
-    
+
     // Load and cache if note not already loaded
     if (!audioBuffers[key]) {
         const res = await fetch(filePath);
@@ -318,27 +351,28 @@ async function playNote(filePath, noteName) {
         audioBuffers[key] = await audioContext.decodeAudioData(buf);
     }
 
-    if (activeAudio[noteName]) stopNote(noteName);
+    const now = audioContext.currentTime;
+
+    // Retrigger: quickly cut existing voices for the same key so rapid repeats don't stack
+    releaseVoices(voices.filter(v => v.noteName === noteName), 0.03);
+    // Polyphony cap: steal the oldest voices if adding this one would exceed the limit
+    releaseVoices(selectVoicesToEvict(voices, MAX_VOICES), 0.03);
 
     const src = audioContext.createBufferSource();
     const gain = audioContext.createGain();
     src.buffer = audioBuffers[key];
     src.connect(gain);
     gain.connect(masterGain);
-    src.start(audioContext.currentTime);
-    activeAudio[noteName] = { src, gain };
+    gain.gain.setValueAtTime(VOICE_GAIN, now);
+    src.start(now);
+
+    const voice = { noteName, src, gain, startedAt: now };
+    voices.push(voice);
+    src.onended = () => removeVoice(voice);
 }
-// Stop a note being played
+// Note-off: let the note release naturally over a short time (no 2s lingering tail)
 function stopNote(noteName) {
-    const note = activeAudio[noteName];
-    if (note) {
-        try {
-            note.gain.gain.setTargetAtTime(0, audioContext.currentTime, 0.7);
-            // Stop this sound in 2 seconds
-            note.src.stop(audioContext.currentTime + 2);
-        } catch (e) {}
-        delete activeAudio[noteName];
-    }
+    releaseVoices(voices.filter(v => v.noteName === noteName), 0.4);
 }
 
 // Store active highlight timeouts per key
@@ -1037,9 +1071,7 @@ function clearAutoPlay() {
     if (previewLayer) previewLayer.innerHTML = "";
     // Stop any currently playing audio
     stopAll();
-    for (let note in activeAudio) {
-        stopNote(note);
-    }
+    stopAllNotes();
     activeNotes.length = 0;
     
     // Reset hero section
@@ -1157,9 +1189,7 @@ function updatePiano() {
     else {piano.setAttribute("viewBox", "0 0 844 108");}
     
     // Mute audio
-    for (let note in activeAudio) {
-        stopNote(note);
-    }
+    stopAllNotes();
 
     // Keep the music editor grid aligned to the (now changed) keys
     if (typeof refreshEditorLayout === "function") refreshEditorLayout();
@@ -1202,9 +1232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Reset audio triggers and clean up notes
                 activeNotes.forEach(n => {
                     // Mute audio
-                    for (let note in activeAudio) {
-                        stopNote(note);
-                    }
+                    stopAllNotes();
                     const elapsed = globalTime - n.scheduledStart;
                     if (elapsed < 0 || elapsed >= n.duration) {
                         if (n.el) n.el.remove();

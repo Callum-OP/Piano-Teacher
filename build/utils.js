@@ -106,6 +106,16 @@ function limitNotesToRange(input, minPitch, maxPitch) {
     return out.join(",");
 }
 
+// --- Audio voice management ---
+// Pick the oldest voices to evict so that, after adding one new voice, the total
+// stays within maxVoices. Bounds polyphony so dense passages don't overload/crackle.
+function selectVoicesToEvict(voices, maxVoices) {
+    const list = voices || [];
+    const overflow = (list.length + 1) - maxVoices;
+    if (overflow <= 0) return [];
+    return list.slice().sort((a, b) => (a.startedAt || 0) - (b.startedAt || 0)).slice(0, overflow);
+}
+
 // --- Keyboard shortcuts ---
 // True if the element is something the user is typing into or operating, so global
 // shortcuts (e.g. spacebar to play/pause) should not hijack the key press.
@@ -161,5 +171,5 @@ function midiToNoteName(midi) {
 
 // Export code for tests
 if (typeof module !== 'undefined') {
-    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic, noteToPitch, pitchToNoteName, limitNotesToRange };
+    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic, noteToPitch, pitchToNoteName, limitNotesToRange, selectVoicesToEvict };
 }

@@ -1,4 +1,4 @@
-const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic, noteToPitch, limitNotesToRange } = require('./utils.js');
+const { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic, noteToPitch, limitNotesToRange, selectVoicesToEvict } = require('./utils.js');
 const { calculateSpan, isWhiteKey, balanceClusters } = require('./sort-notes.js');
 
 //------------------------
@@ -271,6 +271,23 @@ test('limitNotesToRange widens with an extended range C1(12)..B7(95)', () => {
 test('limitNotesToRange returns empty string for empty input', () => {
     expect(limitNotesToRange('', LO, HI)).toBe('');
     expect(limitNotesToRange(null, LO, HI)).toBe('');
+});
+
+// selectVoicesToEvict()
+test('selectVoicesToEvict evicts nothing while under the limit', () => {
+    expect(selectVoicesToEvict([], 16)).toEqual([]);
+    expect(selectVoicesToEvict([{ startedAt: 1 }, { startedAt: 2 }], 16)).toEqual([]);
+});
+
+test('selectVoicesToEvict steals the oldest voice when adding would hit the limit', () => {
+    const voices = [{ startedAt: 5, id: 'c' }, { startedAt: 1, id: 'a' }, { startedAt: 3, id: 'b' }];
+    const evict = selectVoicesToEvict(voices, 3); // 3 voices + 1 new > 3 -> drop 1 oldest
+    expect(evict.map(v => v.id)).toEqual(['a']);
+});
+
+test('selectVoicesToEvict can evict several to make room', () => {
+    const voices = [{ startedAt: 1 }, { startedAt: 2 }, { startedAt: 3 }, { startedAt: 4 }];
+    expect(selectVoicesToEvict(voices, 2).length).toBe(3); // keep 1 + new = 2
 });
 
 //------------------------

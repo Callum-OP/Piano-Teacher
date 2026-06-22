@@ -96,7 +96,7 @@ There are several different types of pianos and each sound slightly different, m
 
 ## Top issues
 --- Audio being overloaded ---
-On music pieces with 10s of notes being played over and over consistently, eventually the audio will become overloaded and begin crackling/cutting out. Seems to especially happen when the same key is hit over and over several times in less than a second. This happens even in performance mode.
+Mitigated: audio playback now uses a fixed voice pool — polyphony is capped (oldest voices are stolen when the limit is hit), the same key being retriggered quickly cuts its previous voice instead of stacking dozens of slow 2s-fading voices, and a tuned compressor acts as a safety limiter. This addresses the root causes (unbounded/orphaned voices) of the crackling. Worth confirming by ear on a busy piece on a real device; if it still crackles, lower MAX_VOICES or the per-voice gain in script.js.
 
 ## Minor issues
 --- Sort Notes Feature ---
