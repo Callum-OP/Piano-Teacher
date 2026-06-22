@@ -598,6 +598,8 @@ function showNoMusicMessage() {
 // Entry point for the "Start autoplay" button: validate first, warn if empty,
 // and only jump to the autoplay view when there is actually music to play.
 function startAutoplay() {
+    // If the music editor is open, apply its edits and close it first
+    if (typeof applyAndExitEditMode === "function") applyAndExitEditMode();
     const left = document.getElementById("noteInputLeft").value.trim();
     const right = document.getElementById("noteInputRight").value.trim();
     if (!isValidMusicInput(left, right)) {
@@ -646,6 +648,8 @@ function updateHandButtonUI(hand) {
 
 // Pause falling notes as well as countdown
 function togglePause() {
+    // If the music editor is open, apply its edits and close it first
+    if (typeof applyAndExitEditMode === "function") applyAndExitEditMode();
     // If nothing is playing, start autoplay
     if (scheduledNotes.length === 0) {
         const left = document.getElementById("noteInputLeft").value.trim();
@@ -759,6 +763,8 @@ function stopAll() {
 // Begin autoplay
 // Calls the play notes from input functions twice (left hand and right hand)
 function autoPlay() {
+    // If the music editor is open, apply its edits and close it first
+    if (typeof applyAndExitEditMode === "function") applyAndExitEditMode();
     // Check if there is notes entered
     const left = document.getElementById("noteInputLeft").value.trim();
     const right = document.getElementById("noteInputRight").value.trim();
@@ -1154,6 +1160,9 @@ function updatePiano() {
     for (let note in activeAudio) {
         stopNote(note);
     }
+
+    // Keep the music editor grid aligned to the (now changed) keys
+    if (typeof refreshEditorLayout === "function") refreshEditorLayout();
 }
 // Initial setup
 document.addEventListener('DOMContentLoaded', () => {

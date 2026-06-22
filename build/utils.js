@@ -67,6 +67,15 @@ function noteToPitch(name) {
     return parseInt(m[3], 10) * 12 + semitone;
 }
 
+// Inverse of noteToPitch: pitch number -> canonical note name (e.g. 48 -> "C4").
+function pitchToNoteName(pitch) {
+    if (pitch == null || Number.isNaN(pitch)) return null;
+    const names = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"];
+    const octave = Math.floor(pitch / 12);
+    const semitone = ((pitch % 12) + 12) % 12;
+    return names[semitone] + octave;
+}
+
 // Remove notes that fall outside [minPitch, maxPitch] from a note-input string,
 // keeping timing/rests. Notes in a chord are filtered individually; if a whole
 // chord is dropped but it had a duration, it becomes a rest of the same length.
@@ -152,5 +161,5 @@ function midiToNoteName(midi) {
 
 // Export code for tests
 if (typeof module !== 'undefined') {
-    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic, noteToPitch, limitNotesToRange };
+    module.exports = { normalise, translateNote, transformNote, formatTime, durationToUnderscores, midiToNoteName, isValidMusicInput, snapTempo, isInteractiveElement, isPointerDrag, musicMatchesQuery, filterMusic, noteToPitch, pitchToNoteName, limitNotesToRange };
 }

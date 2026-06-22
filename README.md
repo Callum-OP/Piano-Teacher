@@ -34,6 +34,7 @@ There is an autoplay feature that will visually show how to play sheet music.
 Select from a list of preset music or upload a MIDI file, then click to start autoplay.
 Use the search boxes above the preset and saved music lists to filter them; matching pieces appear in a clickable list (press Enter to pick the first match).
 Enable "Limit Notes to Piano Size" in settings to automatically discard notes outside the current piano's range when loading a preset, saved piece, or MIDI file (useful on a smaller piano).
+Enable "Show Music Editor" in settings to reveal the "Editor Mode" button (top-right above the piano). In the editor (beta) the area above the real piano becomes an editable note grid aligned to the keys. Pick a Tool: Left/Right places a note above a key (or tap an existing note to move it to that hand), Erase removes a note; set a note Length too. Drag a note to move it, drag its top edge to change its length, and scroll to scrub/preview (time runs upward, the start nearest the keys). It's touch-friendly. Use "Load music" to pull in the current inputs, the piano's normal Play button to apply your edits and hear them, and "Done editing" to finish.
 Alternatively enter the notes directly into the input in letter format (A1, Fs3, etc), using _ for rests and + to play several notes at once.
 Use the Left/Right hand toggle buttons to silence a hand during autoplay so you can focus on one hand at a time, then re-enable it when ready.
 Press the spacebar to play/pause autoplay (it won't trigger while you're typing in a field). Click the tempo value (e.g. "1x") to reset the tempo. Dragging the tempo slider lands exactly where you release it; only a click/tap near the middle snaps to 1x.
@@ -51,12 +52,9 @@ Below are the future features and current issues relating to the app in order of
 
 ## Top features to consider
 --- Custom Music Editor ---
-Be able to easily add notes by pressing where on the screen to add them. Double click to increase the length? or maybe add/drag another note on top to extend it?
-Drag existing notes to a different time or note entirely.
-Change the hand of existing notes by clicking them.
-Have different modes available: add mode, change hand mode, delete mode, etc
-Then be able to export saved music back out as MIDI?
-Will be useful for imported music with extra unwanted notes or incorrect hand placement, or even just being able to easily create your own music pieces from scratch using a more visual interface.
+An in-page piano-roll editor now exists, enabled via the "Show Music Editor" setting: press "Editor Mode" and the area above the real piano becomes an editable grid aligned to the keys. You can pick a hand, set note length, click to add/remove notes, drag notes to move them, drag a note's top edge to change its length, right-click a note to switch its hand, scroll to scrub/preview, and Play. Useful for cleaning up imported music or composing from scratch. Remaining work:
+Export the edited/saved music back out as a MIDI file.
+Could also make it easier to use and understand.
 
 --- UI Improvements ---
 Get play buttons to shrink if the screen width gets too cramped so that they stay on the same level, or reduce padding or margin.

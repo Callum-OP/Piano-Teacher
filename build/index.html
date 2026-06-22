@@ -48,6 +48,32 @@
         <section class="piano-card card shadow-sm">
         <div class="card-body position-relative piano-wrapper" style="padding-bottom: 10px;">
 
+            <!-- Music editor: an "Editor Mode" that turns the area above this piano into an editable note grid -->
+            <div class="editor-bar d-flex flex-wrap align-items-center gap-2 justify-content-between">
+                <!-- Left: editing tools -->
+                <span class="editor-tools align-items-center flex-wrap gap-2">
+                    <span class="form-label text-light mb-0 me-1">Tool:</span>
+                    <button type="button" class="btn btn-sm hand-toggle hand-toggle-left" id="editor-tool-left" onclick="setEditorTool('left')">Left</button>
+                    <button type="button" class="btn btn-sm hand-toggle hand-toggle-right active" id="editor-tool-right" onclick="setEditorTool('right')">Right</button>
+                    <button type="button" class="btn btn-sm editor-tool-erase" id="editor-tool-erase" onclick="toggleEraseTool()"><i class="bi bi-eraser"></i> Erase</button>
+                    <span class="form-label text-light mb-0 ms-3 me-1">Length:</span>
+                    <button type="button" class="btn btn-sm btn-outline-light" onclick="changeDefaultLen(-1)" aria-label="Shorter notes">&minus;</button>
+                    <span id="editor-len-val" class="text-light">2</span>
+                    <button type="button" class="btn btn-sm btn-outline-light" onclick="changeDefaultLen(1)" aria-label="Longer notes">+</button>
+                </span>
+                <!-- Right: load / clear and the mode toggle -->
+                <span class="d-flex align-items-center flex-wrap gap-2">
+                    <span class="editor-tools align-items-center flex-wrap gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadCurrentIntoEditor()">Load music</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearEditor()">Clear</button>
+                    </span>
+                    <button class="btn btn-sm btn-outline-primary" id="edit-toggle-btn" onclick="toggleEditMode()">Editor Mode</button>
+                </span>
+            </div>
+            <!-- Editable note grid, sits directly above the real piano keys when editing -->
+            <div id="editor-overlay" class="editor-overlay" aria-hidden="true"></div>
+            <p class="editor-hint small text-light mb-1" style="display:none;">Pick a tool — Left/Right places a note above a key (or tap a note to move it to that hand); Erase removes a note (tap Erase again to go back). Drag a note to move it, drag its top edge to change its length, scroll to scrub, and press the piano's Play button to hear it.</p>
+
             <!-- Using an svg to display the piano -->
             <div class="piano-frame center">
             <svg id="piano" viewBox="0 0 844 108" role="img" aria-label="Piano keyboard" preserveAspectRatio="xMidYMid meet">
@@ -379,6 +405,12 @@
                     </div>
                     <div class="col-12 col-md-4">
                         <div class="form-check form-switch custom-deck-switch">
+                            <input class="form-check-input" type="checkbox" id="show-editor">
+                            <label class="form-check-label" for="show-editor">Show Music Editor</label>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="form-check form-switch custom-deck-switch">
                             <input class="form-check-input" type="checkbox" id="toggle-high-contrast">
                             <label class="form-check-label" for="toggle-high-contrast">High Contrast Mode</label>
                         </div>
@@ -483,6 +515,7 @@
                 </div>
             </div>
         </div>
+
     </main>
 
     <br>
@@ -499,6 +532,7 @@
     <script src="./midi-upload.js"></script>
     <script src="./script.js"></script>
     <script src="./sort-notes.js"></script>
+    <script src="./editor.js"></script>
     <script src="./save-music.js"></script>
 </body>
 </html>

@@ -6,6 +6,7 @@ const defaultSettings = {
     autoSort: true,
     limitMidi: false,
     limitToPianoSize: false,
+    showEditor: false,
     enableGlow: true,
     uiScale: 1.0,
     highContrast: false,
@@ -39,6 +40,14 @@ function applySettings(settings) {
     // Limit notes to piano size
     const limitPiano = document.getElementById("limit-piano");
     if (limitPiano) limitPiano.checked = settings.limitToPianoSize;
+
+    // Show the Music Editor button (opt-in). Leaving editor mode if it gets hidden.
+    const showEditor = document.getElementById("show-editor");
+    if (showEditor) showEditor.checked = settings.showEditor;
+    document.body.classList.toggle("editor-available", !!settings.showEditor);
+    if (!settings.showEditor && typeof setEditMode === "function" && document.body.classList.contains("editor-mode")) {
+        setEditMode(false);
+    }
 
     // Handle UI Scale Application
     const uiScaleSlider = document.getElementById("ui-scale");
@@ -99,6 +108,7 @@ function initSettings() {
         "auto-sort": "autoSort",
         "limit-midi": "limitMidi",
         "limit-piano": "limitToPianoSize",
+        "show-editor": "showEditor",
         "toggle-glow": "enableGlow",
         "toggle-high-contrast": "highContrast",
         "toggle-performance": "performanceMode"
