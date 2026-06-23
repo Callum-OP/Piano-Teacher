@@ -451,24 +451,18 @@ function getRects(noteName) {
         previewRect: previewLayer.getBoundingClientRect()
     };
 }
-// Create the html element for falling notes
-function createNoteDiv(noteName, delay, hand) {
-    // Get html items
-    const rects = getRects(noteName);
-    if (!rects) return null;
-    const { keyRect, previewRect } = rects;
-
+// Build + append a falling-note element from already-measured geometry.
+// Write-only (no layout reads), so the spawn loop can batch all its reads first.
+function buildNoteEl(leftOffset, width, delay, hand) {
     const noteDiv = document.createElement("div");
     noteDiv.className = "falling-note"; // This is for css to detect the class
-    noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
-    noteDiv.style.left = `${keyRect.left - previewRect.left}px`;
+    noteDiv.style.width = `${width}px`; // Set width to width of key
+    noteDiv.style.left = `${leftOffset}px`;
     noteDiv.style.height = `${delay / 8}px`; // Set height to length of note
     noteDiv.style.top = "0"; // Vertical position is driven by the transform below
-    if (hand == "Right") {noteDiv.style.background = "var(--highlight)";} // Gold if on right hand
-    else {noteDiv.style.background = "var(--highlightAlt)";} // Blue if on left hand
+    noteDiv.style.background = (hand == "Right") ? "var(--highlight)" : "var(--highlightAlt)"; // Gold right / blue left
     previewLayer.appendChild(noteDiv);
     noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height (tick adds the fall)
-
     return noteDiv;
 }
 // Calculate where falling notes end
@@ -542,16 +536,30 @@ function tick(ts) {
 
     updateTimelineDisplay(); // Update the timeline bar
 
-    // Lookahead and create DOM elements only for upcoming notes
+    // Lookahead: spawn upcoming notes. Batched to avoid layout thrashing — when a
+    // dense chord spawns many notes at once, we read every key rect FIRST, then do
+    // all the DOM writes, so the browser reflows once instead of once per note.
+    let toSpawn = null;
     for (let i = 0; i < scheduledNotes.length; i++) {
         const sn = scheduledNotes[i];
         // Skip notes whose hand is currently disabled (stays unspawned so it can return if re-enabled)
         if (!sn.spawned && isHandEnabled(handState, sn.hand) && sn.scheduledStart <= globalTime + LOOKAHEAD) {
-            const el = createNoteDiv(sn.noteName, sn.delay, sn.hand);
-            if (!el) continue;
-            const targetTop = calcTargetTop(sn.noteName);
-            sn.el = el;
-            sn.targetTop = targetTop;
+            (toSpawn || (toSpawn = [])).push(sn);
+        }
+    }
+    if (toSpawn) {
+        // Phase 1 — read all geometry up front (one overlay rect for the whole batch)
+        const previewRect = previewLayer.getBoundingClientRect();
+        const measured = [];
+        for (const sn of toSpawn) {
+            const key = getKeyElement(sn.noteName);
+            if (!key) continue; // no key on the current piano -> retry next frame
+            measured.push({ sn, rect: key.getBoundingClientRect() });
+        }
+        // Phase 2 — create + append all elements (writes only, no reads)
+        for (const { sn, rect } of measured) {
+            sn.el = buildNoteEl(rect.left - previewRect.left, rect.width, sn.delay, sn.hand);
+            sn.targetTop = rect.top - previewRect.top;
             sn.audioTriggered = false;
             sn.spawned = true;
             activeNotes.push(sn);
