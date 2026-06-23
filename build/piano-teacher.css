@@ -971,7 +971,6 @@ body.performance-mode .settings-panel {
 }
 body.performance-mode .falling-note {
     box-shadow: none !important;
-    will-change: top; /* Hints the browser to optimize this layer on the GPU */
 }
 
 /* ==========================================

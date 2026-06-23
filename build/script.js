@@ -1386,21 +1386,36 @@ function calculateTotalDuration() {
     return lastEnd + 2000; // Add 2000ms buffer to ensure last notes finish playing
 }
 
-// Update timeline display
+// Update timeline display. Called every animation frame, so it caches its element
+// references and only writes to the DOM when a value actually changes — the slider
+// gradient and the m:ss text rarely change, so this avoids 60 needless repaints/sec.
+let _tlEls = null;
+let _lastTlPercent = -1, _lastCurText = "", _lastTotText = "";
 function updateTimelineDisplay() {
-    const timeline = document.getElementById("timeline");
-    const currentTimeEl = document.getElementById("currentTime");
-    const totalTimeEl = document.getElementById("totalTime");
-    
-    if (!timeline || !currentTimeEl || !totalTimeEl) return;
-    
-    if (!isScrubbingTimeline && totalDuration > 0) {
-        timeline.value = (globalTime / totalDuration) * 100;
-        updateRangeFill(timeline);
+    if (!_tlEls) {
+        _tlEls = {
+            range: document.getElementById("timeline"),
+            cur: document.getElementById("currentTime"),
+            tot: document.getElementById("totalTime")
+        };
     }
-    
-    currentTimeEl.textContent = formatTime(globalTime);
-    totalTimeEl.textContent = formatTime(totalDuration);
+    const { range, cur, tot } = _tlEls;
+    if (!range || !cur || !tot) return;
+
+    if (!isScrubbingTimeline && totalDuration > 0) {
+        const percent = (globalTime / totalDuration) * 100;
+        const rounded = Math.round(percent * 10) / 10; // 0.1% resolution is smooth enough
+        if (rounded !== _lastTlPercent) {
+            range.value = percent;
+            updateRangeFill(range);
+            _lastTlPercent = rounded;
+        }
+    }
+
+    const curText = formatTime(globalTime);
+    if (curText !== _lastCurText) { cur.textContent = curText; _lastCurText = curText; }
+    const totText = formatTime(totalDuration);
+    if (totText !== _lastTotText) { tot.textContent = totText; _lastTotText = totText; }
 
     // Check if music has finished
     if (globalTime >= totalDuration && totalDuration > 0) {
