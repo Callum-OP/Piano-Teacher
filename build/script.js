@@ -337,19 +337,50 @@ function stopAllNotes() {
     cutVoices(voices.slice(), 0.05);
 }
 
-async function playNote(filePath, noteName) {
-    const key = noteName.toLowerCase();
-
-    // Load and cache if note not already loaded
-    if (!audioBuffers[key]) {
+// Fetch + decode a note's sound into the cache (once). Returns a promise so callers
+// can await it; de-duplicates concurrent loads of the same note.
+const loadingBuffers = {};
+function preloadNote(noteName) {
+    const key = String(noteName).toLowerCase();
+    if (audioBuffers[key]) return Promise.resolve();
+    if (loadingBuffers[key]) return loadingBuffers[key];
+    loadingBuffers[key] = (async () => {
         try {
-            const res = await fetch(filePath);
+            const res = await fetch(`./sounds/${key}.ogg`);
             const buf = await res.arrayBuffer();
             audioBuffers[key] = await audioContext.decodeAudioData(buf);
         } catch (e) {
-            console.error("Could not load sound:", filePath, e);
-            return; // skip silently rather than throwing an unhandled rejection
+            console.error("Could not load sound:", key, e);
+        } finally {
+            delete loadingBuffers[key];
         }
+    })();
+    return loadingBuffers[key];
+}
+
+// Warm the cache for a piece's notes BEFORE they need to sound, so playback has no
+// fetch/decode lag. Loads them one at a time with a small gap (never a batch decode,
+// which can spike), and is cancellable so restarting a piece doesn't pile up.
+let preloadGen = 0;
+function preloadNotes(noteNames) {
+    const gen = ++preloadGen;
+    const queue = [...new Set((noteNames || []).map(n => String(n).toLowerCase()))]
+        .filter(k => !audioBuffers[k]);
+    let i = 0;
+    function next() {
+        if (gen !== preloadGen || i >= queue.length) return; // cancelled or done
+        preloadNote(queue[i++]).finally(() => setTimeout(next, 40));
+    }
+    next();
+}
+
+async function playNote(filePath, noteName) {
+    const key = noteName.toLowerCase();
+
+    // Make sure the sound is loaded (instant if it was preloaded)
+    if (!audioBuffers[key]) {
+        await preloadNote(noteName);
+        if (!audioBuffers[key]) return; // load failed — skip silently
     }
 
     const now = audioContext.currentTime;
@@ -829,6 +860,9 @@ function autoPlay() {
     // Play sheet music
     playNotesFromInput(document.getElementById("noteInputLeft").value, "Left");
     playNotesFromInput(document.getElementById("noteInputRight").value, "Right");
+
+    // Warm the sound cache for this piece during the fall, so notes have no load lag
+    preloadNotes(scheduledNotes.map(n => n.noteName));
 
     // Set up timeline
     totalDuration = calculateTotalDuration();
