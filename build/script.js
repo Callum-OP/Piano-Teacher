@@ -52,6 +52,16 @@ let scheduledNotes = []; // Full schedule for lookahead spawning
 const LOOKAHEAD = 3000; // Window to spawn upcoming notes
 const previewLayer = document.getElementById("note-overlay");
 
+// Animation loop handle. The loop only runs while notes are actively playing, then
+// stops itself — so we don't burn CPU/battery rendering nothing 60 times a second.
+let rafId = null;
+function startLoop() {
+    if (rafId === null) {
+        lastFrameTime = null;
+        rafId = requestAnimationFrame(tick);
+    }
+}
+
 // Which hands are enabled (lets the user focus on one hand at a time)
 const handState = createHandState();
 
@@ -422,12 +432,11 @@ function createNoteDiv(noteName, delay, hand) {
     noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
     noteDiv.style.left = `${keyRect.left - previewRect.left}px`;
     noteDiv.style.height = `${delay / 8}px`; // Set height to length of note
-    noteDiv.style.setProperty("--target-top", `${keyRect.top}px`);
-    noteDiv.style.animationDuration = "9s"; // Lasts for 9 seconds
+    noteDiv.style.top = "0"; // Vertical position is driven by the transform below
     if (hand == "Right") {noteDiv.style.background = "var(--highlight)";} // Gold if on right hand
     else {noteDiv.style.background = "var(--highlightAlt)";} // Blue if on left hand
     previewLayer.appendChild(noteDiv);
-    noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
+    noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height (tick adds the fall)
 
     return noteDiv;
 }
@@ -481,7 +490,7 @@ function playNotesFromInput(rawInput, hand) {
         timeOffset += delay;
     }
     isPaused = false; lastFrameTime = null; globalTime = 0; // Reset everything
-    requestAnimationFrame(tick); // Begin animation and audio playing
+    startLoop(); // Begin animation and audio playing
 }
 
 // --- Animation loop ---
@@ -517,7 +526,6 @@ function tick(ts) {
             activeNotes.push(sn);
         }
     }
-    const updates = [];
     for (let i = 0; i < activeNotes.length; i++) {
         const n = activeNotes[i];
         const elapsed = globalTime - n.scheduledStart;
@@ -543,23 +551,23 @@ function tick(ts) {
             continue;
         }
         
-        // Get position updates
+        // Move the note with a GPU transform (compositor only — no layout/paint per frame)
         if (n.el) {
             const progress = elapsed / n.duration;
             const y = n.startTop + (n.targetTop - n.startTop) * progress;
-            updates.push({ el: n.el, y });
+            n.el.style.transform = `translate3d(0, ${y}px, 0) translateY(-100%)`;
         }
     }
 
-    // Update positions
-    updates.forEach(({ el, y }) => {
-        if (el) { // Null check
-            el.style.top = y + "px";
-        }
-    });
-
-    requestAnimationFrame(tick);
     checkIfFinished();
+
+    // Keep looping only while notes are actively playing; otherwise stop until the
+    // next play/resume/scrub restarts it (saves CPU/battery when idle or paused).
+    if (!isPaused && scheduledNotes.length > 0 && globalTime < totalDuration) {
+        rafId = requestAnimationFrame(tick);
+    } else {
+        rafId = null;
+    }
 }
 
 // --- Button controls ---
@@ -714,6 +722,7 @@ function togglePause() {
         pauseWakeLockTimer = null;
         enableWakeLock();
         setButtonToPause();
+        startLoop(); // restart the animation loop (it stops itself while paused)
     }
 }
 // Change tempo, making autoplay quicker or slower
@@ -922,6 +931,7 @@ function rewind() {
             }
         }
     }
+    startLoop(); // render the new position (loop may be stopped if paused)
 }
 function fastForward() {
     globalTime += 2000; // Jump forward 2s
@@ -946,6 +956,7 @@ function fastForward() {
             sn.spawned = true; // Mark as spawned so tick won't try to spawn it
         }
     }
+    startLoop(); // render the new position (loop may be stopped if paused)
 }
 function startRewind() {
     rewindInterval = setInterval(() => rewind(), 200);
@@ -1282,6 +1293,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 })
                 updateTimelineDisplay();
+                startLoop(); // render the scrubbed-to position (loop is stopped while paused)
 
                 if (globalTime >= totalDuration) {
                     isPaused = true;
@@ -1302,19 +1314,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             // Ensure animation loop is running
-            if (!lastFrameTime) {
-                lastFrameTime = null;
-                requestAnimationFrame(tick);
-            }
+            startLoop();
         });
         
         timeline.addEventListener("mouseleave", () => {
             isScrubbingTimeline = false;
             // Ensure animation loop is running
-            if (!lastFrameTime) {
-                lastFrameTime = null;
-                requestAnimationFrame(tick);
-            }
+            startLoop();
         });
 
         // Touch screen
@@ -1327,19 +1333,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             // Ensure animation loop is running
-            if (!lastFrameTime) {
-                lastFrameTime = null;
-                requestAnimationFrame(tick);
-            }
+            startLoop();
         }, { passive: true });
         
         timeline.addEventListener("touchcancel", () => {
             isScrubbingTimeline = false;
             // Ensure animation loop is running
-            if (!lastFrameTime) {
-                lastFrameTime = null;
-                requestAnimationFrame(tick);
-            }
+            startLoop();
         }, { passive: true });
     }
 });

@@ -747,10 +747,12 @@ body.editor-mode .editor-overlay {
 
 .falling-note {
     position: absolute;
+    top: 0;
     background: var(--highlight);
     border-radius: 3px;
     z-index: 9999;
     contain: layout paint;
+    will-change: transform; /* animated via translate3d — keep it on its own GPU layer */
 }
 
 /* ==========================================
