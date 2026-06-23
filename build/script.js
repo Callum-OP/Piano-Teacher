@@ -821,6 +821,7 @@ function executeStop() {
 
 // Stop audio and any falling notes as well as countdown and reset hero
 function stopAll() {
+    document.body.classList.remove("is-playing"); // restore the full visual style when not playing
     disableWakeLock(); // No longer need to keep screen open
     activeNotes.forEach(n => n.el && n.el.remove());
     activeNotes.length = 0;
@@ -881,6 +882,10 @@ function autoPlay() {
     // Show timeline
     const timelineContainer = document.querySelector(".timeline-container");
     if (timelineContainer) timelineContainer.style.display = "block";
+
+    // Drop the most expensive effects (backdrop blur, shadows, key glows) while
+    // playing so the animation stays smooth; stopAll() restores them afterwards.
+    document.body.classList.add("is-playing");
 
     // Change to pause button symbol since music is now playing
     setButtonToPause();
