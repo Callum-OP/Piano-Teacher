@@ -77,7 +77,7 @@ Option to export the saved music list and import it to the app on another device
 Add more classical music pieces to the preset list.
 
 --- Improved Performance Mode ---
-Added performance mode, could enhance it further by getting it to change how the app plays animations. The app will likely still struggle if every key was being pressed at once repeatedly.
+Rendering was optimised for both normal and performance mode: falling notes now move with a GPU `translate3d` transform instead of `top` (compositor-only, no per-frame layout/paint), the animation loop now stops itself when nothing is playing (paused/finished/stopped) instead of running at 60fps forever, the timeline only repaints when its value actually changes rather than every frame, and the note-spawn loop batches its layout reads so dense chords reflow once instead of once per note. The sound files for a piece are also preloaded (gently, one at a time) during the countdown so notes have no fetch/decode lag the first time they play. Normal mode now also drops the most expensive effects (backdrop blur, card shadows, per-note key glows) while autoplay is running via a `body.is-playing` class, restoring the full look when stopped — so it stays smooth during playback without permanently losing the glassmorphism style. Could still enhance performance mode further (e.g. capping the number of on-screen falling notes); the app may still struggle if every key is pressed at once repeatedly, though the audio voice cap now helps.
 
 --- Customisation ---
 Such as light/dark mode, colour theme selection?

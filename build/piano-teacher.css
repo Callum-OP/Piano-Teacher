@@ -149,6 +149,17 @@ button,
     padding: 6px 10px; 
 }
 
+/* While autoplay is running, drop the most expensive effects (backdrop blur and
+   card shadows) so the falling-note animation stays smooth in normal mode. The full
+   glassmorphism look returns when playback stops. (Performance mode strips these
+   permanently.) The per-note key glow is kept on here so its cost can be A/B tested. */
+body.is-playing .controls-card.card,
+body.is-playing .piano-card.card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+}
+
 /* ==========================================
    FORM CONTROLS (AUTOPLAY CONFIGS)
    ========================================== */
@@ -747,10 +758,12 @@ body.editor-mode .editor-overlay {
 
 .falling-note {
     position: absolute;
+    top: 0;
     background: var(--highlight);
     border-radius: 3px;
     z-index: 9999;
     contain: layout paint;
+    will-change: transform; /* animated via translate3d — keep it on its own GPU layer */
 }
 
 /* ==========================================
@@ -969,7 +982,6 @@ body.performance-mode .settings-panel {
 }
 body.performance-mode .falling-note {
     box-shadow: none !important;
-    will-change: top; /* Hints the browser to optimize this layer on the GPU */
 }
 
 /* ==========================================

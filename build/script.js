@@ -52,6 +52,16 @@ let scheduledNotes = []; // Full schedule for lookahead spawning
 const LOOKAHEAD = 3000; // Window to spawn upcoming notes
 const previewLayer = document.getElementById("note-overlay");
 
+// Animation loop handle. The loop only runs while notes are actively playing, then
+// stops itself — so we don't burn CPU/battery rendering nothing 60 times a second.
+let rafId = null;
+function startLoop() {
+    if (rafId === null) {
+        lastFrameTime = null;
+        rafId = requestAnimationFrame(tick);
+    }
+}
+
 // Which hands are enabled (lets the user focus on one hand at a time)
 const handState = createHandState();
 
@@ -327,19 +337,50 @@ function stopAllNotes() {
     cutVoices(voices.slice(), 0.05);
 }
 
-async function playNote(filePath, noteName) {
-    const key = noteName.toLowerCase();
-
-    // Load and cache if note not already loaded
-    if (!audioBuffers[key]) {
+// Fetch + decode a note's sound into the cache (once). Returns a promise so callers
+// can await it; de-duplicates concurrent loads of the same note.
+const loadingBuffers = {};
+function preloadNote(noteName) {
+    const key = String(noteName).toLowerCase();
+    if (audioBuffers[key]) return Promise.resolve();
+    if (loadingBuffers[key]) return loadingBuffers[key];
+    loadingBuffers[key] = (async () => {
         try {
-            const res = await fetch(filePath);
+            const res = await fetch(`./sounds/${key}.ogg`);
             const buf = await res.arrayBuffer();
             audioBuffers[key] = await audioContext.decodeAudioData(buf);
         } catch (e) {
-            console.error("Could not load sound:", filePath, e);
-            return; // skip silently rather than throwing an unhandled rejection
+            console.error("Could not load sound:", key, e);
+        } finally {
+            delete loadingBuffers[key];
         }
+    })();
+    return loadingBuffers[key];
+}
+
+// Warm the cache for a piece's notes BEFORE they need to sound, so playback has no
+// fetch/decode lag. Loads them one at a time with a small gap (never a batch decode,
+// which can spike), and is cancellable so restarting a piece doesn't pile up.
+let preloadGen = 0;
+function preloadNotes(noteNames) {
+    const gen = ++preloadGen;
+    const queue = [...new Set((noteNames || []).map(n => String(n).toLowerCase()))]
+        .filter(k => !audioBuffers[k]);
+    let i = 0;
+    function next() {
+        if (gen !== preloadGen || i >= queue.length) return; // cancelled or done
+        preloadNote(queue[i++]).finally(() => setTimeout(next, 40));
+    }
+    next();
+}
+
+async function playNote(filePath, noteName) {
+    const key = noteName.toLowerCase();
+
+    // Make sure the sound is loaded (instant if it was preloaded)
+    if (!audioBuffers[key]) {
+        await preloadNote(noteName);
+        if (!audioBuffers[key]) return; // load failed — skip silently
     }
 
     const now = audioContext.currentTime;
@@ -410,25 +451,18 @@ function getRects(noteName) {
         previewRect: previewLayer.getBoundingClientRect()
     };
 }
-// Create the html element for falling notes
-function createNoteDiv(noteName, delay, hand) {
-    // Get html items
-    const rects = getRects(noteName);
-    if (!rects) return null;
-    const { keyRect, previewRect } = rects;
-
+// Build + append a falling-note element from already-measured geometry.
+// Write-only (no layout reads), so the spawn loop can batch all its reads first.
+function buildNoteEl(leftOffset, width, delay, hand) {
     const noteDiv = document.createElement("div");
     noteDiv.className = "falling-note"; // This is for css to detect the class
-    noteDiv.style.width = `${keyRect.width}px`; // Set width to width of key
-    noteDiv.style.left = `${keyRect.left - previewRect.left}px`;
+    noteDiv.style.width = `${width}px`; // Set width to width of key
+    noteDiv.style.left = `${leftOffset}px`;
     noteDiv.style.height = `${delay / 8}px`; // Set height to length of note
-    noteDiv.style.setProperty("--target-top", `${keyRect.top}px`);
-    noteDiv.style.animationDuration = "9s"; // Lasts for 9 seconds
-    if (hand == "Right") {noteDiv.style.background = "var(--highlight)";} // Gold if on right hand
-    else {noteDiv.style.background = "var(--highlightAlt)";} // Blue if on left hand
+    noteDiv.style.top = "0"; // Vertical position is driven by the transform below
+    noteDiv.style.background = (hand == "Right") ? "var(--highlight)" : "var(--highlightAlt)"; // Gold right / blue left
     previewLayer.appendChild(noteDiv);
-    noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height
-
+    noteDiv.style.transform = "translateY(-100%)"; // Shift note upward by its full height (tick adds the fall)
     return noteDiv;
 }
 // Calculate where falling notes end
@@ -481,7 +515,7 @@ function playNotesFromInput(rawInput, hand) {
         timeOffset += delay;
     }
     isPaused = false; lastFrameTime = null; globalTime = 0; // Reset everything
-    requestAnimationFrame(tick); // Begin animation and audio playing
+    startLoop(); // Begin animation and audio playing
 }
 
 // --- Animation loop ---
@@ -502,22 +536,35 @@ function tick(ts) {
 
     updateTimelineDisplay(); // Update the timeline bar
 
-    // Lookahead and create DOM elements only for upcoming notes
+    // Lookahead: spawn upcoming notes. Batched to avoid layout thrashing — when a
+    // dense chord spawns many notes at once, we read every key rect FIRST, then do
+    // all the DOM writes, so the browser reflows once instead of once per note.
+    let toSpawn = null;
     for (let i = 0; i < scheduledNotes.length; i++) {
         const sn = scheduledNotes[i];
         // Skip notes whose hand is currently disabled (stays unspawned so it can return if re-enabled)
         if (!sn.spawned && isHandEnabled(handState, sn.hand) && sn.scheduledStart <= globalTime + LOOKAHEAD) {
-            const el = createNoteDiv(sn.noteName, sn.delay, sn.hand);
-            if (!el) continue;
-            const targetTop = calcTargetTop(sn.noteName);
-            sn.el = el;
-            sn.targetTop = targetTop;
+            (toSpawn || (toSpawn = [])).push(sn);
+        }
+    }
+    if (toSpawn) {
+        // Phase 1 — read all geometry up front (one overlay rect for the whole batch)
+        const previewRect = previewLayer.getBoundingClientRect();
+        const measured = [];
+        for (const sn of toSpawn) {
+            const key = getKeyElement(sn.noteName);
+            if (!key) continue; // no key on the current piano -> retry next frame
+            measured.push({ sn, rect: key.getBoundingClientRect() });
+        }
+        // Phase 2 — create + append all elements (writes only, no reads)
+        for (const { sn, rect } of measured) {
+            sn.el = buildNoteEl(rect.left - previewRect.left, rect.width, sn.delay, sn.hand);
+            sn.targetTop = rect.top - previewRect.top;
             sn.audioTriggered = false;
             sn.spawned = true;
             activeNotes.push(sn);
         }
     }
-    const updates = [];
     for (let i = 0; i < activeNotes.length; i++) {
         const n = activeNotes[i];
         const elapsed = globalTime - n.scheduledStart;
@@ -543,23 +590,23 @@ function tick(ts) {
             continue;
         }
         
-        // Get position updates
+        // Move the note with a GPU transform (compositor only — no layout/paint per frame)
         if (n.el) {
             const progress = elapsed / n.duration;
             const y = n.startTop + (n.targetTop - n.startTop) * progress;
-            updates.push({ el: n.el, y });
+            n.el.style.transform = `translate3d(0, ${y}px, 0) translateY(-100%)`;
         }
     }
 
-    // Update positions
-    updates.forEach(({ el, y }) => {
-        if (el) { // Null check
-            el.style.top = y + "px";
-        }
-    });
-
-    requestAnimationFrame(tick);
     checkIfFinished();
+
+    // Keep looping only while notes are actively playing; otherwise stop until the
+    // next play/resume/scrub restarts it (saves CPU/battery when idle or paused).
+    if (!isPaused && scheduledNotes.length > 0 && globalTime < totalDuration) {
+        rafId = requestAnimationFrame(tick);
+    } else {
+        rafId = null;
+    }
 }
 
 // --- Button controls ---
@@ -714,6 +761,7 @@ function togglePause() {
         pauseWakeLockTimer = null;
         enableWakeLock();
         setButtonToPause();
+        startLoop(); // restart the animation loop (it stops itself while paused)
     }
 }
 // Change tempo, making autoplay quicker or slower
@@ -773,6 +821,7 @@ function executeStop() {
 
 // Stop audio and any falling notes as well as countdown and reset hero
 function stopAll() {
+    document.body.classList.remove("is-playing"); // restore the full visual style when not playing
     disableWakeLock(); // No longer need to keep screen open
     activeNotes.forEach(n => n.el && n.el.remove());
     activeNotes.length = 0;
@@ -821,6 +870,9 @@ function autoPlay() {
     playNotesFromInput(document.getElementById("noteInputLeft").value, "Left");
     playNotesFromInput(document.getElementById("noteInputRight").value, "Right");
 
+    // Warm the sound cache for this piece during the fall, so notes have no load lag
+    preloadNotes(scheduledNotes.map(n => n.noteName));
+
     // Set up timeline
     totalDuration = calculateTotalDuration();
     updateTimelineDisplay();
@@ -830,6 +882,10 @@ function autoPlay() {
     // Show timeline
     const timelineContainer = document.querySelector(".timeline-container");
     if (timelineContainer) timelineContainer.style.display = "block";
+
+    // Drop the most expensive effects (backdrop blur, shadows, key glows) while
+    // playing so the animation stays smooth; stopAll() restores them afterwards.
+    document.body.classList.add("is-playing");
 
     // Change to pause button symbol since music is now playing
     setButtonToPause();
@@ -922,6 +978,7 @@ function rewind() {
             }
         }
     }
+    startLoop(); // render the new position (loop may be stopped if paused)
 }
 function fastForward() {
     globalTime += 2000; // Jump forward 2s
@@ -946,6 +1003,7 @@ function fastForward() {
             sn.spawned = true; // Mark as spawned so tick won't try to spawn it
         }
     }
+    startLoop(); // render the new position (loop may be stopped if paused)
 }
 function startRewind() {
     rewindInterval = setInterval(() => rewind(), 200);
@@ -1282,6 +1340,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 })
                 updateTimelineDisplay();
+                startLoop(); // render the scrubbed-to position (loop is stopped while paused)
 
                 if (globalTime >= totalDuration) {
                     isPaused = true;
@@ -1302,19 +1361,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             // Ensure animation loop is running
-            if (!lastFrameTime) {
-                lastFrameTime = null;
-                requestAnimationFrame(tick);
-            }
+            startLoop();
         });
         
         timeline.addEventListener("mouseleave", () => {
             isScrubbingTimeline = false;
             // Ensure animation loop is running
-            if (!lastFrameTime) {
-                lastFrameTime = null;
-                requestAnimationFrame(tick);
-            }
+            startLoop();
         });
 
         // Touch screen
@@ -1327,19 +1380,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             // Ensure animation loop is running
-            if (!lastFrameTime) {
-                lastFrameTime = null;
-                requestAnimationFrame(tick);
-            }
+            startLoop();
         }, { passive: true });
         
         timeline.addEventListener("touchcancel", () => {
             isScrubbingTimeline = false;
             // Ensure animation loop is running
-            if (!lastFrameTime) {
-                lastFrameTime = null;
-                requestAnimationFrame(tick);
-            }
+            startLoop();
         }, { passive: true });
     }
 });
@@ -1386,21 +1433,36 @@ function calculateTotalDuration() {
     return lastEnd + 2000; // Add 2000ms buffer to ensure last notes finish playing
 }
 
-// Update timeline display
+// Update timeline display. Called every animation frame, so it caches its element
+// references and only writes to the DOM when a value actually changes — the slider
+// gradient and the m:ss text rarely change, so this avoids 60 needless repaints/sec.
+let _tlEls = null;
+let _lastTlPercent = -1, _lastCurText = "", _lastTotText = "";
 function updateTimelineDisplay() {
-    const timeline = document.getElementById("timeline");
-    const currentTimeEl = document.getElementById("currentTime");
-    const totalTimeEl = document.getElementById("totalTime");
-    
-    if (!timeline || !currentTimeEl || !totalTimeEl) return;
-    
-    if (!isScrubbingTimeline && totalDuration > 0) {
-        timeline.value = (globalTime / totalDuration) * 100;
-        updateRangeFill(timeline);
+    if (!_tlEls) {
+        _tlEls = {
+            range: document.getElementById("timeline"),
+            cur: document.getElementById("currentTime"),
+            tot: document.getElementById("totalTime")
+        };
     }
-    
-    currentTimeEl.textContent = formatTime(globalTime);
-    totalTimeEl.textContent = formatTime(totalDuration);
+    const { range, cur, tot } = _tlEls;
+    if (!range || !cur || !tot) return;
+
+    if (!isScrubbingTimeline && totalDuration > 0) {
+        const percent = (globalTime / totalDuration) * 100;
+        const rounded = Math.round(percent * 10) / 10; // 0.1% resolution is smooth enough
+        if (rounded !== _lastTlPercent) {
+            range.value = percent;
+            updateRangeFill(range);
+            _lastTlPercent = rounded;
+        }
+    }
+
+    const curText = formatTime(globalTime);
+    if (curText !== _lastCurText) { cur.textContent = curText; _lastCurText = curText; }
+    const totText = formatTime(totalDuration);
+    if (totText !== _lastTotText) { tot.textContent = totText; _lastTotText = totText; }
 
     // Check if music has finished
     if (globalTime >= totalDuration && totalDuration > 0) {
