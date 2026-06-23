@@ -51,8 +51,7 @@ https://musescore.com/
 Below are the future features and current issues relating to the app in order of priority (highest in list being highest priority)
 
 ## Top features to consider
---- Custom Music Editor ---
-An in-page piano-roll editor now exists, enabled via the "Show Music Editor" setting: press "Editor Mode" and the area above the real piano becomes an editable grid aligned to the keys. You can pick a hand, set note length, click to add/remove notes, drag notes to move them, drag a note's top edge to change its length, right-click a note to switch its hand, scroll to scrub/preview, and Play. Useful for cleaning up imported music or composing from scratch. Remaining work:
+--- Expand Music Editor ---
 Export the edited/saved music back out as a MIDI file.
 Could also make it easier to use and understand.
 
@@ -62,22 +61,16 @@ Make piano bigger? Piano scale bar setting? or just have the piano be max possib
 Give the autoplay editor and buttons a faded look if no music has been started?
 Reduce distance between piano and playback controls, so there is more space on screen if you want to have both on screen during autoplay.
 
---- Save Current Music & Progress ---
-If you exit the app and had a music piece open/paused, it would be good to save what music was last open as well as exactly where the user was in the timeline bar, so then the user can start exactly where they were when they left.
-
---- Decrease App Size ---
-The desktop version of the app on Microsoft Store is around 300mb with the appxbundle being 277mb, maybe try to find ways to decrease that since the mobile version is around 30mb or less in comparison. 
-Electron requires a lot of space to work, Tauri 2.0 uses the OS WebView like Capacitor does, it may be worth changing to it instead of Electron in the future (Tauri could also be used for mobile as well as meaning I only need one wrapper), although it means retesting and possibly rewriting code to get it to work.
-
 ## Features to consider
---- Import/Export Saved Music List ---
-Option to export the saved music list and import it to the app on another device, so that lists of music can be shared either across devices or to other people.
-
 --- Bigger Preset List ---
 Add more classical music pieces to the preset list.
 
---- Improved Performance Mode ---
-Rendering was optimised for both normal and performance mode: falling notes now move with a GPU `translate3d` transform instead of `top` (compositor-only, no per-frame layout/paint), the animation loop now stops itself when nothing is playing (paused/finished/stopped) instead of running at 60fps forever, the timeline only repaints when its value actually changes rather than every frame, and the note-spawn loop batches its layout reads so dense chords reflow once instead of once per note. The sound files for a piece are also preloaded (gently, one at a time) during the countdown so notes have no fetch/decode lag the first time they play. Normal mode now also drops the most expensive effects (backdrop blur, card shadows, per-note key glows) while autoplay is running via a `body.is-playing` class, restoring the full look when stopped — so it stays smooth during playback without permanently losing the glassmorphism style. Could still enhance performance mode further (e.g. capping the number of on-screen falling notes); the app may still struggle if every key is pressed at once repeatedly, though the audio voice cap now helps.
+--- Import/Export Saved Music List ---
+Option to export the saved music list and import it to the app on another device, so that lists of music can be shared either across devices or to other people.
+Would also be cool to have saved music shared across devices but that would require somewhere to host and store the data or some other way to automatically sync saved music, and would likely also need a login, meaning it would be more hassle than it is worth.
+
+--- Save Current Music & Progress ---
+If you exit the app and had a music piece open/paused, it would be good to save what music was last open as well as exactly where the user was in the timeline bar, so then the user can start exactly where they were when they left.
 
 --- Customisation ---
 Such as light/dark mode, colour theme selection?
@@ -88,17 +81,20 @@ When saving a music piece, save the last tempo setting used for it and restore i
 --- Select Specific MIDI Tracks? ---
 Allow users to see all the tracks within a MIDI file they upload and choose which tracks will and won't play. As some will have unneccessary background noise and instruments. Would likely need to a new section that gives the user complete freedom and control over the MIDI file they uploaded.
 
---- Better Rests ---
-When playing several notes at once in autoplay the underscores are not considered separate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another. This isn't a quick and easy fix, as it is a fundamental limitation of the note format the app uses.
-
 --- Piano Audio Options ---
 There are several different types of pianos and each sound slightly different, maybe giving different options to choose from in the settings will allow users to choose one they will be familiar with. Will require collecting the necessary audio files.
 
 ## Top issues
---- Audio being overloaded ---
-Mitigated: audio playback now uses a fixed voice pool — polyphony is capped (oldest voices are stolen when the limit is hit), the same key being retriggered quickly cuts its previous voice instead of stacking dozens of slow 2s-fading voices, and a tuned compressor acts as a safety limiter. This addresses the root causes (unbounded/orphaned voices) of the crackling. Worth confirming by ear on a busy piece on a real device; if it still crackles, lower MAX_VOICES or the per-voice gain in script.js.
+None atm
 
 ## Minor issues
+--- App Size ---
+The desktop version of the app on Microsoft Store is around 300mb with the appxbundle being 277mb, maybe try to find ways to decrease that since the mobile version is around 30mb or less in comparison. 
+Electron requires a lot of space to work, Tauri 2.0 uses the OS WebView like Capacitor does, it may be worth changing to it instead of Electron in the future (Tauri could also be used for mobile as well as meaning I only need one wrapper), although it means retesting and possibly rewriting code to get it to work. Also I'm familiar with Electron and Capacitor, I have no idea what Tauri is like or what its actually capable of (and that goes for any other alternative wrapper too).
+
 --- Sort Notes Feature ---
 Resorting notes is not always perfect, some notes would be better suited to the closer hand than what the chosen hand is through the resort function. This is fundamentally a hard problem, the current sort function works well so far but to properly improve it so that it is perfect may require a complete rewrite of the sort logic with the risk of only just making it worse.
-Another limitation as to why this feature is not always perfect is when music pieces have more notes and are wider than possible to be played, it may worth having it be able to sort a third hand of background notes so that it can still accurately show how to play the rest.
+Another limitation as to why this feature is not always perfect is when music pieces have more notes and are wider than possible to be played, it may be worth having it be able to sort a third hand of background notes so that it can still accurately show how to play the rest.
+
+--- Note Rests ---
+When playing several notes at once in autoplay the underscores are not considered separate for each note, meaning several notes pressed at once will all be held down for the same length, could make it possible to have one note last longer than another. This isn't a quick and easy fix, as it is a fundamental limitation of the note format the app uses.
