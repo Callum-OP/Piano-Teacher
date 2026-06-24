@@ -174,9 +174,9 @@ function findBestSplitPoint(notes, prevLeftPitch, prevRightPitch) {
         
         // Bonus for splits near C4
         const adjustedGap = gap + (distanceFromC4 < 6 ? 2 : 0);
-        
+
         if (adjustedGap > maxGap) {
-            maxGap = gap;
+            maxGap = adjustedGap;
             gapIndex = i + 1;
         }
     }
@@ -316,10 +316,11 @@ function getAveragePitch(noteText) {
     return notes.reduce((sum, n) => sum + n.pitch, 0) / notes.length;
 }
 
-// Main function for sorting notes into proper hands
-function resortNotes() {
-    let leftBlock = document.getElementById("noteInputLeft").value || '';
-    let rightBlock = document.getElementById("noteInputRight").value || '';
+// Pure core of the resort: takes the two hands' note strings and returns the
+// resorted { left, right } strings. Kept DOM-free so the whole behaviour can be tested.
+function resortBlocks(leftBlock, rightBlock) {
+    leftBlock = leftBlock || '';
+    rightBlock = rightBlock || '';
 
     if (!/[A-Za-z]/.test(leftBlock)) leftBlock = "";
     if (!/[A-Za-z]/.test(rightBlock)) rightBlock = "";
@@ -409,11 +410,17 @@ function resortNotes() {
         }
     }
 
-    const leftOut = outLeft.join('');
-    const rightOut = outRight.join('');
+    return { left: outLeft.join(''), right: outRight.join('') };
+}
 
-    document.getElementById("noteInputLeft").value = leftOut || '';
-    document.getElementById("noteInputRight").value = rightOut || '';
+// DOM wrapper used by the app and MIDI import: resort the note inputs in place
+function resortNotes() {
+    const leftEl = document.getElementById("noteInputLeft");
+    const rightEl = document.getElementById("noteInputRight");
+    if (!leftEl || !rightEl) return;
+    const { left, right } = resortBlocks(leftEl.value, rightEl.value);
+    leftEl.value = left || '';
+    rightEl.value = right || '';
 }
 
 // Export code for tests
@@ -430,6 +437,7 @@ if (typeof module !== 'undefined') {
         shouldSplitNotes,
         findBestSplitPoint,
         splitNotes,
-        getAveragePitch
+        getAveragePitch,
+        resortBlocks
     };
 }
