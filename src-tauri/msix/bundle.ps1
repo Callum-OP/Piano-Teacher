@@ -1,0 +1,34 @@
+<#
+.SYNOPSIS
+  Combine the per-arch MSIX packages (dist/packages/*.msix) into one .msixbundle.
+
+.DESCRIPTION
+  The MSIX equivalent of the old Electron .appxbundle: a single multi-architecture file you
+  upload to Partner Center (which signs it). Run the per-arch pack steps first, or just use
+  `npm run build-store`, which builds, packs and bundles in one go.
+#>
+[CmdletBinding()]
+param([string]$Version = "1.3.0.0")
+
+$ErrorActionPreference = "Stop"
+$here   = Split-Path -Parent $MyInvocation.MyCommand.Path
+$dist   = Join-Path $here "..\..\dist"
+$pkgDir = Join-Path $dist "packages"
+
+if (-not (Get-ChildItem (Join-Path $pkgDir "*.msix") -ErrorAction SilentlyContinue)) {
+    throw "No MSIX packages in $pkgDir - run the per-arch pack steps first (npm run build-store)."
+}
+
+function Find-Kit($name) {
+    $bin = "C:\Program Files (x86)\Windows Kits\10\bin"
+    $hit = Get-ChildItem "$bin\*\arm64\$name", "$bin\*\x64\$name" -ErrorAction SilentlyContinue |
+        Sort-Object FullName -Descending | Select-Object -First 1
+    if (-not $hit) { throw "$name not found under $bin (install the Windows SDK)" }
+    return $hit.FullName
+}
+$makeappx = Find-Kit "makeappx.exe"
+
+$bundle = Join-Path $dist "PianoTeacher_$Version.msixbundle"
+& $makeappx bundle /d $pkgDir /p $bundle /bv $Version /o
+if ($LASTEXITCODE -ne 0) { throw "makeappx bundle failed (exit $LASTEXITCODE)" }
+Write-Host "MSIX bundle created: $bundle" -ForegroundColor Green

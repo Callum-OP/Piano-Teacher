@@ -18,14 +18,13 @@ To set up dependencies, assuming you have node installed, use: npm install
 
 To run locally on localhost:3000 you can use a command like: python -m http.server 3000 or npx http-server . 
 
-Alternatively to build locally as a desktop app use: npm run build
-Or:
-npx electron-builder --win appx 
-npx electron-builder --win --x64
-For store app bundle:
-npm run build-store
+Alternatively to build and run locally as a desktop app use: npm run tauri:dev (Tauri, needs the Rust toolchain)
 
-If you want to build for android you'll need something like Android Studio and can sync changes with: npx cap sync android
+To build the desktop app and package it for the Microsoft Store as MSIX (both arm64 and x64) in one command:
+npm run build-store
+This outputs dist/PianoTeacher_<version>.msixbundle — a single multi-architecture bundle (arm64 + x64). The individual per-arch MSIX are in dist/packages/. See src-tauri/msix/README.md for details. (It runs: clean dist, build arm64, build x64, pack each into an MSIX, then combine them into one .msixbundle.)
+
+If you want to build for android you'll need something like Android Studio, can sync changes with: npx cap sync android
 
 To run tests use: npm test
 
