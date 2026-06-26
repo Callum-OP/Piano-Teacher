@@ -19,6 +19,7 @@
 [CmdletBinding()]
 param(
     [string]$Arch = "arm64",
+    [string]$Version = "",
     [switch]$TestSign,
     [string]$TestPublisher = "CN=Piano Teacher Test Cert"
 )
@@ -26,6 +27,10 @@ param(
 $ErrorActionPreference = "Stop"
 $here  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $icons = Join-Path $here "..\icons"
+
+# Resolve the version from package.json unless one was passed explicitly.
+. (Join-Path $here "version.ps1")
+if (-not $Version) { $Version = Get-AppVersion -RepoRoot (Join-Path $here "..\..") }
 
 # Resolve the exe for the requested arch. A cross-compiled build lands under
 # target\<triple>\release; the default host build lands under target\release.
@@ -62,6 +67,11 @@ foreach ($a in "StoreLogo.png", "Square44x44Logo.png", "Square71x71Logo.png", "S
 # signing cert subject must match the manifest Publisher for the package to install)
 $manifest = Get-Content (Join-Path $here "AppxManifest.xml") -Raw
 $manifest = $manifest -replace 'ProcessorArchitecture="[^"]*"', "ProcessorArchitecture=`"$Arch`""
+# Stamp the package identity version from package.json. The Store reads this and
+# requires it to increase each submission, so it must track the real version.
+# -creplace (case-sensitive) + lookbehind targets Identity's Version only, not the
+# lowercase XML declaration or the MinVersion/MaxVersionTested attributes.
+$manifest = $manifest -creplace '(?<![A-Za-z])Version="[^"]*"', "Version=`"$Version`""
 if ($TestSign) {
     $manifest = $manifest -replace 'Publisher="CN=[^"]*"', "Publisher=`"$TestPublisher`""
 }
@@ -71,7 +81,7 @@ Set-Content (Join-Path $stage "AppxManifest.xml") $manifest -Encoding UTF8
 # into a single dist/*.msixbundle. dist/ is gitignored and easy to find.
 $outDir = Join-Path $here "..\..\dist\packages"
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-$msix = Join-Path $outDir "PianoTeacher_1.3.0.0_$Arch.msix"
+$msix = Join-Path $outDir "PianoTeacher_${Version}_$Arch.msix"
 & $makeappx pack /d $stage /p $msix /o
 if ($LASTEXITCODE -ne 0) { throw "makeappx failed (exit $LASTEXITCODE)" }
 Write-Host "MSIX created: $msix" -ForegroundColor Green

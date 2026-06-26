@@ -8,12 +8,16 @@
   `npm run build-store`, which builds, packs and bundles in one go.
 #>
 [CmdletBinding()]
-param([string]$Version = "1.3.0.0")
+param([string]$Version = "")
 
 $ErrorActionPreference = "Stop"
 $here   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $dist   = Join-Path $here "..\..\dist"
 $pkgDir = Join-Path $dist "packages"
+
+# Resolve the version from package.json unless one was passed explicitly.
+. (Join-Path $here "version.ps1")
+if (-not $Version) { $Version = Get-AppVersion -RepoRoot (Join-Path $here "..\..") }
 
 if (-not (Get-ChildItem (Join-Path $pkgDir "*.msix") -ErrorAction SilentlyContinue)) {
     throw "No MSIX packages in $pkgDir - run the per-arch pack steps first (npm run build-store)."
