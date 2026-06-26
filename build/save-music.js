@@ -176,8 +176,32 @@ function renderSavedResults(query) {
     results.hidden = false;
 }
 
+// One-time recovery of saved music from the old Electron build. That version ran at
+// a different webview origin (file://), so its saved music isn't visible here. The
+// Tauri `legacy_custom_music` command reads the orphaned data and we re-store it
+// under this origin. No-op for new installs, once it's run, or outside Tauri.
+async function migrateLegacyMusic() {
+    try {
+        if (localStorage.getItem("customMusic")) return;       // already have data here
+        if (localStorage.getItem("legacyMusicChecked")) return; // already attempted once
+        const invoke = window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke;
+        if (!invoke) return; // not running under Tauri — try again on a later launch
+        const json = await invoke("legacy_custom_music");
+        if (json) {
+            const list = JSON.parse(json);
+            if (Array.isArray(list) && list.length) {
+                localStorage.setItem("customMusic", JSON.stringify(list));
+            }
+        }
+        localStorage.setItem("legacyMusicChecked", "1");
+    } catch (e) {
+        // Non-fatal: worst case the user just doesn't get the old data back.
+    }
+}
+
 // Load on startup
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    await migrateLegacyMusic();
     populateCustomMusicSelect();
 
     // Live search: show a clickable results list as the user types

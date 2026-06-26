@@ -20,3 +20,6 @@ tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+# Reads the old Electron build's Chromium localStorage to recover saved music
+# (see src/migrate.rs).
+rusty-leveldb = "3"
