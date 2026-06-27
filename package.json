@@ -14,7 +14,8 @@
     "tauri:pack:x64": "powershell -ExecutionPolicy Bypass -File ./src-tauri/msix/pack.ps1 -Arch x64",
     "tauri:bundle": "powershell -ExecutionPolicy Bypass -File ./src-tauri/msix/bundle.ps1",
     "tauri:clean": "powershell -Command \"if (Test-Path 'dist') { Remove-Item -Recurse -Force 'dist' }\"",
-    "build-store": "npm run tauri:clean && npm run tauri:build:arm64 && npm run tauri:build:x64 && npm run tauri:pack:arm64 && npm run tauri:pack:x64 && npm run tauri:bundle"
+    "sync-version": "powershell -ExecutionPolicy Bypass -File ./src-tauri/msix/sync-version.ps1",
+    "build-store": "npm run sync-version && npm run tauri:clean && npm run tauri:build:arm64 && npm run tauri:build:x64 && npm run tauri:pack:arm64 && npm run tauri:pack:x64 && npm run tauri:bundle"
   },
   "jest": {
     "testEnvironment": "jsdom",

@@ -182,15 +182,21 @@ function renderSavedResults(query) {
 // under this origin. No-op for new installs, once it's run, or outside Tauri.
 async function migrateLegacyMusic() {
     try {
-        if (localStorage.getItem("customMusic")) return;       // already have data here
-        if (localStorage.getItem("legacyMusicChecked")) return; // already attempted once
+        if (localStorage.getItem("legacyMusicChecked")) return; // one-time only
         const invoke = window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke;
         if (!invoke) return; // not running under Tauri — try again on a later launch
         const json = await invoke("legacy_custom_music");
         if (json) {
-            const list = JSON.parse(json);
-            if (Array.isArray(list) && list.length) {
-                localStorage.setItem("customMusic", JSON.stringify(list));
+            const legacy = JSON.parse(json);
+            if (Array.isArray(legacy) && legacy.length) {
+                // Merge: add any legacy piece not already saved here (matched by
+                // composer + title). Never removes or overwrites current music, so
+                // it's safe even for users who already saved new music in 1.3.1.
+                const current = loadCustomMusic();
+                const keyOf = m => `${m.composer || "My Music"}|${m.title}`;
+                const have = new Set(current.map(keyOf));
+                const additions = legacy.filter(m => m && m.title && !have.has(keyOf(m)));
+                if (additions.length) saveCustomMusicList(current.concat(additions));
             }
         }
         localStorage.setItem("legacyMusicChecked", "1");

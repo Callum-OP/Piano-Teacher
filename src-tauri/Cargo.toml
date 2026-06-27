@@ -1,6 +1,6 @@
 [package]
 name = "piano-teacher"
-version = "1.3.0"
+version = "1.3.2"
 description = "An interactive way to learn piano using a visual piano interface."
 authors = ["Callum O'Prey"]
 edition = "2021"
