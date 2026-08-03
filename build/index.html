@@ -429,10 +429,22 @@
                     </div>
                 </div>
                 <br>
-                <div class="col-12 col-md-4">
-                    <div class="custom-deck-slider">
-                        <label for="ui-scale" class="form-label mb-1">UI, Text & Button Scale</label>
-                        <input type="range" class="range" id="ui-scale" min="1" max="1.4" step="0.05" value="1">
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <!-- Move the whole saved list between devices: export to a JSON file, import to merge -->
+                        <div>
+                            <label for="ui-scale" class="form-label mb-1">Saved Music List Options</label><br>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="exportCustomMusic()">Export</button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="document.getElementById('importMusicFile').click()">Import</button>
+                            <input type="file" id="importMusicFile" accept=".json,application/json" hidden onchange="importCustomMusicFile(this.files[0]); this.value='';">
+                            <small class="text-muted">Share or transfer saved music between devices.</small>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="custom-deck-slider">
+                            <label for="ui-scale" class="form-label mb-1">UI, Text & Button Scale</label>
+                            <input type="range" class="range" id="ui-scale" min="1" max="1.4" step="0.05" value="1">
+                        </div>
                     </div>
                 </div>
                 <div class="text-end mt-2">
@@ -479,8 +491,8 @@
 
             <!-- Buttons -->
             <div class="row g-3">
-                <div class="col-12 col-lg-6 mt-3 d-flex gap-2">
-                    <label for="midiFile" class="form-label">Upload MIDI file</label>
+                <div class="col-12 col-lg-6 mt-3 d-flex gap-2 align-items-center flex-wrap">
+                    <label for="midiFile" class="form-label mb-0">Upload MIDI file</label>
                     <input class="text-light" type="file" id="midiFile" accept=".mid,.midi">
                 </div>
                 <div class="col-12 col-lg-6 mt-3 d-flex gap-2 justify-content-end"> <!-- Set to right -->
@@ -488,6 +500,7 @@
                     <button class="btn btn-outline-primary" id="clear" onclick="clearAutoPlay();">Clear</button>
                 </div>
             </div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="exportCurrentMusicAsMidi()">Export MIDI</button>
         </div>
         </section>
 
@@ -533,6 +546,7 @@
     <script src="./script.js"></script>
     <script src="./sort-notes.js"></script>
     <script src="./editor.js"></script>
+    <script src="./midi-export.js"></script>
     <script src="./save-music.js"></script>
 </body>
 </html>

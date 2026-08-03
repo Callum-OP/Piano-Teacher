@@ -27,6 +27,8 @@ Piano Teacher is available across desktop, mobile, and the web:
 - **Limit notes to piano size** — enable *Limit Notes to Piano Size* in settings to automatically discard notes outside the current piano's range when loading a preset, saved piece, or MIDI file (useful on a smaller piano).
 - **Hand isolation** — use the Left/Right hand toggle buttons to silence a hand during autoplay so you can focus on one hand at a time, then re-enable it when ready.
 - **Playback control** — press the **spacebar** to play/pause autoplay (it won't trigger while you're typing in a field). Click the tempo value (e.g. `1x`) to reset the tempo. Dragging the tempo slider lands exactly where you release it; only a click/tap near the middle snaps to `1x`.
+- **Export as MIDI** — click **Export MIDI** (next to the MIDI upload) to download whatever is currently loaded — a preset, saved piece, MIDI upload, or your editor changes — as a standard `.mid` file you can open in other music apps.
+- **Back up & share your saved list** — use **Export list** / **Import list** in the saved-music section to save your whole custom list to a JSON file and merge it back in on another device. Importing only adds pieces you don't already have, so it never overwrites your existing music.
 
 ### Music Editor (beta)
 
@@ -64,7 +66,10 @@ Requires the [Rust toolchain](https://www.rust-lang.org/tools/install).
 npm run tauri:dev
 ```
 
+May want to clear src-tauri/target folder once finished to clear space.
+
 ### Build for the Microsoft Store (MSIX)
+
 
 Build and package the desktop app for the Microsoft Store as MSIX (both arm64 and x64) in one command:
 
@@ -108,7 +113,6 @@ Planned features and known issues, in order of priority (highest first).
 ### Top features to consider
 
 **Expand Music Editor**
-- Export the edited/saved music back out as a MIDI file.
 - Make it easier to use and understand.
 
 **UI improvements**
@@ -122,9 +126,8 @@ Planned features and known issues, in order of priority (highest first).
 **Bigger preset list**
 - Add more classical music pieces to the preset list.
 
-**Import/export saved music list**
-- Option to export the saved music list and import it to the app on another device, so lists can be shared across devices or with other people.
-- Sharing saved music across devices automatically would require somewhere to host and store the data (or another sync mechanism) and likely a login — more hassle than it's worth for now.
+**Automatic saved-music sync**
+- Manual export/import of the saved list is now supported (see Features). Syncing saved music across devices *automatically* would require somewhere to host and store the data (or another sync mechanism) and likely a login — more hassle than it's worth for now.
 
 **Save current music & progress**
 - If you exit the app with a piece open/paused, save which piece was last open and exactly where you were in the timeline, so you can resume exactly where you left off.

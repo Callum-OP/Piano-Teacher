@@ -15,6 +15,88 @@ function saveCustomMusicList(list) {
     }
 }
 
+// --- Import / export of the whole saved-music list ---
+
+// Coerce arbitrary parsed JSON into a clean array of music entries. Accepts either a
+// bare array or the export envelope { music: [...] }. Each entry is reduced to the
+// fields the app uses (with safe defaults); anything without a title is dropped.
+function sanitizeMusicList(raw) {
+    const arr = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.music) ? raw.music : null);
+    if (!arr) return [];
+    return arr
+        .filter(m => m && typeof m.title === "string" && m.title.trim())
+        .map(m => ({
+            title: String(m.title).trim(),
+            left: typeof m.left === "string" ? m.left : "",
+            right: typeof m.right === "string" ? m.right : "",
+            composer: (typeof m.composer === "string" && m.composer.trim()) ? m.composer.trim() : "My Music"
+        }));
+}
+
+// Merge incoming pieces into the current list, adding only those not already present
+// (matched by composer + title) so a merge never overwrites or removes saved music.
+// Returns { list, added } with the list sorted like the saved-music dropdown.
+function mergeCustomMusic(current, incoming) {
+    const keyOf = m => `${m.composer || "My Music"}|${m.title}`;
+    const have = new Set((current || []).map(keyOf));
+    let list = (current || []).slice();
+    let added = 0;
+    (incoming || []).forEach(m => {
+        if (!m || !m.title || have.has(keyOf(m))) return;
+        have.add(keyOf(m));
+        list = addOrUpdateMusic(list, m.title, m.left, m.right, m.composer);
+        added++;
+    });
+    return { list, added };
+}
+
+// Serialise the saved-music list to a downloadable JSON file, so it can be backed up
+// or moved to another device / shared and re-imported via importCustomMusicFile.
+function exportCustomMusic() {
+    const list = loadCustomMusic();
+    if (!list.length) { alert("No saved music to export."); return; }
+    const payload = { app: "piano-teacher", type: "custom-music", version: 1, music: list };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "piano-teacher-music.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+}
+
+// Read a previously exported JSON file and merge its pieces into the saved list.
+// Merge-only: existing pieces are never overwritten or removed. Returns a Promise
+// that resolves once the merge is applied (used by the smoke test).
+function importCustomMusicFile(file) {
+    if (!file) return Promise.resolve();
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            let incoming;
+            try {
+                incoming = sanitizeMusicList(JSON.parse(reader.result));
+            } catch (e) {
+                alert("Could not read this file. It doesn't look like an exported music list.");
+                return resolve();
+            }
+            if (!incoming.length) { alert("No saved music found in that file."); return resolve(); }
+            const { list, added } = mergeCustomMusic(loadCustomMusic(), incoming);
+            saveCustomMusicList(list);
+            populateCustomMusicSelect();
+            const skipped = incoming.length - added;
+            alert(added
+                ? `Imported ${added} piece${added === 1 ? "" : "s"}.${skipped ? ` ${skipped} already in your list.` : ""}`
+                : "Every piece in that file is already in your list.");
+            resolve();
+        };
+        reader.onerror = () => { alert("Could not read that file."); resolve(); };
+        reader.readAsText(file);
+    });
+}
+
 // Save custom music
 function saveCustomMusic() {
     const titleEl = document.getElementById("customMusicTitle");
@@ -192,11 +274,8 @@ async function migrateLegacyMusic() {
                 // Merge: add any legacy piece not already saved here (matched by
                 // composer + title). Never removes or overwrites current music, so
                 // it's safe even for users who already saved new music in 1.3.1.
-                const current = loadCustomMusic();
-                const keyOf = m => `${m.composer || "My Music"}|${m.title}`;
-                const have = new Set(current.map(keyOf));
-                const additions = legacy.filter(m => m && m.title && !have.has(keyOf(m)));
-                if (additions.length) saveCustomMusicList(current.concat(additions));
+                const { list, added } = mergeCustomMusic(loadCustomMusic(), sanitizeMusicList(legacy));
+                if (added) saveCustomMusicList(list);
             }
         }
         localStorage.setItem("legacyMusicChecked", "1");
@@ -230,5 +309,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // Export code for tests
 if (typeof module !== "undefined") {
-    module.exports = { addOrUpdateMusic };
+    module.exports = { addOrUpdateMusic, sanitizeMusicList, mergeCustomMusic, importCustomMusicFile };
 }
