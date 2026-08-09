@@ -69,6 +69,7 @@
                 <span class="d-flex align-items-center flex-wrap gap-2">
                     <span class="editor-tools align-items-center flex-wrap gap-2">
                         <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadCurrentIntoEditor()">Load music</button>
+                        <button type="button" class="btn btn-sm btn-outline-warning" onclick="removeDuplicateNotes()" title="Remove notes on the selected hand (Left/Right tool) that duplicate a note on the other hand at the same time">De-dup hand</button>
                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearEditor()">Clear</button>
                     </span>
                     <button class="btn btn-sm btn-outline-primary" id="edit-toggle-btn" onclick="toggleEditMode()">Editor Mode</button>

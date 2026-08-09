@@ -174,6 +174,20 @@ function deleteColumn(grid, atTime) {
     return grid;
 }
 
+// Remove notes from `hand` that duplicate a note (same time + pitch) also
+// present in the other hand — e.g. clean up a piece that has the same note
+// played by both hands at once. The other hand is left untouched.
+function deleteDuplicateNotes(grid, hand) {
+    const targetHand = (hand === "left" || hand === "Left") ? "left" : "right";
+    const otherHand = targetHand === "left" ? "right" : "left";
+    const otherKeys = new Set(
+        grid.notes.filter(n => n.hand === otherHand).map(n => n.time + ":" + n.note)
+    );
+    grid.notes = grid.notes.filter(n => !(n.hand === targetHand && otherKeys.has(n.time + ":" + n.note)));
+    grid.totalUnits = gridTotalUnits(grid);
+    return grid;
+}
+
 // Ordered note names for grid rows, highest pitch first (top row)
 function pitchRangeToRows(minPitch, maxPitch) {
     const rows = [];
@@ -299,6 +313,14 @@ function clearEditor() {
     const speedEl = document.getElementById("editor-speed-val");
     if (speedEl) speedEl.textContent = "100%";
     renderEditorOverlay(false);
+}
+
+// Remove duplicate notes (same time + pitch on both hands) from the currently
+// selected tool hand (Left/Right toggle), keeping the copy on the other hand.
+function removeDuplicateNotes() {
+    const hand = (EDITOR.hand === "left") ? "left" : "right";
+    deleteDuplicateNotes(EDITOR.grid, hand);
+    renderEditorOverlay(true);
 }
 
 // Tool selector: "left"/"right" act like a pen for that hand (tap empty = add,
@@ -560,6 +582,6 @@ if (typeof module !== "undefined") {
         parseHandToNotes, musicToGrid, gridToMusic, gridTotalUnits,
         hasNote, toggleNote, noteAt, setNoteLen, moveNote, changeNoteHand,
         insertColumn, deleteColumn, pitchRangeToRows, isBlackPitch, pianoLayout, keyAtX,
-        scaleGrid
+        scaleGrid, deleteDuplicateNotes
     };
 }

@@ -431,12 +431,19 @@ function highlightKey(noteName, duration, hand) {
         delete highlightTimeouts[noteName];
     }
 
+    // A key can only be highlighted by one hand at a time, so always drop any
+    // stale hand class before applying the new one. Without this, overlapping
+    // hits on the same key from different hands (e.g. a fast right-hand run
+    // with a left-hand note in the middle) can pre-empt each other's removal
+    // timeout and leave a hand class permanently stuck on the key, causing it
+    // to show the wrong colour for every future press until the page reloads.
+    key.classList.remove("right-hand", "left-hand");
     key.classList.add("active");
     const handClass = hand === "Right" ? "right-hand" : "left-hand";
     key.classList.add(handClass);
 
     highlightTimeouts[noteName] = setTimeout(() => {
-        key.classList.remove("active", handClass);
+        key.classList.remove("active", "right-hand", "left-hand");
         delete highlightTimeouts[noteName];
     }, duration);
 }

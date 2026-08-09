@@ -2,7 +2,7 @@ const {
     parseHandToNotes, musicToGrid, gridToMusic, gridTotalUnits,
     hasNote, toggleNote, noteAt, setNoteLen, moveNote, changeNoteHand,
     insertColumn, deleteColumn, pitchRangeToRows, isBlackPitch, pianoLayout, keyAtX,
-    scaleGrid
+    scaleGrid, deleteDuplicateNotes
 } = require('./editor.js');
 
 // Compare a grid's notes regardless of order
@@ -293,4 +293,37 @@ test('scaleGrid ignores invalid factors', () => {
     scaleGrid(grid, 0);
     scaleGrid(grid, -1);
     expect(JSON.stringify(grid)).toBe(before);
+});
+
+//------------------------
+// Duplicate-note removal
+
+test('deleteDuplicateNotes removes same time+pitch notes from the chosen hand only', () => {
+    // Both hands play C4 at time 0; left also plays E4 (unique to left)
+    const grid = musicToGrid('c4+e4__', 'c4__');
+    deleteDuplicateNotes(grid, 'left');
+    expect(hasNote(grid, 0, 'C4', 'left')).toBe(false); // duplicate removed from left
+    expect(hasNote(grid, 0, 'C4', 'right')).toBe(true); // right's copy kept
+    expect(hasNote(grid, 0, 'E4', 'left')).toBe(true);  // non-duplicate untouched
+});
+
+test('deleteDuplicateNotes on the other hand keeps left, removes right', () => {
+    const grid = musicToGrid('c4__', 'c4__');
+    deleteDuplicateNotes(grid, 'right');
+    expect(hasNote(grid, 0, 'C4', 'left')).toBe(true);
+    expect(hasNote(grid, 0, 'C4', 'right')).toBe(false);
+});
+
+test('deleteDuplicateNotes only matches same time AND same pitch', () => {
+    // C4 at time 0 on left, C4 at time 2 on right -- not a duplicate
+    const grid = musicToGrid('c4__', '__c4__');
+    deleteDuplicateNotes(grid, 'left');
+    expect(hasNote(grid, 0, 'C4', 'left')).toBe(true);
+});
+
+test('deleteDuplicateNotes does nothing when there are no duplicates', () => {
+    const grid = musicToGrid('c4__', 'g4__');
+    const before = noteKeys(grid);
+    deleteDuplicateNotes(grid, 'left');
+    expect(noteKeys(grid)).toEqual(before);
 });
