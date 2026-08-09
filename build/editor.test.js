@@ -1,7 +1,8 @@
 const {
     parseHandToNotes, musicToGrid, gridToMusic, gridTotalUnits,
     hasNote, toggleNote, noteAt, setNoteLen, moveNote, changeNoteHand,
-    insertColumn, deleteColumn, pitchRangeToRows, isBlackPitch, pianoLayout, keyAtX
+    insertColumn, deleteColumn, pitchRangeToRows, isBlackPitch, pianoLayout, keyAtX,
+    scaleGrid
 } = require('./editor.js');
 
 // Compare a grid's notes regardless of order
@@ -244,4 +245,52 @@ test('keyAtX prefers black keys where they overlap white keys', () => {
     expect(keyAtX(layout, 35).note).toBe('Cs2');  // black overlaps D2's left edge
     expect(keyAtX(layout, 45).note).toBe('D2');   // white gap between black keys
     expect(keyAtX(layout, 9000)).toBeNull();      // past the keyboard
+});
+
+//------------------------
+// Speed scaling
+
+test('scaleGrid halves onset times and lengths for factor 0.5 (double speed)', () => {
+    const grid = musicToGrid('c4__e4____', 'g3______');
+    scaleGrid(grid, 0.5);
+    // c4 at 0 (len 2->1), e4 at 2->1 (len 4->2); g3 at 0 (len 6->3)
+    const c4 = noteAt(grid, 0, 'C4', 'left');
+    const e4 = grid.notes.find(n => n.note === 'E4');
+    expect(c4.time).toBe(0);
+    expect(e4.time).toBe(1);
+    expect(e4.len).toBe(2);
+});
+
+test('scaleGrid doubles onset times and lengths for factor 2 (half speed)', () => {
+    const grid = musicToGrid('c4__e4__', '');
+    scaleGrid(grid, 2);
+    const c4 = noteAt(grid, 0, 'C4', 'left');
+    const e4 = grid.notes.find(n => n.note === 'E4');
+    expect(c4.time).toBe(0);
+    expect(e4.time).toBe(4);
+    expect(grid.totalUnits).toBeGreaterThanOrEqual(6);
+});
+
+test('scaleGrid never produces a zero-length note', () => {
+    const grid = musicToGrid('c4_', '');
+    scaleGrid(grid, 0.1);
+    const c4 = grid.notes[0];
+    expect(c4.len).toBeGreaterThanOrEqual(1);
+});
+
+test('scaleGrid round-trips back to (approximately) the original via inverse factor', () => {
+    const grid = musicToGrid('c4__e4____g4______', 'a3________');
+    scaleGrid(grid, 0.5);
+    scaleGrid(grid, 2);
+    // Onsets should be close to original cumulative units (rounding-safe)
+    const notes = grid.notes.map(n => n.note).sort();
+    expect(notes).toEqual(['A3', 'C4', 'E4', 'G4'].sort());
+});
+
+test('scaleGrid ignores invalid factors', () => {
+    const grid = musicToGrid('c4__', '');
+    const before = JSON.stringify(grid);
+    scaleGrid(grid, 0);
+    scaleGrid(grid, -1);
+    expect(JSON.stringify(grid)).toBe(before);
 });

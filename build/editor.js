@@ -126,6 +126,21 @@ function setNoteLen(grid, note, len) {
     return grid;
 }
 
+// Scale every note's onset time and length by `factor` (>0), rounding to whole
+// units (min 1 for length, min 0 for time). Used to speed up / slow down the
+// whole piece: since 1 underscore = a fixed playback duration, compressing the
+// time axis (factor < 1) plays the piece faster; stretching it (factor > 1)
+// plays it slower. Relative spacing between notes is preserved.
+function scaleGrid(grid, factor) {
+    if (!grid || !(factor > 0)) return grid;
+    grid.notes.forEach(n => {
+        n.time = Math.max(0, Math.round(n.time * factor));
+        n.len = Math.max(1, Math.round((n.len || 1) * factor));
+    });
+    grid.totalUnits = gridTotalUnits(grid);
+    return grid;
+}
+
 // Move a note to a new time / key / hand (mutates the note object in place)
 function moveNote(grid, note, time, name, hand) {
     if (!note) return grid;
@@ -207,7 +222,7 @@ function keyAtX(layout, x) {
 // =====================================================================
 // Browser rendering & wiring (guarded; verified via jsdom smoke test)
 // =====================================================================
-const EDITOR = { grid: { notes: [], totalUnits: 1 }, hand: "right", tool: "right", lastHand: "right", editing: false, lastScrubTime: null, defaultLen: 2, drag: null };
+const EDITOR = { grid: { notes: [], totalUnits: 1 }, hand: "right", tool: "right", lastHand: "right", editing: false, lastScrubTime: null, defaultLen: 2, drag: null, speedPercent: 100 };
 const UNIT_PX = 18;   // vertical pixels per time unit
 const PAD_UNITS = 6;  // extra blank time at the top to click into
 const RESIZE_EDGE = 7; // px from a note's top edge that starts a length-resize drag
@@ -217,6 +232,21 @@ function changeDefaultLen(delta) {
     EDITOR.defaultLen = Math.max(1, (EDITOR.defaultLen || 2) + delta);
     const el = document.getElementById("editor-len-val");
     if (el) el.textContent = EDITOR.defaultLen;
+}
+
+// Speed up / slow down the whole piece currently in the editor, via the
+// toolbar +/- buttons. `delta` is a percentage step (e.g. +10 / -10). Faster
+// compresses note onsets/lengths; slower stretches them. Clamped to a sane
+// 25%-400% range so it can't be scaled down to nothing or blown up absurdly.
+function changeSpeed(delta) {
+    const oldPercent = EDITOR.speedPercent || 100;
+    const newPercent = Math.max(25, Math.min(400, oldPercent + delta));
+    if (newPercent === oldPercent) return;
+    scaleGrid(EDITOR.grid, oldPercent / newPercent);
+    EDITOR.speedPercent = newPercent;
+    const el = document.getElementById("editor-speed-val");
+    if (el) el.textContent = newPercent + "%";
+    renderEditorOverlay(true);
 }
 
 function getEditorRange() {
@@ -247,6 +277,9 @@ function loadCurrentIntoEditor() {
     const leftEl = document.getElementById("noteInputLeft");
     const rightEl = document.getElementById("noteInputRight");
     EDITOR.grid = musicToGrid(leftEl ? leftEl.value : "", rightEl ? rightEl.value : "");
+    EDITOR.speedPercent = 100;
+    const speedEl = document.getElementById("editor-speed-val");
+    if (speedEl) speedEl.textContent = "100%";
     renderEditorOverlay(false); // jump to the start (bottom)
 }
 
@@ -262,6 +295,9 @@ function applyEditorToInputs() {
 
 function clearEditor() {
     EDITOR.grid = { notes: [], totalUnits: 1 };
+    EDITOR.speedPercent = 100;
+    const speedEl = document.getElementById("editor-speed-val");
+    if (speedEl) speedEl.textContent = "100%";
     renderEditorOverlay(false);
 }
 
@@ -523,6 +559,7 @@ if (typeof module !== "undefined") {
     module.exports = {
         parseHandToNotes, musicToGrid, gridToMusic, gridTotalUnits,
         hasNote, toggleNote, noteAt, setNoteLen, moveNote, changeNoteHand,
-        insertColumn, deleteColumn, pitchRangeToRows, isBlackPitch, pianoLayout, keyAtX
+        insertColumn, deleteColumn, pitchRangeToRows, isBlackPitch, pianoLayout, keyAtX,
+        scaleGrid
     };
 }
