@@ -201,6 +201,7 @@ function loadPresetIntoInputs(piece) {
     document.getElementById("noteInputLeft").value = piece.left || "";
     document.getElementById("noteInputRight").value = piece.right || "";
     maybeLimitToPianoSize();
+    if (typeof syncEditorFromInputsIfActive === "function") syncEditorFromInputsIfActive();
 }
 
 // --- Limit notes to piano size ---
@@ -1136,6 +1137,9 @@ function clearAutoPlay() {
     // Reset file input
     const midiFile = document.getElementById("midiFile");
     if (midiFile) midiFile.value = "";   // Clears any chosen filename
+    // Keep the music editor's grid (source of truth while editing) in sync,
+    // otherwise the next write-back would silently undo this clear.
+    if (typeof syncEditorFromInputsIfActive === "function") syncEditorFromInputsIfActive();
 
     // Remove any preview notes still falling
     if (previewLayer) previewLayer.innerHTML = "";

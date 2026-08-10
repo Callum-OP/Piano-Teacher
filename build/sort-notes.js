@@ -421,6 +421,10 @@ function resortNotes() {
     const { left, right } = resortBlocks(leftEl.value, rightEl.value);
     leftEl.value = left || '';
     rightEl.value = right || '';
+    // Keep the music editor's grid (source of truth while editing) in sync,
+    // otherwise it would silently overwrite this sort the next time it's
+    // written back to the inputs.
+    if (typeof syncEditorFromInputsIfActive === "function") syncEditorFromInputsIfActive();
 }
 
 // Export code for tests

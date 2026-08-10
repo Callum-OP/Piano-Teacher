@@ -297,6 +297,17 @@ function loadCurrentIntoEditor() {
     renderEditorOverlay(false); // jump to the start (bottom)
 }
 
+// Called by anything OUTSIDE the editor's own controls that writes directly
+// to the note inputs while editor mode is open - loading a preset, importing
+// a MIDI file, running Sort Notes, clearing the inputs, etc. Without this the
+// editor's grid (the source of truth while editing) goes stale and silently
+// overwrites that change back out of existence the next time it's written to
+// the inputs (e.g. hitting the transport Play button, which applies pending
+// edits and exits editor mode via applyAndExitEditMode()).
+function syncEditorFromInputsIfActive() {
+    if (EDITOR.editing) loadCurrentIntoEditor();
+}
+
 function applyEditorToInputs() {
     const { left, right } = gridToMusic(EDITOR.grid);
     const leftEl = document.getElementById("noteInputLeft");
@@ -383,7 +394,23 @@ function renderEditorOverlay(preserveScroll) {
     content.style.height = contentH + "px";
     host.appendChild(content);
 
+    // Restore/set the scroll position before deciding what to draw, so the
+    // viewport check below (and clientHeight) reflect where the user is
+    // actually looking.
+    host.scrollTop = preserveScroll ? prevScroll : host.scrollHeight; // start at bottom on load
+
     const hostRect = host.getBoundingClientRect();
+
+    // Only build DOM nodes for notes near the current viewport. Previously
+    // every note in the whole piece was rebuilt (and re-measured via
+    // getBoundingClientRect) on every single edit and every drag-move event,
+    // which is what made editing longer pieces feel like "everything reloads
+    // at once" - most of a long piece is scrolled out of sight at any moment,
+    // so there's no need to draw it.
+    const viewBuffer = Math.max(host.clientHeight, UNIT_PX * 20); // one screen of slack each way
+    const viewTop = host.scrollTop - viewBuffer;
+    const viewBottom = host.scrollTop + host.clientHeight + viewBuffer;
+
     // A note's drawn length is the spacing to the next note in its hand (legato),
     // so the bar height matches the underscores it serialises to. The last note
     // in a hand uses its own stored length.
@@ -395,17 +422,31 @@ function renderEditorOverlay(preserveScroll) {
         const next = onsetsByHand[n.hand].find(t => t > n.time);
         return (next != null) ? (next - n.time) : Math.max(1, n.len || 1);
     };
+
+    // Cache each note name's key rect for this render pass. A run of repeated
+    // or chorded notes shares the same key(s), so there's no need to re-run
+    // getBoundingClientRect once per note instance.
+    const keyRectCache = new Map();
+    const rectForNote = (noteName) => {
+        if (keyRectCache.has(noteName)) return keyRectCache.get(noteName);
+        const key = (typeof getKeyElement === "function") ? getKeyElement(noteName) : null;
+        const rect = key ? key.getBoundingClientRect() : null;
+        keyRectCache.set(noteName, rect);
+        return rect;
+    };
+
     // Draw notes over their real keys (white-key notes first, black on top)
     const draw = (n) => {
-        const rects = (typeof getRects === "function") ? getRects(n.note) : null;
-        if (!rects || !rects.keyRect) return; // out of range / no key
-        const k = rects.keyRect;
         const len = effLen(n);
+        const top = contentH - (n.time + len) * UNIT_PX;
+        if (top + len * UNIT_PX < viewTop || top > viewBottom) return; // off-screen, skip
+        const keyRect = rectForNote(n.note);
+        if (!keyRect) return; // out of range / no key
         const div = document.createElement("div");
         div.className = "editor-note " + (n.hand === "right" ? "right" : "left");
-        div.style.left = (k.left - hostRect.left) + "px";
-        div.style.width = k.width + "px";
-        div.style.top = (contentH - (n.time + len) * UNIT_PX) + "px";
+        div.style.left = (keyRect.left - hostRect.left) + "px";
+        div.style.width = keyRect.width + "px";
+        div.style.top = top + "px";
         div.style.height = (len * UNIT_PX - 2) + "px";
         div.dataset.time = n.time;
         div.dataset.note = n.note;
@@ -414,8 +455,19 @@ function renderEditorOverlay(preserveScroll) {
     };
     EDITOR.grid.notes.filter(n => !/s/.test(n.note)).forEach(draw);
     EDITOR.grid.notes.filter(n => /s/.test(n.note)).forEach(draw);
+}
 
-    host.scrollTop = preserveScroll ? prevScroll : host.scrollHeight; // start at bottom on load
+// Schedules a render on the next animation frame instead of running it
+// immediately, collapsing bursts of calls (drag-move, fast scrolling) into
+// at most one render per frame instead of one per event.
+let editorRenderQueued = false;
+function scheduleEditorRender(preserveScroll) {
+    if (editorRenderQueued) return;
+    editorRenderQueued = true;
+    requestAnimationFrame(() => {
+        editorRenderQueued = false;
+        renderEditorOverlay(preserveScroll);
+    });
 }
 
 // Time at a pointer's Y position (continuous=false floors to a unit)
@@ -492,7 +544,7 @@ function onEditorPointerMove(e) {
     } else if (d.mode === "resize") {
         setNoteLen(EDITOR.grid, d.note, editorTimeAtY(e.clientY, true) - d.note.time);
     }
-    renderEditorOverlay(true);
+    scheduleEditorRender(true);
 }
 
 function onEditorPointerUp(e) {
@@ -521,6 +573,10 @@ function onEditorPointerUp(e) {
 // Scroll = scrub: play notes as they pass the playhead (the keyboard line)
 function onEditorScroll() {
     if (!EDITOR.editing) return;
+    // Rendering is now virtualised (only notes near the viewport get DOM
+    // nodes), so scrolling can bring previously-undrawn notes into view -
+    // schedule a re-render (throttled to one per frame) to pick those up.
+    scheduleEditorRender(true);
     const host = document.getElementById("editor-overlay");
     const content = host && host.querySelector(".editor-content");
     if (!content) return;

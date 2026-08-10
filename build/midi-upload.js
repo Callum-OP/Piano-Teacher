@@ -191,6 +191,13 @@ if (midiFileInput) midiFileInput.addEventListener("change", async (e) => {
         musicSelect.selectedIndex = 0;
     }
 
+    // If the music editor is open, its grid is the source of truth and would
+    // otherwise still hold the old piece - refresh it from what was just
+    // imported so it doesn't get silently overwritten again later.
+    if (typeof syncEditorFromInputsIfActive === "function") {
+        syncEditorFromInputsIfActive();
+    }
+
     // Reset file input so the same file can be reselected
     e.target.value = "";
 });

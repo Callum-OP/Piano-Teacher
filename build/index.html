@@ -50,27 +50,35 @@
 
             <!-- Music editor: an "Editor Mode" that turns the area above this piano into an editable note grid -->
             <div class="editor-bar d-flex flex-wrap align-items-center gap-2 justify-content-between">
-                <!-- Left: editing tools -->
+                <!-- Left: editing tools, grouped so related controls read together -->
                 <span class="editor-tools align-items-center flex-wrap gap-2">
-                    <span class="form-label text-light mb-0 me-1">Tool:</span>
-                    <button type="button" class="btn btn-sm hand-toggle hand-toggle-left" id="editor-tool-left" onclick="setEditorTool('left')">Left</button>
-                    <button type="button" class="btn btn-sm hand-toggle hand-toggle-right active" id="editor-tool-right" onclick="setEditorTool('right')">Right</button>
-                    <button type="button" class="btn btn-sm editor-tool-erase" id="editor-tool-erase" onclick="toggleEraseTool()"><i class="bi bi-eraser"></i> Erase</button>
-                    <span class="form-label text-light mb-0 ms-3 me-1">Length:</span>
-                    <button type="button" class="btn btn-sm btn-outline-light" onclick="changeDefaultLen(-1)" aria-label="Shorter notes">&minus;</button>
-                    <span id="editor-len-val" class="text-light">2</span>
-                    <button type="button" class="btn btn-sm btn-outline-light" onclick="changeDefaultLen(1)" aria-label="Longer notes">+</button>
-                    <span class="form-label text-light mb-0 ms-3 me-1">Speed:</span>
-                    <button type="button" class="btn btn-sm btn-outline-light" onclick="changeSpeed(-10)" aria-label="Decrease speed">&minus;</button>
-                    <span id="editor-speed-val" class="text-light">100%</span>
-                    <button type="button" class="btn btn-sm btn-outline-light" onclick="changeSpeed(10)" aria-label="Increase speed">+</button>
+                    <span class="editor-tool-group" title="Choose which hand new notes are placed on. Tap an existing note to switch it to this hand.">
+                        <span class="form-label text-light mb-0 me-1">Hand:</span>
+                        <button type="button" class="btn btn-sm hand-toggle hand-toggle-left" id="editor-tool-left" onclick="setEditorTool('left')">Left</button>
+                        <button type="button" class="btn btn-sm hand-toggle hand-toggle-right active" id="editor-tool-right" onclick="setEditorTool('right')">Right</button>
+                    </span>
+                    <span class="editor-tool-group">
+                        <button type="button" class="btn btn-sm editor-tool-erase" id="editor-tool-erase" onclick="toggleEraseTool()" title="Tap a note to delete it (tap Erase again to go back to placing notes)"><i class="bi bi-eraser"></i> Erase</button>
+                    </span>
+                    <span class="editor-tool-group" title="How long a newly placed note is, in grid units">
+                        <span class="form-label text-light mb-0 me-1">Note length:</span>
+                        <button type="button" class="btn btn-sm btn-outline-light" onclick="changeDefaultLen(-1)" aria-label="Shorter notes">&minus;</button>
+                        <span id="editor-len-val" class="text-light">2</span>
+                        <button type="button" class="btn btn-sm btn-outline-light" onclick="changeDefaultLen(1)" aria-label="Longer notes">+</button>
+                    </span>
+                    <span class="editor-tool-group" title="Speed up or slow down the whole piece currently in the editor">
+                        <span class="form-label text-light mb-0 me-1">Piece speed:</span>
+                        <button type="button" class="btn btn-sm btn-outline-light" onclick="changeSpeed(-10)" aria-label="Decrease speed">&minus;</button>
+                        <span id="editor-speed-val" class="text-light">100%</span>
+                        <button type="button" class="btn btn-sm btn-outline-light" onclick="changeSpeed(10)" aria-label="Increase speed">+</button>
+                    </span>
                 </span>
-                <!-- Right: load / clear and the mode toggle -->
+                <!-- Right: whole-grid actions and the mode toggle -->
                 <span class="d-flex align-items-center flex-wrap gap-2">
                     <span class="editor-tools align-items-center flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadCurrentIntoEditor()">Load music</button>
-                        <button type="button" class="btn btn-sm btn-outline-warning" onclick="removeDuplicateNotes()" title="Remove notes on the selected hand (Left/Right tool) that duplicate a note on the other hand at the same time">De-dup hand</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearEditor()">Clear</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadCurrentIntoEditor()" title="Discard any unsaved edits here and reload from the note boxes below (useful if you picked a different preset, imported a MIDI, etc. while editing)">Reload from inputs</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="removeDuplicateNotes()" title="Advanced: remove notes on the selected hand that duplicate a note the other hand plays at the same time">Remove duplicates</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearEditor()" title="Erase the whole piece currently in the editor">Clear all</button>
                     </span>
                     <button class="btn btn-sm btn-outline-primary" id="edit-toggle-btn" onclick="toggleEditMode()">Editor Mode</button>
                 </span>
