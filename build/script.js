@@ -232,6 +232,26 @@ function maybeLimitToPianoSize() {
     if (toggle && toggle.checked) applyPianoLimit();
 }
 
+
+// Return the title to display for a preset, honouring the "Use Formal Titles" setting.
+// Falls back to the normal title if no formal title is available.
+function getDisplayTitle(music) {
+    if (!music) return "";
+    const settings = (typeof loadSettings === "function") ? loadSettings() : {};
+    if (settings.useFormalTitles && music.formalTitle) return music.formalTitle;
+    return music.title || "";
+}
+
+// Re-render whatever preset title lists are currently on screen (dropdown + live
+// search results). Called whenever the "Use Formal Titles" setting changes.
+function refreshMusicTitles() {
+    if (!musicLibrary.length) return;
+    const search = document.getElementById("presetSearch");
+    renderMusicOptions(search ? search.value : "");
+    const results = document.getElementById("presetResults");
+    if (search && results && !results.hidden) renderPresetResults(search.value);
+}
+
 // Render the live search results for the preset list
 function renderPresetResults(query) {
     const results = document.getElementById("presetResults");
@@ -257,7 +277,7 @@ function renderPresetResults(query) {
     }
 
     matches.slice(0, 50).forEach(({ music, index }) => {
-        const item = makeSearchResultItem(music.title, music.composer);
+        const item = makeSearchResultItem(getDisplayTitle(music), music.composer);
         item.addEventListener("click", () => {
             loadPresetIntoInputs(music);
             musicSelect.value = index;
@@ -304,7 +324,7 @@ function renderMusicOptions(query) {
         pieces.forEach(({ music, index }) => {
             const option = document.createElement("option");
             option.value = index;
-            option.textContent = music.title;
+            option.textContent = getDisplayTitle(music);
             group.appendChild(option);
         });
         musicSelect.appendChild(group);

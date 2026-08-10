@@ -10,7 +10,8 @@ const defaultSettings = {
     enableGlow: true,
     uiScale: 1.0,
     highContrast: false,
-    performanceMode: false
+    performanceMode: false,
+    useFormalTitles: false
 };
 
 // Get and set settings. localStorage can throw (private mode) and stored data can
@@ -37,6 +38,11 @@ function applySettings(settings) {
     const toggleLabels = document.getElementById("toggle-labels");
     if (toggleLabels) toggleLabels.checked = settings.showLabels;
     if (piano) piano.classList.toggle("hide-labels", !settings.showLabels);
+
+    // Use formal titles for preset music
+    const toggleFormalTitles = document.getElementById("toggle-formal-titles");
+    if (toggleFormalTitles) toggleFormalTitles.checked = settings.useFormalTitles;
+    if (typeof refreshMusicTitles === "function") refreshMusicTitles();
 
     // Auto sort
     const autoSort = document.getElementById("auto-sort");
@@ -120,7 +126,8 @@ function initSettings() {
         "show-editor": "showEditor",
         "toggle-glow": "enableGlow",
         "toggle-high-contrast": "highContrast",
-        "toggle-performance": "performanceMode"
+        "toggle-performance": "performanceMode",
+        "toggle-formal-titles": "useFormalTitles"
     };
 
     Object.entries(toggleMap).forEach(([id, key]) => {
