@@ -7,13 +7,35 @@ function loadCustomMusic() {
         return [];
     }
 }
+// Returns true on success, false if the save was silently dropped (private
+// mode, quota exceeded, storage disabled) so callers can warn the user
+// instead of losing music with no trace.
 function saveCustomMusicList(list) {
     try {
         localStorage.setItem("customMusic", JSON.stringify(list));
+        return true;
     } catch (e) {
-        // Ignore (private mode / quota exceeded)
+        alert("Couldn't save your music — your browser's storage is full or unavailable. " +
+              "Use Export now to back up what you have, from wherever it was last saved successfully.");
+        return false;
     }
 }
+
+// Ask the browser not to silently evict storage (localStorage included)
+// under disk pressure. Best-effort: some browsers refuse, and it has no
+// effect for third-party/embedded contexts. Safe to
+// call repeatedly; called once on load below.
+function requestPersistentStorage() {
+    try {
+        if (!navigator.storage || !navigator.storage.persist) return;
+        navigator.storage.persisted?.().then((already) => {
+            if (!already) navigator.storage.persist();
+        });
+    } catch (e) {
+        /* no-op */
+    }
+}
+if (typeof window !== "undefined") requestPersistentStorage();
 
 // --- Import / export of the whole saved-music list ---
 
